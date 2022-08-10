@@ -18,6 +18,9 @@ export default function Header() {
 
   return (
     <Menu secondary pointing>
+       <Menu.Item as={Link} to="/tictactoe">
+        TicTacToe
+      </Menu.Item>
       <Menu.Item
         as={Link}
         to="/accounts"
@@ -36,9 +39,7 @@ export default function Header() {
       >
         類別
       </Menu.Item>
-      <Menu.Item as={Link} to="/tictactoe">
-        TicTacToe
-      </Menu.Item>
+     
       <Menu.Item as={Link} to="/balances">
         收支
       </Menu.Item>
