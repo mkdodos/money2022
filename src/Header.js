@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Menu,
   Icon,
@@ -6,8 +6,8 @@ import {
   Dropdown,
   Container,
   Sticky,
-} from 'semantic-ui-react';
-import { Link } from 'react-router-dom';
+} from "semantic-ui-react";
+import { Link } from "react-router-dom";
 
 export default function Header() {
   const [activeItem, setActiveItem] = React.useState("");
@@ -17,13 +17,13 @@ export default function Header() {
   }
 
   return (
-    <Menu secondary pointing >
+    <Menu secondary pointing>
       <Menu.Item
         as={Link}
         to="/accounts"
         name="accounts"
         onClick={handleClick}
-        active={activeItem === 'accounts'}
+        active={activeItem === "accounts"}
       >
         帳戶
       </Menu.Item>
@@ -32,15 +32,15 @@ export default function Header() {
         to="/cates"
         name="cates"
         onClick={handleClick}
-        active={activeItem === 'cates'}
+        active={activeItem === "cates"}
       >
         類別
       </Menu.Item>
-      <Menu.Item
-      as={Link}
-      to="/tictactoe"
-      >
-      TicTacToe
+      <Menu.Item as={Link} to="/tictactoe">
+        TicTacToe
+      </Menu.Item>
+      <Menu.Item as={Link} to="/balances">
+        收支
       </Menu.Item>
     </Menu>
   );
