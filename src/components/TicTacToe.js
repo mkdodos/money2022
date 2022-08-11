@@ -1,93 +1,53 @@
-import React from 'react';
-
-class Square extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = { value: null };
-  // }
-
-  render() {
-    return (
-      <button
-        className="square"
-        onClick={() => {
-          // this.setState({ value: 'X' });
-          this.props.onClick()
-        }}
-      >
-        {this.props.value}
-        {/* {this.state.value} */}
-      </button>
-    );
+import {useState} from 'react';
+import { Form, Button, Segment } from 'semantic-ui-react';
+export default function TicTacToe() {
+  const [todoList, setTodoList] = useState([])
+  const [newTask, setNewTask] = useState("")
+  const handleChange = (event) => {
+    setNewTask(event.target.value)
   }
+
+  const addTask = () => {
+    const newTodoList = [...todoList, newTask];
+    setTodoList(newTodoList);
+    console.log('dd')
+  }
+
+  const deleteTask = (taskName) => {
+    const newTodoList = todoList.filter((task)=>{
+      return task!==taskName
+    })
+    console.log(newTodoList)
+    setTodoList(newTodoList)
+  }
+  return (
+    <>
+    <Form>
+      <Form.Group>
+        <Form.Field>
+          <label>名稱</label>
+          <input onChange={handleChange}
+            placeholder="First Name"
+           
+          />
+        </Form.Field>
+        
+      </Form.Group>
+      <Button onClick={addTask}>Submit</Button>
+    </Form>
+    <Segment>{
+    todoList.map((task,i)=>{
+      return (
+        <div key={i}>
+          <h1 >{task}</h1>
+          <button  onClick={()=>deleteTask(task)}>X</button>
+        </div>
+        
+      )
+     
+    })
+    }</Segment>
+    </>
+
+  );
 }
-
-class Board extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      squares: Array(9).fill(null),
-    };
-  }
-
-  handleClick(i){
-    const squares = this.state.squares.slice() //建立一個 squares array 的 copy
-    squares[i] = 'X'
-    this.setState({squares:squares})
-  }
-
-  renderSquare(i) {
-    // return <Square value={i} />;
-    return (
-      <Square
-        value={this.state.squares[i]}
-        onClick={() => {
-          this.handleClick(i);
-        }}
-      />
-    );
-  }
-
-  render() {
-    const status = 'Next player: X';
-
-    return (
-      <div>
-        <div className="status">{status}</div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
-      </div>
-    );
-  }
-}
-
-export default class Game extends React.Component {
-  render() {
-    return (
-      <div className="game">
-        <div className="game-board">
-          <Board />
-        </div>
-        <div className="game-info">
-          <div>{/* status */}</div>
-          <ol>{/* TODO */}</ol>
-        </div>
-      </div>
-    );
-  }
-}
-
-// ========================================

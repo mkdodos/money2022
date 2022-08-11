@@ -1,6 +1,6 @@
 import { db, db_dada } from "../utils/firebase";
 // import {db as dada} from '../utils/firebase-dada'
-import { Table } from "semantic-ui-react";
+import { Table, Form, Button } from "semantic-ui-react";
 import DataTable from "./DataTable";
 import DataRow from "./DataRow";
 import React from "react";
@@ -40,9 +40,30 @@ export default function Accounts() {
     );
   }
 
+  function handleChange(event) {
+    setRow({name:event.target.value})
+  }
+
   return (
     <>
-    <EditForm row={row} />
+    
+
+    <Form>
+        <Form.Group>
+        <Form.Field>
+        <label>名稱</label>
+        <input placeholder="First Name" value= {row.name}  onChange={handleChange}/>
+      </Form.Field>
+      <Form.Field>
+        <label>餘額</label>
+        <input placeholder="Last Name"  value= {row.balance}  onChange={handleChange}/>
+      </Form.Field>
+        </Form.Group>   
+      <Button type="submit">Submit</Button>
+    </Form>
+
+
+
       <Table unstackable>
       <Table.Header>
         <Table.Row>
