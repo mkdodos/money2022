@@ -1,15 +1,7 @@
 import { db, db_dada } from '../utils/firebase';
 import DataTable from './DataTable';
 import DataRow from './DataRow';
-import {
-  Button,
-  Form,
-  Table,
-  Divider,
-  Segment,
-  Input,
-  Grid,
-} from 'semantic-ui-react';
+import { Button, Form, Table, Divider } from 'semantic-ui-react';
 // import {db as dada} from '../utils/firebase-dada'
 import React from 'react';
 import { Cate } from './Cate';
@@ -17,15 +9,17 @@ import { EditCate } from './EditCate';
 
 export default function Cates() {
   const [rows, setRows] = React.useState([]);
-  // const [editedRow, setEditedRow] = React.useState({});
+  const [editedRow, setEditedRow] = React.useState({});
+
   const [editIndex, setEditIndex] = React.useState(-1);
+
+  const [rows2, setRows2] = React.useState([]);
   const [name, setName] = React.useState('');
   const [prior, setPrior] = React.useState('');
   const schema = [
-    // { text: 'ID', value: 'id', type: 'string' },
     { text: '名稱', value: 'name', type: 'string' },
     { text: '順序', value: 'prior', type: 'number' },
-    // { text: '使用者', value: 'user', type: 'string' },
+    // {text:'建立',value:'createdAt',type:'number'},
   ];
   React.useEffect(() => {
     db.collection('cates')
@@ -36,119 +30,123 @@ export default function Cates() {
           return { ...doc.data(), id: doc.id };
         });
         setRows(data);
+        setRows2(data);
+        // setRows(
+        //   snapshot.docs.map((doc) => {
+        //     return { ...doc.data(), id: doc.id };
+        //   })
+        // );
       });
   }, []);
 
   // 刪除
   const deleteTask = (id) => {
-    // 篩選資料排除點選的項目
     const newTodoList = rows.filter((task) => {
       return task.id !== id;
     });
-    // 清空欄位值
-    setName('');
-    setPrior('');
-    // 設定篩選後的資料
+
+    setName('')
+    setPrior('')
+
     setRows(newTodoList);
   };
 
   // 編輯
   const editTask = (item) => {
-    // 設定 editIndex 做為儲存時判斷新增或修改的依據
     setEditIndex(rows.indexOf(item));
-    // 設定編輯列傳給子元件
-    // setEditedRow(item)
-    // 設定表單輸入元件的值
+    setEditedRow(item)
     setName(item.name);
     setPrior(item.prior);
+    //   editRow(item) {
+    //     this.editIndex = this.rows.indexOf(item);
+    //     this.editItem = Object.assign({}, item);
+    // var newPlayer = Object.assign({}, player, {score: 2});
+    // var newPlayer = {...player, score: 2};
+
+    // },
   };
 
-  // 儲存
   const saveTask = () => {
-    // 複製一份原資料
     const newRows = rows.slice();
-    // 欄位資料
-    const row = { name, prior };
+    const row = {name,prior}
     // 修改
     if (editIndex > -1) {
-      // 將欄位資料寫到複本
       Object.assign(newRows[editIndex], row);
-      // 清空欄位值
       setEditIndex(-1);
-      setName('');
-      setPrior('');
-    }
+      setName('')
+      setPrior('')
+    } 
     // 新增
     else {
-      const id = Date.now();
-      // 將欄位資料加到複本
-      newRows.push({ ...row, id });
-      // 清空欄位值
-      setName('');
-      setPrior('');
+
+      const id = Date.now() 
+      newRows.push({...row,id});
+      setName('')
+      setPrior('')
+    
     }
-    // 將複本寫到原資料
+    
     setRows(newRows);
   };
 
   return (
     <>
-
-    <Grid>
-      <Grid.Row>
-        <Grid.Column> <Form unstackable>
+      <Form unstackable>
         <Form.Group widths={2}>
-          <Form.Input
-            fluid
-            label="First name"
+          <Form.Field
+            label="名稱"
+            control="input"
             value={name}
             onChange={(e) => {
               setName(e.target.value);
             }}
-            placeholder="First name"
+            placeholder="name"
           />
-          <Form.Input
+          <Form.Field
+            label="順序"
+            control="input"
             value={prior}
-            type="number"
             onChange={(e) => {
               setPrior(e.target.value);
             }}
-            fluid
-            label="Last name"
-            placeholder="Last name"
+           
           />
         </Form.Group>
 
-        <Form.Field>
-          {/* <label>First Name</label>
-          <input placeholder="First Name" /> */}
-        </Form.Field>
-
+        <Divider hidden />
         <Button color="teal" floated="right" onClick={saveTask}>
           儲存
         </Button>
+      </Form>
 
-        
-      </Form></Grid.Column>
-      </Grid.Row>
-      <Grid.Row>
-        <Grid.Column> <Table unstackable>
-        <Table.Header>
-          <Table.Row>
-            {schema.map((obj, i) => (
-              <Table.HeaderCell key={i}>{obj.text}</Table.HeaderCell>
-            ))}
-            <Table.HeaderCell>刪除</Table.HeaderCell>
-            <Table.HeaderCell>編輯</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
+      {/* <Button
+        onClick={() => {
+          const data = rows2.filter((row) => row.user === 'mkdodos@gmail.com');
+          setRows(data);
+        }}
+      >
+        M
+      </Button>
+      <Button
+        onClick={() => {
+          const data = rows2.filter((row) => row.user === 'dada@gmail.com');
+          setRows(data);
+        }}
+      >
+        D
+      </Button> */}
+      <Table unstackable>
         <Table.Body>
           {rows.map((task, i) => {
             return (
               <Cate
+                // onClick={() => editTask(task)}
                 key={i}
+                id={task.id}
                 index={i}
-                schema={schema}
+                // taskName={task.name}
+                prior={task.prior}
+                user={task.user}
                 row={task}
                 deleteTask={deleteTask}
                 editTask={editTask}
@@ -156,16 +154,7 @@ export default function Cates() {
             );
           })}
         </Table.Body>
-      </Table></Grid.Column>
-      </Grid.Row>
-    </Grid>
-     
-
-    
-
-      
-
-     
+      </Table>
     </>
   );
 }
