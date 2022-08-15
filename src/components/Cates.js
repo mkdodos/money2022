@@ -9,6 +9,8 @@ import {
   Segment,
   Input,
   Grid,
+  Menu,
+  Dropdown,
 } from 'semantic-ui-react';
 import React from 'react';
 import { Cate } from './Cate';
@@ -19,17 +21,16 @@ export default function Cates() {
     contact: {
       name: '',
       prior: '',
-      groupId:''
+      groupId: '',
     },
     groups: [],
-    prior: 0,
   });
   const [rows, setRows] = React.useState([]);
   // const [editedRow, setEditedRow] = React.useState({});
   const [editIndex, setEditIndex] = React.useState(-1);
   const [docId, setDocId] = React.useState('');
-  const [name, setName] = React.useState('');
-  const [prior, setPrior] = React.useState('');
+  // const [name, setName] = React.useState('');
+  // const [prior, setPrior] = React.useState('');
   const schema = [
     // { text: 'ID', value: 'id', type: 'string' },
     { text: '名稱', value: 'name', type: 'string' },
@@ -40,15 +41,19 @@ export default function Cates() {
   const col_name = 'notes';
   React.useEffect(() => {
     db.collection(col_name)
-      .limit(3)
+      .limit(30)
       .get()
       .then((snapshot) => {
         const data = snapshot.docs.map((doc) => {
           return { ...doc.data(), id: doc.id };
         });
         setRows(data);
-        console.log(data);
-        setState({ ...state, groups: data });
+        const options = data.map((row) => {
+          return { text: row.name, value: row.id, key: row.id };
+        });
+        console.log(options);
+        setState({ ...state, groups: options });
+        // setState({ ...state, groups: data });
       });
   }, []);
 
@@ -63,21 +68,31 @@ export default function Cates() {
     db.collection(col_name).doc(id).delete();
 
     // 清空欄位值
-    setName('');
-    setPrior('');
+    // setName('');
+    // setPrior('');
     // 設定篩選後的資料
     setRows(newTodoList);
   };
 
   // 編輯
   const editTask = (item) => {
+    // console.log(item.name)
     // 設定 editIndex 做為儲存時判斷新增或修改的依據
     setEditIndex(rows.indexOf(item));
     // 設定編輯列傳給子元件
     // setEditedRow(item)
     // 設定表單輸入元件的值
-    setName(item.name);
-    setPrior(item.prior);
+    setState({
+      ...state,
+      contact: {
+        ...state.contact,
+        name: item.name,
+        prior: item.prior,
+        groupId: item.groupId,
+      },
+    });
+    // setName(item.name);
+    // setPrior(item.prior);
     // 更新時會用到
     setDocId(item.id);
   };
@@ -86,18 +101,22 @@ export default function Cates() {
   const saveTask = () => {
     // 複製一份原資料
     const newRows = rows.slice();
-    // 欄位資料
-    const row = { name, prior };
+    // 欄位資料    
+    // const row = { name, prior };
     // 修改
     if (editIndex > -1) {
       // 將欄位資料寫到複本
-      Object.assign(newRows[editIndex], row);
+      Object.assign(newRows[editIndex], state.contact);
       // firebase
-      db.collection(col_name).doc(docId).update(row);
+      db.collection(col_name).doc(docId).update(state.contact);
       // 清空欄位值
       setEditIndex(-1);
-      setName('');
-      setPrior('');
+      setState({
+        ...state,
+        contact: { ...state.contact, name: '', prior: '' },
+      });
+      // setName('');
+      // setPrior('');
     }
     // 新增
     else {
@@ -115,13 +134,18 @@ export default function Cates() {
           setRows(newRows);
         });
       // 清空欄位值
-      setName('');
-      setPrior('');
+      setState({
+        ...state,
+        contact: { ...state.contact, name: '', prior: '' },
+      });
+      // setName('');
+      // setPrior('');
     }
   };
   let { contact, groups } = state;
 
   let updateInput = (event) => {
+   
     setState({
       ...state,
       contact: {
@@ -129,12 +153,15 @@ export default function Cates() {
         [event.target.name]: event.target.value,
       },
     });
+   
+
+    
   };
 
   return (
     <>
       <pre>{JSON.stringify(contact)}</pre>
-      <pre>{JSON.stringify(groups[0])}</pre>
+      {/* <pre>{JSON.stringify(groups[0])}</pre> */}
       {/* <pre>{groups[0]}</pre> */}
       <Grid>
         <Grid.Row>
@@ -164,15 +191,35 @@ export default function Cates() {
                   label="金額"
                   placeholder=""
                 />
-                <select
-                name="groupId"
-                value={contact.groupId}
-                onChange={updateInput}
+
+                <Form.Select
+                  selection
+                  // text="Dropdown"
+                  name="groupId"
+                  value={contact.groupId}
+                  onChange={(e, obj) => {
+                    setState({
+                      ...state,
+                      contact: { ...state.contact, groupId: obj.value },
+                    });
+                  }}
+                  options={groups}
+                  placeholder="下拉"
+                />
+
+                {/* <select
+                  name="groupId"
+                  value={contact.groupId}
+                  onChange={updateInput}
                 >
                   {groups.map((group) => {
-                    return <option key={group.id} value={group.id}>{group.name}</option>;
+                    return (
+                      <option key={group.id} value={group.id}>
+                        {group.name}
+                      </option>
+                    );
                   })}
-                </select>
+                </select> */}
               </Form.Group>
 
               <Button color="teal" floated="right" onClick={saveTask}>
