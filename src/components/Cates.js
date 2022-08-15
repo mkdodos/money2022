@@ -10,15 +10,14 @@ import {
   Input,
   Grid,
 } from 'semantic-ui-react';
-// import {db as dada} from '../utils/firebase-dada'
 import React from 'react';
 import { Cate } from './Cate';
-import { EditCate } from './EditCate';
 
 export default function Cates() {
   const [rows, setRows] = React.useState([]);
   // const [editedRow, setEditedRow] = React.useState({});
   const [editIndex, setEditIndex] = React.useState(-1);
+  const [docId, setDocId] = React.useState('');
   const [name, setName] = React.useState('');
   const [prior, setPrior] = React.useState('');
   const schema = [
@@ -27,8 +26,10 @@ export default function Cates() {
     { text: '順序', value: 'prior', type: 'number' },
     // { text: '使用者', value: 'user', type: 'string' },
   ];
+
+  const col_name = 'notes';
   React.useEffect(() => {
-    db.collection('cates')
+    db.collection(col_name)
       .limit(3)
       .get()
       .then((snapshot) => {
@@ -45,6 +46,10 @@ export default function Cates() {
     const newTodoList = rows.filter((task) => {
       return task.id !== id;
     });
+
+    // firebase
+    db.collection(col_name).doc(id).delete();
+
     // 清空欄位值
     setName('');
     setPrior('');
@@ -61,6 +66,8 @@ export default function Cates() {
     // 設定表單輸入元件的值
     setName(item.name);
     setPrior(item.prior);
+    // 更新時會用到
+    setDocId(item.id);
   };
 
   // 儲存
@@ -73,6 +80,8 @@ export default function Cates() {
     if (editIndex > -1) {
       // 將欄位資料寫到複本
       Object.assign(newRows[editIndex], row);
+      // firebase
+      db.collection(col_name).doc(docId).update(row);
       // 清空欄位值
       setEditIndex(-1);
       setName('');
@@ -80,92 +89,89 @@ export default function Cates() {
     }
     // 新增
     else {
-      const id = Date.now();
+      // const id = Date.now();
       // 將欄位資料加到複本
-      newRows.push({ ...row, id });
+      // newRows.push({ ...row, id });
+
+      // firebase
+      db.collection(col_name)
+        .add(row)
+        .then((doc) => {
+          newRows.push({ ...row, id: doc.id });
+          // 將複本寫到原資料
+          setRows(newRows);
+        });
       // 清空欄位值
       setName('');
       setPrior('');
     }
-    // 將複本寫到原資料
-    setRows(newRows);
   };
 
   return (
     <>
+      <Grid>
+        <Grid.Row>
+          <Grid.Column>
+            <Form unstackable>
+              <Form.Group widths={2}>
+                <Form.Input
+                  fluid
+                  label="First name"
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                  }}
+                  placeholder="First name"
+                />
+                <Form.Input
+                  value={prior}
+                  type="number"
+                  onChange={(e) => {
+                    setPrior(e.target.value);
+                  }}
+                  fluid
+                  label="金額"
+                  placeholder=""
+                />
+              </Form.Group>
 
-    <Grid>
-      <Grid.Row>
-        <Grid.Column> <Form unstackable>
-        <Form.Group widths={2}>
-          <Form.Input
-            fluid
-            label="First name"
-            value={name}
-            onChange={(e) => {
-              setName(e.target.value);
-            }}
-            placeholder="First name"
-          />
-          <Form.Input
-            value={prior}
-            type="number"
-            onChange={(e) => {
-              setPrior(e.target.value);
-            }}
-            fluid
-            label="Last name"
-            placeholder="Last name"
-          />
-        </Form.Group>
-
-        <Form.Field>
-          {/* <label>First Name</label>
-          <input placeholder="First Name" /> */}
-        </Form.Field>
-
-        <Button color="teal" floated="right" onClick={saveTask}>
-          儲存
-        </Button>
-
-        
-      </Form></Grid.Column>
-      </Grid.Row>
-      <Grid.Row>
-        <Grid.Column> <Table unstackable>
-        <Table.Header>
-          <Table.Row>
-            {schema.map((obj, i) => (
-              <Table.HeaderCell key={i}>{obj.text}</Table.HeaderCell>
-            ))}
-            <Table.HeaderCell>刪除</Table.HeaderCell>
-            <Table.HeaderCell>編輯</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {rows.map((task, i) => {
-            return (
-              <Cate
-                key={i}
-                index={i}
-                schema={schema}
-                row={task}
-                deleteTask={deleteTask}
-                editTask={editTask}
-              />
-            );
-          })}
-        </Table.Body>
-      </Table></Grid.Column>
-      </Grid.Row>
-    </Grid>
-     
-
-    
-
-      
-
-     
+              <Button color="teal" floated="right" onClick={saveTask}>
+                儲存
+              </Button>
+            </Form>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column>
+            {' '}
+            <Table unstackable>
+              <Table.Header>
+                <Table.Row>
+                  {schema.map((obj, i) => (
+                    <Table.HeaderCell key={i}>{obj.text}</Table.HeaderCell>
+                  ))}
+                  <Table.HeaderCell>刪除</Table.HeaderCell>
+                  <Table.HeaderCell>編輯</Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                {rows.map((task, i) => {
+                  return (
+                    <Cate
+                      key={i}
+                      index={i}
+                      schema={schema}
+                      row={task}
+                      deleteTask={deleteTask}
+                      editTask={editTask}
+                    />
+                  );
+                })}
+              </Table.Body>
+            </Table>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
     </>
   );
 }
