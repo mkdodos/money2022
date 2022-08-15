@@ -14,6 +14,16 @@ import React from 'react';
 import { Cate } from './Cate';
 
 export default function Cates() {
+  let [state, setState] = React.useState({
+    docId: '',
+    contact: {
+      name: '',
+      prior: '',
+      groupId:''
+    },
+    groups: [],
+    prior: 0,
+  });
   const [rows, setRows] = React.useState([]);
   // const [editedRow, setEditedRow] = React.useState({});
   const [editIndex, setEditIndex] = React.useState(-1);
@@ -37,6 +47,8 @@ export default function Cates() {
           return { ...doc.data(), id: doc.id };
         });
         setRows(data);
+        console.log(data);
+        setState({ ...state, groups: data });
       });
   }, []);
 
@@ -95,9 +107,10 @@ export default function Cates() {
 
       // firebase
       db.collection(col_name)
-        .add(row)
+        .add(state.contact)
         .then((doc) => {
-          newRows.push({ ...row, id: doc.id });
+          // newRows.push({ ...row, id: doc.id });
+          newRows.push({ ...state.contact, id: doc.id });
           // 將複本寫到原資料
           setRows(newRows);
         });
@@ -106,9 +119,23 @@ export default function Cates() {
       setPrior('');
     }
   };
+  let { contact, groups } = state;
+
+  let updateInput = (event) => {
+    setState({
+      ...state,
+      contact: {
+        ...state.contact,
+        [event.target.name]: event.target.value,
+      },
+    });
+  };
 
   return (
     <>
+      <pre>{JSON.stringify(contact)}</pre>
+      <pre>{JSON.stringify(groups[0])}</pre>
+      {/* <pre>{groups[0]}</pre> */}
       <Grid>
         <Grid.Row>
           <Grid.Column>
@@ -117,22 +144,35 @@ export default function Cates() {
                 <Form.Input
                   fluid
                   label="First name"
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                  }}
+                  name="name"
+                  value={contact.name}
+                  onChange={updateInput}
+                  // onChange={(e) => {
+                  //   setName(e.target.value);
+                  // }}
                   placeholder="First name"
                 />
                 <Form.Input
-                  value={prior}
+                  name="prior"
+                  value={contact.prior}
                   type="number"
-                  onChange={(e) => {
-                    setPrior(e.target.value);
-                  }}
+                  onChange={updateInput}
+                  // onChange={(e) => {
+                  //   setPrior(e.target.value);
+                  // }}
                   fluid
                   label="金額"
                   placeholder=""
                 />
+                <select
+                name="groupId"
+                value={contact.groupId}
+                onChange={updateInput}
+                >
+                  {groups.map((group) => {
+                    return <option key={group.id} value={group.id}>{group.name}</option>;
+                  })}
+                </select>
               </Form.Group>
 
               <Button color="teal" floated="right" onClick={saveTask}>
