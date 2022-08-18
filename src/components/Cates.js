@@ -3,74 +3,7 @@
 
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
-import { Button, Table } from 'semantic-ui-react';
-
-// 產生表單
-class MyForm extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <>
-        {/* {JSON.stringify(this.props.schema)} */}
-        {this.props.schema.map((obj, i) => {
-          return (
-            <div className="ui input" key={i}>
-              <input onChange={() => {}} placeholder={obj.text} />
-            </div>
-          );
-        })}
-        <button className="ui button" onClick={this.props.onClick}>
-          新增
-        </button>
-        {/* <button
-          className="ui button"
-          onClick={() => {
-            this.props.onClick();
-          }}
-        >
-          新增
-        </button> */}
-      </>
-    );
-  }
-}
-
-// 產生表格
-class MyTableOLD extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <>
-        <table className="ui unstackable table">
-          <thead>
-            <tr>
-              {this.props.schema.map((header, i) => {
-                return <th key={i}>{header.name}</th>;
-              })}
-            </tr>
-          </thead>
-          <tbody>
-            {this.props.rows.map((obj, i) => {
-              return (
-                <tr key={i}>
-                  <td>{obj.date}</td>
-                  <td>{obj.title}</td>
-                  <td>{obj.expense}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </>
-    );
-  }
-}
+import { Button, Table, Modal } from 'semantic-ui-react';
 
 class MyTable extends React.Component {
   constructor(props) {
@@ -134,13 +67,13 @@ export default function Cates() {
   ];
 
   const data = [
-    { date: '2022-08-17', title: '蛋餅', expense: '30' },
-    { date: '2022-08-18', title: '土司', expense: '20' },
+    // { date: '2022-08-17', title: '蛋餅', expense: '30' },
+    // { date: '2022-08-18', title: '土司', expense: '20' },
   ];
 
   const [itemList, setItemList] = React.useState([]);
   const defalutItem = {
-    date: '',
+    date: new Date().toISOString().slice(0, 10),
     title: '',
     expense: '',
   };
@@ -148,7 +81,8 @@ export default function Cates() {
 
   const [editedIndex, setEditedIndex] = React.useState(-1);
 
-  // const [editedItem, setEditedItem] =React.useState({})
+  // Modal
+  const [open, setOpen] = React.useState(false);
 
   React.useEffect(() => {
     setItemList(data);
@@ -164,6 +98,7 @@ export default function Cates() {
   }
 
   function handleEdit(obj) {
+    setOpen(true);
     // 點選編輯列的索引,用來修改後,把值傳回該列
     setEditedIndex(itemList.indexOf(obj));
     setItem(obj);
@@ -173,7 +108,7 @@ export default function Cates() {
   function handleUpdate() {
     // 新增
     if (editedIndex == -1) {
-      setItemList([...itemList, item]);
+      setItemList([...itemList, { ...item, id: Date.now() }]);
     }
     // 更新
     else {
@@ -183,38 +118,68 @@ export default function Cates() {
       Object.assign(data[editedIndex], item);
       // 設定更改後的資料陣列給原陣列
       setItemList(data);
-      setEditedIndex(-1)
+      setEditedIndex(-1);
     }
 
     // 新增或更新完將表單輸入項的值清空
     setItem(defalutItem);
+    setOpen(false);
+  }
+
+  function handleDelete() {
+    const data = itemList.filter((obj) => obj.id !== item.id);
+    setItemList(data);
+    setOpen(false);
   }
 
   return (
     <>
       <pre>{JSON.stringify(item)}</pre>
       <pre>{editedIndex}</pre>
-      {/* 表單 */}
-      {schema.map((obj, i) => {
-        return (
-          <div className="ui input" key={i}>
-            <input
-              name={obj.name}
-              value={item[obj.name]}
-              type={obj.type}
-              onChange={(e) => {
-                setItem({ ...item, [e.target.name]: e.target.value });
-              }}
-              placeholder={obj.text}
-            />
-          </div>
-        );
-      })}
-      {/* <button className="ui button" onClick={handleClick}>
+      <Modal open={open} closeIcon onClose={() => setOpen(false)}>
+        <Modal.Header>編輯表單</Modal.Header>
+        <Modal.Content>
+          {/* 表單 */}
+          {schema.map((obj, i) => {
+            return (
+              <div className="ui input" key={i}>
+                <input
+                  name={obj.name}
+                  value={item[obj.name]}
+                  type={obj.type}
+                  onChange={(e) => {
+                    setItem({ ...item, [e.target.name]: e.target.value });
+                  }}
+                  placeholder={obj.text}
+                />
+              </div>
+            );
+          })}
+        </Modal.Content>
+        <Modal.Actions>
+          <button className="ui button blue" onClick={handleUpdate}>
+            儲存
+          </button>
+          {editedIndex !== -1 && (
+            <button
+              className="ui button red left floated"
+              onClick={handleDelete}
+            >
+              刪除
+            </button>
+          )}
+        </Modal.Actions>
+      </Modal>
+
+      <button
+        className="ui button"
+        onClick={() => {
+          setOpen(true);
+          setItem(defalutItem);
+          setEditedIndex(-1);
+        }}
+      >
         新增
-      </button> */}
-      <button className="ui button" onClick={handleUpdate}>
-        儲存
       </button>
 
       {/* <MyForm
