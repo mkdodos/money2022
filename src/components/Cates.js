@@ -88,6 +88,7 @@ class MyTable extends React.Component {
                   <Table.HeaderCell key={i}>{header.text}</Table.HeaderCell>
                 );
               })}
+              <Table.HeaderCell>#</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -97,6 +98,7 @@ class MyTable extends React.Component {
                   <td>{obj.date}</td>
                   <td>{obj.title}</td>
                   <td>{obj.expense}</td>
+                  <td onClick={() => this.props.edit(obj)}>編輯</td>
                 </tr>
               );
             })}
@@ -137,20 +139,22 @@ export default function Cates() {
   ];
 
   const [itemList, setItemList] = React.useState([]);
-  const [item, setItem] = React.useState({
+  const defalutItem = {
     date: '',
     title: '',
     expense: '',
-  });
+  };
+  const [item, setItem] = React.useState(defalutItem);
+
+  const [editedIndex, setEditedIndex] = React.useState(-1);
+
+  // const [editedItem, setEditedItem] =React.useState({})
 
   React.useEffect(() => {
     setItemList(data);
   }, []);
 
   function handleClick() {
-    // setItem({ date: '2022-08-17', title: '蛋餅', expense: '30' });
-    // console.log(item);
-    // const data = itemList
     setItemList([
       ...itemList,
       // 將這筆資料和表單結合
@@ -158,9 +162,39 @@ export default function Cates() {
       item,
     ]);
   }
+
+  function handleEdit(obj) {
+    // 點選編輯列的索引,用來修改後,把值傳回該列
+    setEditedIndex(itemList.indexOf(obj));
+    setItem(obj);
+    // setItem({...item})
+  }
+
+  function handleUpdate() {
+    // 新增
+    if (editedIndex == -1) {
+      setItemList([...itemList, item]);
+    }
+    // 更新
+    else {
+      // 複製一份原資料陣列
+      const data = itemList.slice();
+      // 將編輯列的資料寫入
+      Object.assign(data[editedIndex], item);
+      // 設定更改後的資料陣列給原陣列
+      setItemList(data);
+      setEditedIndex(-1)
+    }
+
+    // 新增或更新完將表單輸入項的值清空
+    setItem(defalutItem);
+  }
+
   return (
     <>
       <pre>{JSON.stringify(item)}</pre>
+      <pre>{editedIndex}</pre>
+      {/* 表單 */}
       {schema.map((obj, i) => {
         return (
           <div className="ui input" key={i}>
@@ -176,8 +210,11 @@ export default function Cates() {
           </div>
         );
       })}
-      <button className="ui button" onClick={handleClick}>
+      {/* <button className="ui button" onClick={handleClick}>
         新增
+      </button> */}
+      <button className="ui button" onClick={handleUpdate}>
+        儲存
       </button>
 
       {/* <MyForm
@@ -192,7 +229,7 @@ export default function Cates() {
           ]);
         }}
       /> */}
-      <MyTable schema={schema} rows={itemList} />
+      <MyTable edit={handleEdit} schema={schema} rows={itemList} />
     </>
   );
 }
