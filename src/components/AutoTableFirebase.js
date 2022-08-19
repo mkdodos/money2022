@@ -14,9 +14,10 @@ export default function AutoTable(props) {
   // Modal
   const [open, setOpen] = React.useState(false);
 
+  const dbCol = db.collection(props.collectionName) 
 
   React.useEffect(()=>{
-    db.collection(props.collectionName).get().then((snapshot)=>{
+    dbCol.get().then((snapshot)=>{
       const rows = snapshot.docs.map((doc)=>{
         return {...doc.data(),id:doc.id}
       })
@@ -35,14 +36,19 @@ export default function AutoTable(props) {
 
   function handleUpdate() {
     // 新增
-    if (editedIndex == -1) {
-      setItemList([...itemList, { ...item, id: Date.now() }]);
+    if (editedIndex == -1) {  
+      const row = { ...item, id: Date.now() }
+      dbCol.add(row)    
+      setItemList([...itemList, row]);
     }
     // 更新
     else {
+      dbCol.doc(item.id).update(item)
+      
       // 複製一份原資料陣列
       const data = itemList.slice();
       // 將編輯列的資料寫入
+      
       Object.assign(data[editedIndex], item);
       // 設定更改後的資料陣列給原陣列
       setItemList(data);
@@ -58,6 +64,7 @@ export default function AutoTable(props) {
     if(!confirm('確定刪除嗎?'))
     return;
 
+    dbCol.doc(item.id).delete()
     const data = itemList.filter((obj) => obj.id !== item.id);
     setItemList(data);
     setOpen(false);

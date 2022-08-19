@@ -2,6 +2,7 @@ import Accounts from '../components/Accounts'
 import Cates from '../components/Cates'
 import TicTacToe from '../components/TicTacToe'
 import Balances from './Balances';
+import Stocks from '../pages/Stocks'
 import {
   BrowserRouter,
   Route,
@@ -19,6 +20,7 @@ export default function Routes() {
       <Route path="/cates" component={Cates} />
       <Route path="/tictactoe" component={TicTacToe}/>
       <Route path="/balances" component={Balances} />
+      <Route path="/stocks" component={Stocks} />
         
      
     </Switch>
