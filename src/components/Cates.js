@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
-import { Button, Table, Modal } from 'semantic-ui-react';
+import { Button, Table, Modal, Form, Input } from 'semantic-ui-react';
 
 class MyTable extends React.Component {
   constructor(props) {
@@ -16,6 +16,7 @@ class MyTable extends React.Component {
         <Table unstackable>
           <Table.Header>
             <Table.Row>
+              {/* 標題列 */}
               {this.props.schema.map((header, i) => {
                 return (
                   <Table.HeaderCell key={i}>{header.text}</Table.HeaderCell>
@@ -25,13 +26,18 @@ class MyTable extends React.Component {
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {this.props.rows.map((obj, i) => {
+            {/* 資料列 */}
+            {this.props.rows.map((row, i) => {
               return (
                 <tr key={i}>
-                  <td>{obj.date}</td>
+                  {/* 資料欄 */}
+                  {this.props.schema.map((obj, i) => {
+                    return <td key={i}>{row[obj.name]}</td>;
+                  })}
+                  {/* <td>{obj.date}</td>
                   <td>{obj.title}</td>
-                  <td>{obj.expense}</td>
-                  <td onClick={() => this.props.edit(obj)}>編輯</td>
+                  <td>{obj.expense}</td> */}
+                  <td onClick={() => this.props.edit(row)}><a href="#">編輯</a></td>
                 </tr>
               );
             })}
@@ -64,7 +70,37 @@ export default function Cates() {
       text: '支出',
       type: 'number',
     },
+    {
+      name: 'name',
+      text: '股票名稱',
+      type: 'text',
+    },
+    {
+      name: 'qty',
+      text: '股數',
+      type: 'number',
+    },
+    {
+      name: 'price',
+      text: '購入單價',
+      type: 'number',
+    },
   ];
+
+  const defalutItem = {
+    date: new Date().toISOString().slice(0, 10),
+    title: '',
+    expense: '',
+    name: '',
+    qty: '',
+    price: '',
+  };
+
+  // const defalutItem = {
+  //   date: new Date().toISOString().slice(0, 10),
+  //   title: '',
+  //   expense: '',
+  // };
 
   const data = [
     // { date: '2022-08-17', title: '蛋餅', expense: '30' },
@@ -72,11 +108,7 @@ export default function Cates() {
   ];
 
   const [itemList, setItemList] = React.useState([]);
-  const defalutItem = {
-    date: new Date().toISOString().slice(0, 10),
-    title: '',
-    expense: '',
-  };
+
   const [item, setItem] = React.useState(defalutItem);
 
   const [editedIndex, setEditedIndex] = React.useState(-1);
@@ -139,22 +171,37 @@ export default function Cates() {
       <Modal open={open} closeIcon onClose={() => setOpen(false)}>
         <Modal.Header>編輯表單</Modal.Header>
         <Modal.Content>
-          {/* 表單 */}
-          {schema.map((obj, i) => {
-            return (
-              <div className="ui input" key={i}>
-                <input
-                  name={obj.name}
-                  value={item[obj.name]}
-                  type={obj.type}
-                  onChange={(e) => {
-                    setItem({ ...item, [e.target.name]: e.target.value });
-                  }}
-                  placeholder={obj.text}
-                />
-              </div>
-            );
-          })}
+          <Form>
+            {/* 表單 */}
+            {schema.map((obj, i) => {
+              return (
+                <Form.Field key={i}>
+                  <label>{obj.text}</label>
+                  <Input
+                    placeholder={obj.text}
+                    name={obj.name}
+                    value={item[obj.name]}
+                    type={obj.type}
+                    onChange={(e) => {
+                      setItem({ ...item, [e.target.name]: e.target.value });
+                    }}
+                  />
+                </Form.Field>
+
+                // <div className="ui input" key={i}>
+                //   <input
+                //     name={obj.name}
+                //     value={item[obj.name]}
+                //     type={obj.type}
+                //     onChange={(e) => {
+                //       setItem({ ...item, [e.target.name]: e.target.value });
+                //     }}
+                //     placeholder={obj.text}
+                //   />
+                // </div>
+              );
+            })}
+          </Form>
         </Modal.Content>
         <Modal.Actions>
           <button className="ui button blue" onClick={handleUpdate}>
