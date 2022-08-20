@@ -27,18 +27,20 @@ const BookContextProvider = (props) => {
     setEditedBook(book);
   };
 
-  const updateBook = (book,title) => {    
-    setEditedBook({...book,title})
-    setBooks([...books, { title }]);
+  const updateBook = (book) => {    
+    setEditedBook(book)
+    // setBooks([...books, { title }]);
   }
 
   const saveBook = (book,title) => {    
-    setEditedBook({...book,title})
-    setBooks([...books, { title }]);
+    // setEditedBook({...book,title})
+    const data = books.slice();
+    Object.assign(data[1],book)
+    setBooks(data);
   }
 
   return (
-    <BookContext.Provider value={{ books, addBook, removeBook, editBook, editedBook, updateBook }}>
+    <BookContext.Provider value={{ books, addBook, removeBook, editBook, editedBook, updateBook, saveBook }}>
       {props.children}
     </BookContext.Provider>
   );
