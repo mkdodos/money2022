@@ -1,20 +1,28 @@
-import React, { createContext, useState } from 'react';
-// import uuid from 'uuid';
+import React, { createContext, useState, useEffect } from 'react';
+import { db } from '../utils/firebase';
 
-export const BookContext = createContext();
+export const FirebaseBookContext = createContext();
 
-const BookContextProvider = (props) => {
+const FirebaseBookContextProvider = (props) => {
+  const dbCol = db.collection(props.collectionName)
+  useEffect(() => {
+    dbCol
+      .get()
+      .then((snapshot) => {
+        const data = snapshot.docs.map((doc) => {
+          return { ...doc.data(), id: doc.id };
+        });
+        setBooks(data);
+      });
+  }, []);
+
   // 資料陣列
-  const [books, setBooks] = useState([
-    { title: 'a', author: 'mark', id: 1 },
-    { title: 'b', author: 'dada', id: 2 },
-    { title: 'c', author: 'ray', id: 3 },
-  ]);
+  const [books, setBooks] = useState([]);
 
   // 資料列預設值
   const defalutItem = {
-    title: '',
-    author: '',
+    name: '',
+    price: '',
   };
   // 編輯列
   const [editedBook, setEditedBook] = useState(defalutItem);
@@ -30,8 +38,16 @@ const BookContextProvider = (props) => {
     setOpen(true);
   };
 
+  // 關閉編輯視窗
+  const closeForm = () => {
+    setEditedIndex(-1);
+    setEditedBook(defalutItem);
+    setOpen(false);
+  };
+
   // 刪除列
   const removeBook = (id) => {
+    dbCol.doc(id).delete()
     setBooks(books.filter((book) => book.id !== id));
   };
 
@@ -51,8 +67,13 @@ const BookContextProvider = (props) => {
   const saveBook = (book) => {
     // 新增或修改
     if (editedIndex == -1) {
-      setBooks([...books, { ...book, id: Date.now() }]);
+      // const row = { ...book, id: Date.now() }
+      dbCol.add(book).then((doc)=>{
+        setBooks([...books, { ...book, id: doc.id } ]);
+      })
+      
     } else {
+      dbCol.doc(book.id).update(book)
       const data = books.slice();
       Object.assign(data[editedIndex], book);
       setBooks(data);
@@ -65,7 +86,7 @@ const BookContextProvider = (props) => {
   };
 
   return (
-    <BookContext.Provider
+    <FirebaseBookContext.Provider
       value={{
         books,
         editedBook,
@@ -75,11 +96,12 @@ const BookContextProvider = (props) => {
         updateBook,
         saveBook,
         openForm,
+        closeForm
       }}
     >
       {props.children}
-    </BookContext.Provider>
+    </FirebaseBookContext.Provider>
   );
 };
 
-export default BookContextProvider;
+export default FirebaseBookContextProvider;

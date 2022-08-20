@@ -7,7 +7,7 @@ const BookList = () => {
   const { editBook, books, removeBook, openForm } =
     useContext(FirebaseBookContext);
   const handleOpen = () => {
-    // console.log('open');
+    console.log('open');
     openForm();
   };
   return (
@@ -18,7 +18,8 @@ const BookList = () => {
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell>書名</Table.HeaderCell>
-            <Table.HeaderCell>作者</Table.HeaderCell>            
+            <Table.HeaderCell>作者</Table.HeaderCell>
+            <Table.HeaderCell>Qty</Table.HeaderCell>
             <Table.HeaderCell>#</Table.HeaderCell>
             <Table.HeaderCell>#</Table.HeaderCell>
           </Table.Row>
@@ -27,8 +28,9 @@ const BookList = () => {
           {books.map((book) => {
             return (
               <Table.Row key={book.id}>
-                <Table.Cell>{book.title}</Table.Cell>
-                <Table.Cell>{book.author}</Table.Cell>               
+                <Table.Cell>{book.name}</Table.Cell>
+                <Table.Cell>{book.price}</Table.Cell>
+                <Table.Cell>{book.qty}</Table.Cell>
                 <Table.Cell
                   onClick={() => {
                     removeBook(book.id);

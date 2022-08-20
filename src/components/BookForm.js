@@ -1,17 +1,12 @@
 import { useContext, useState } from 'react';
-import { BookContext } from '../contexts/BookContext';
+import { FirebaseBookContext } from '../contexts/FirebaseBookContext';
 import { Form, Input, Button, Modal } from 'semantic-ui-react';
 const NewBookForm = () => {
-  const { addBook, editedBook, updateBook, saveBook, open } =
-    useContext(BookContext);
+  const { editedBook, updateBook, saveBook, open, closeForm } =
+    useContext(FirebaseBookContext);
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
-  const handleAdd = () => {
-    // addBook(title, author);
-
-    setTitle('');
-    setAuthor('');
-  };
+  
 
   const handleUpdate = () => {
     updateBook(editedBook, title);
@@ -20,13 +15,23 @@ const NewBookForm = () => {
   };
 
   const handleSave = () => {
-    saveBook(editedBook, title);
+    saveBook(editedBook);
     setTitle('');
     setAuthor('');
   };
+
+  const updateInput = (e) => {
+    updateBook({
+      ...editedBook,
+      [e.target.name]: e.target.value,
+    });  
+  }
   return (
     <>
-      <Modal open={open}>
+      <Modal open={open}
+      closeIcon
+      onClose={closeForm}
+      >
         <Modal.Header>
           編輯
         </Modal.Header>
@@ -36,18 +41,11 @@ const NewBookForm = () => {
               <label>Title</label>
               <Input
                 placeholder="book title"
-                name="title"
-                value={editedBook.title}
+                name="price"
+                value={editedBook.price}
                 // value={editedBook['title']}
                 type="text"
-                onChange={(e) => {
-                  updateBook({
-                    ...editedBook,
-                    [e.target.name]: e.target.value,
-                  });
-                  // { ...item, [e.target.name]: e.target.value }
-                  // updateBook(editedBook,[e.target.name]:e.target.value);
-                }}
+                onChange={updateInput}
               />
             </Form.Field>
             <Form.Field>
@@ -61,8 +59,7 @@ const NewBookForm = () => {
                   updateBook({
                     ...editedBook,
                     [e.target.name]: e.target.value,
-                  });
-                  // updateBook(editedBook,{[e.target.name]:e.target.value});
+                  });                 
                 }}
               />
             </Form.Field>
