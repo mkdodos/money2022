@@ -10,14 +10,25 @@ const BookContextProvider = (props) => {
     { title: 'c', author: 'ray', id: 3 },
   ]);
 
-  const [editedBook, setEditedBook] = useState({
+
+  const defalutItem = {
     title:'',
     author:''
-  });
+  }
+  const [editedBook, setEditedBook] = useState(defalutItem);
+
+  const [editedIndex, setEditedIndex] = useState(-1);
+  const [open, setOpen] = useState(false);
 
   const addBook = (title, author) => {
-    setBooks([...books, { title, author, id: Date.now() }]);
+    // setBooks([...books, { title, author, id: Date.now() }]);
   };
+
+  const openForm = () => {
+    setEditedIndex(-1);
+    setEditedBook(defalutItem)
+    setOpen(true);
+  }
 
   const removeBook = (id) => {
     setBooks(books.filter((book) => book.id !== id));
@@ -25,6 +36,8 @@ const BookContextProvider = (props) => {
 
   const editBook = (book) => {
     setEditedBook(book);
+    setEditedIndex(books.indexOf(book));
+    setOpen(true)
   };
 
   const updateBook = (book) => {    
@@ -32,15 +45,27 @@ const BookContextProvider = (props) => {
     // setBooks([...books, { title }]);
   }
 
-  const saveBook = (book,title) => {    
+  const saveBook = (book) => {    
     // setEditedBook({...book,title})
-    const data = books.slice();
-    Object.assign(data[1],book)
-    setBooks(data);
+    if(editedIndex==-1){
+      setBooks([...books, {...book, id:Date.now()}]);
+    }else{
+      const data = books.slice();
+      Object.assign(data[editedIndex],book)
+      setBooks(data);
+    }
+
+    setEditedBook(defalutItem)
+    setEditedIndex(-1)
+    setOpen(false)
+   
   }
 
   return (
-    <BookContext.Provider value={{ books, addBook, removeBook, editBook, editedBook, updateBook, saveBook }}>
+    <BookContext.Provider value={{ 
+      books, addBook, removeBook, editBook, editedBook, updateBook, saveBook
+      , openForm, open
+      }}>
       {props.children}
     </BookContext.Provider>
   );
