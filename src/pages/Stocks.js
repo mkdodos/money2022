@@ -13,8 +13,14 @@ export default function Stocks() {
     cost:''
   }
 
+  // 自訂資料欄
+  let dataRow = schema.map((obj, i) => {
+    return <td key={i}>A</td>;    
+  })
+  // console.log(dataRow)
+  // dataRow=[...dataRow]
   const collectionName = 'stocks'
   return <AutoTableFirebase schema={schema} defalutItem={defalutItem}
-  collectionName={collectionName}
+  collectionName={collectionName} 
   />;
 }

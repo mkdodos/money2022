@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Table, Modal, Form, Input } from 'semantic-ui-react';
-import {db} from "../utils/firebase"
+import { db } from '../utils/firebase';
 export default function AutoTable(props) {
   const defalutItem = props.defalutItem;
   const schema = props.schema;
@@ -14,41 +14,40 @@ export default function AutoTable(props) {
   // Modal
   const [open, setOpen] = React.useState(false);
 
-  const dbCol = db.collection(props.collectionName) 
+  const dbCol = db.collection(props.collectionName);
 
-  React.useEffect(()=>{
-    dbCol.get().then((snapshot)=>{
-      const rows = snapshot.docs.map((doc)=>{
-        return {...doc.data(),id:doc.id}
-      })
-      setItemList(rows)
-    })
-  },[])
-
+  React.useEffect(() => {
+    dbCol.get().then((snapshot) => {
+      const rows = snapshot.docs.map((doc) => {
+        return { ...doc.data(), id: doc.id };
+      });
+      setItemList(rows);
+    });
+  }, []);
 
   // CRUD
   function handleEdit(obj) {
     setOpen(true);
     // 點選編輯列的索引,用來修改後,把值傳回該列
     setEditedIndex(itemList.indexOf(obj));
-    setItem(obj);   
+    setItem(obj);
   }
 
   function handleUpdate() {
     // 新增
-    if (editedIndex == -1) {  
-      const row = { ...item, id: Date.now() }
-      dbCol.add(row)    
+    if (editedIndex == -1) {
+      const row = { ...item, id: Date.now() };
+      dbCol.add(row);
       setItemList([...itemList, row]);
     }
     // 更新
     else {
-      dbCol.doc(item.id).update(item)
-      
+      dbCol.doc(item.id).update(item);
+
       // 複製一份原資料陣列
       const data = itemList.slice();
       // 將編輯列的資料寫入
-      
+
       Object.assign(data[editedIndex], item);
       // 設定更改後的資料陣列給原陣列
       setItemList(data);
@@ -61,15 +60,15 @@ export default function AutoTable(props) {
   }
 
   function handleDelete() {
-    if(!confirm('確定刪除嗎?'))
-    return;
+    if (!confirm('確定刪除嗎?')) return;
 
-    dbCol.doc(item.id).delete()
+    dbCol.doc(item.id).delete();
     const data = itemList.filter((obj) => obj.id !== item.id);
     setItemList(data);
     setOpen(false);
   }
 
+  
   return (
     <>
       {/* <pre>{JSON.stringify(item)}</pre> */}
@@ -123,7 +122,7 @@ export default function AutoTable(props) {
         新增
       </button>
 
-      <MyTable edit={handleEdit} schema={schema} rows={itemList} />
+      <MyTable edit={handleEdit} schema={schema} rows={itemList} dataRow={props.dataRow}  />
     </>
   );
 }
@@ -153,11 +152,13 @@ class MyTable extends React.Component {
             {this.props.rows.map((row, i) => {
               return (
                 <tr key={i}>
-                  {/* 資料欄 */}
-                  {this.props.schema.map((obj, i) => {
-                    return <td key={i}>{row[obj.name]}</td>;
-                  })}
-                 
+                  {/* 資料欄(自訂或預設) */}
+                  {this.props.dataRow
+                    ? this.props.dataRow
+                    : this.props.schema.map((obj, i) => {
+                        return <td key={i}>{row[obj.name]}</td>;
+                      })}
+
                   <td onClick={() => this.props.edit(row)}>
                     <a href="#">編輯</a>
                   </td>

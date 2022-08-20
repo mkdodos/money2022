@@ -46,6 +46,9 @@ export default function Header() {
       <Menu.Item as={Link} to="/stocks">
         股票
       </Menu.Item>
+      <Menu.Item as={Link} to="/books">
+        書本
+      </Menu.Item>
     </Menu>
   );
 }
