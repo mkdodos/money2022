@@ -17,19 +17,23 @@ import {
 import ContactList from './demo/contacts/ContactList';
 import CrudForm from './components/template/CrudForm';
 
+import Spinner from './components/Spinner';
+
 export default function App() {
   // React.useEffect(()=>{
   //   db.collection('accounts').add({name:'abc'})
   // },[])
   return (
     <>
-    <CrudForm/>
-    {/* <ContactList/> */}
+    {/* <Spinner/> */}
+    {/* <CrudForm/> */}
+   
     <BrowserRouter>
       <Header></Header>
 
       {/* 路由 */}
      <Container>
+     {/* <ContactList/> */}
      <Routes />
      </Container>
       
