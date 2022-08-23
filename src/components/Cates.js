@@ -55,5 +55,5 @@ export default function Cates() {
     
   };
 
-  return <AutoTable schema={schema} defalutItem={defalutItem}  />
+  return <AutoTable collectionName="cates" schema={schema} defalutItem={defalutItem}  />
 }

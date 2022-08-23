@@ -13,11 +13,18 @@ import {
 
 } from 'react-router-dom';
 
+
+import ContactList from './demo/contacts/ContactList';
+import CrudForm from './components/template/CrudForm';
+
 export default function App() {
   // React.useEffect(()=>{
   //   db.collection('accounts').add({name:'abc'})
   // },[])
   return (
+    <>
+    <CrudForm/>
+    {/* <ContactList/> */}
     <BrowserRouter>
       <Header></Header>
 
@@ -27,5 +34,6 @@ export default function App() {
      </Container>
       
     </BrowserRouter>
+    </>
   );
 }

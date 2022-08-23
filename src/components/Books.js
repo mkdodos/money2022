@@ -5,11 +5,16 @@ import StockList from '../components/StockList';
 import FirebaseBookContextProvider from '../contexts/FirebaseBookContext';
 
 import NewBookForm from './BookForm';
+
+import FakeData from './FakeData';
+import ContactList from './contacts/ContactList';
 // import  from '../contexts/BookContext';
 
 const Books = () => {
   return (
     <>
+      {/* <FakeData /> */}
+      <ContactList/>
       <FirebaseBookContextProvider collectionName="stocks">
         <NewBookForm />
         <StockList />

@@ -6,9 +6,9 @@ export const BookContext = createContext();
 const BookContextProvider = (props) => {
   // 資料陣列
   const [books, setBooks] = useState([
-    { title: 'a', author: 'mark', id: 1 },
-    { title: 'b', author: 'dada', id: 2 },
-    { title: 'c', author: 'ray', id: 3 },
+    fetch('https://jsonplaceholder.typicode.com/todos/1')
+    .then(response => response.json())
+    .then(json => console.log(json))
   ]);
 
   // 資料列預設值

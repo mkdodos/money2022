@@ -66,7 +66,7 @@ export default function AutoTable(props) {
   return (
     <>
       {/* <pre>{JSON.stringify(item)}</pre> */}
-      {/* <pre>{editedIndex}</pre> */}
+      <pre>{itemList.length}</pre>
       <Modal open={open} closeIcon onClose={() => setOpen(false)}>
         <Modal.Header>編輯表單</Modal.Header>
         <Modal.Content>
