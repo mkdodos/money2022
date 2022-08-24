@@ -1,8 +1,7 @@
-
 import React from 'react';
 import Header from './Header';
 import Routes from './components/Routes';
-import { Container } from 'semantic-ui-react'
+import { Container } from 'semantic-ui-react';
 import {
   BrowserRouter,
   Route,
@@ -10,14 +9,16 @@ import {
   Switch,
   useHistory,
   Redirect,
-
 } from 'react-router-dom';
 
+import { AuthProvider } from './contexts/AuthContext';
 
 import ContactList from './demo/contacts/ContactList';
 import CrudForm from './components/template/CrudForm';
 
 import Spinner from './components/Spinner';
+
+import Login from './pages/Login';
 
 export default function App() {
   // React.useEffect(()=>{
@@ -25,19 +26,22 @@ export default function App() {
   // },[])
   return (
     <>
-    {/* <Spinner/> */}
-    {/* <CrudForm/> */}
-   
-    <BrowserRouter>
-      <Header></Header>
+      {/* <Login/> */}
+      {/* <Spinner/> */}
+      {/* <CrudForm/> */}
 
-      {/* 路由 */}
-     <Container>
-     {/* <ContactList/> */}
-     <Routes />
-     </Container>
-      
-    </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <Header></Header>
+
+          {/* 路由 */}
+          <Container>
+            {/* <ContactList/> */}
+
+            <Routes />
+          </Container>
+        </BrowserRouter>
+      </AuthProvider>
     </>
   );
 }

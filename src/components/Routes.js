@@ -12,6 +12,8 @@ import ContactList from '../demo/contacts/ContactList';
 import ViewContact from '../demo/contacts/ViewContact';
 import AddContact from '../demo/contacts/AddContact';
 
+import Login from './Login'
+
 import {
   BrowserRouter,
   Route,
@@ -20,6 +22,7 @@ import {
   useHistory,
   Redirect,
 } from 'react-router-dom';
+import Dashboard from './Dashboard'
 export default function Routes() {
   return (
     <Switch>
@@ -31,6 +34,10 @@ export default function Routes() {
       <Route path="/balances" component={Balances} />
       <Route path="/stocks" component={Stocks} />
       <Route path="/books" component={Books} />
+
+      <Route path="/login" exact component={Login} />
+      <Route path="/" exact component={Dashboard} />
+
       <Route path="/contacts" exact component={ContactList} />
 
       <Route path="/contacts/add" exact component={AddContact} />

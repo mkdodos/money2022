@@ -2,9 +2,9 @@ import { db } from '../../../utils/firebase';
 import DataTable from '../../../components/DataTable';
 import React from 'react';
 import axios from 'axios';
-import { Table } from 'semantic-ui-react';
+import { Table, Icon } from 'semantic-ui-react';
 
-export default function ItemList({ rows, setItem, setEditedIndex }) {
+export default function ItemList({ rows, setItem, setEditedIndex, setOpen }) {
   // const [rows, setRows] = React.useState([]);
   const schema = [
     { text: '日期', value: 'date', type: 'date' },
@@ -21,8 +21,9 @@ export default function ItemList({ rows, setItem, setEditedIndex }) {
   // })
 
   function handleEdit(row) {
-    setItem(row)
-    setEditedIndex(rows.indexOf(row))
+    setItem(row);
+    setEditedIndex(rows.indexOf(row));
+    setOpen(true)
   }
 
   return (
@@ -45,10 +46,13 @@ export default function ItemList({ rows, setItem, setEditedIndex }) {
                 <Table.Cell>{row.date}</Table.Cell>
                 <Table.Cell>{row.title}</Table.Cell>
                 <Table.Cell>{row.expense}</Table.Cell>
+                <Table.Cell>{row.user}</Table.Cell>
                 <Table.Cell
-                  onClick={()=>{handleEdit(row)}}
+                  onClick={() => {
+                    handleEdit(row);
+                  }}
                 >
-                  Edit
+             <a href="#"><Icon  name='edit' /></a>      
                 </Table.Cell>
               </Table.Row>
             );

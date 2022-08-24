@@ -1,13 +1,22 @@
 import ItemList from './components/ItemList';
 import EditForm from './components/EditForm';
 import { useState, useEffect } from 'react';
-import { db } from '../../utils/firebase';
+import { db, auth } from '../../utils/firebase';
+import { Button, Header } from 'semantic-ui-react';
+
 const Balances = () => {
+
+  const user = auth.currentUser;
+  // console.log(user)
+
+  // 顯示 Modal
+  const [open, setOpen] = useState(false);
+
   // 資料陣列
   const [rows, setRows] = useState([]);
 
   const defalutItem = {
-    // date: '',
+    date: new Date().toISOString().slice(0,10),
     title: '',
     expense: '',
   };
@@ -24,12 +33,17 @@ const Balances = () => {
     //   setRows(res.data)
     // })
 
-    db.collection('balances')
+    console.log(user?.uid)
+    let dbCol = db.collection('balances')
       .orderBy('date', 'desc')
-      .limit(3)
-      .get()
+      .limit(10)
+    if(user)
+      dbCol = dbCol.where('user','==',user?.email)
+     
+
+      dbCol.get()
       .then((snapshot) => {
-        console.log(snapshot.size);
+        // console.log(snapshot.size);
         const data = snapshot.docs.map((doc) => {
           return { ...doc.data(), id: doc.id };
         });
@@ -37,11 +51,18 @@ const Balances = () => {
       });
   }, []);
 
+
+  const handleOpen = () => {
+    setOpen(true);
+    setItem(defalutItem)
+  };
+
   return (
     <>
+     <Button onClick={handleOpen} floated="right" color="yellow">ADD</Button>
+     <Header>{rows.length}</Header>
       {/* {JSON.stringify(item)} */}
       <EditForm
-        add={setRows}
         defalutItem={defalutItem}
         rows={rows}
         setRows={setRows}
@@ -49,8 +70,12 @@ const Balances = () => {
         setItem={setItem}
         editedIndex={editedIndex}
         setEditedIndex={setEditedIndex}
+        open={open}
+        setOpen={setOpen}
       />
       <ItemList
+        setOpen={setOpen}
+        // open={open}
         rows={rows}
         item={item}
         setItem={setItem}
