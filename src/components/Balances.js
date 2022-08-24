@@ -15,21 +15,21 @@ export default function Balances() {
   ];
 
   React.useEffect(() => {
-    axios.get('http://192.168.0.12:9000/balances').then(res=>{
-      setRows(res.data)
-    }) 
+    // axios.get('http://192.168.0.12:9000/balances').then(res=>{
+    //   setRows(res.data)
+    // }) 
     
-    // db.collection('balances')
-    //   .orderBy('date', 'desc')
-    //   .limit(30)
-    //   .get()
-    //   .then((snapshot) => {
-    //     console.log(snapshot.size);
-    //     const data = snapshot.docs.map((doc) => {
-    //       return { ...doc.data(), id: doc.id };
-    //     });
-    //     setRows(data);
-    //   });
+    db.collection('balances')
+      .orderBy('date', 'desc')
+      .limit(30)
+      .get()
+      .then((snapshot) => {
+        console.log(snapshot.size);
+        const data = snapshot.docs.map((doc) => {
+          return { ...doc.data(), id: doc.id };
+        });
+        setRows(data);
+      });
   }, []);
 
   return (

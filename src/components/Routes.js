@@ -1,7 +1,10 @@
 import Accounts from '../components/Accounts'
 import Cates from '../components/Cates'
 import TicTacToe from '../components/TicTacToe'
-import Balances from './Balances';
+import Balances from '../pages/Balances'
+
+// import Balances from './Balances';
+
 import Stocks from '../pages/Stocks'
 import Books from '../components/Books'
 
