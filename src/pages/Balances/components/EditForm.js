@@ -2,6 +2,7 @@ import { Form, Button, Modal } from 'semantic-ui-react';
 import { useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { db } from '../../../utils/firebase';
+import { useAuth } from '../../../contexts/AuthContext';
 const EditForm = ({
   rows,
   setRows,
@@ -12,7 +13,9 @@ const EditForm = ({
   setEditedIndex,
   open,
   setOpen,
+  setActiveAccount
 }) => {
+  const {currentUser} = useAuth()
   const [loading, setLoading] = useState(false);
   // 表單輸入時,設定 item 的值
   const handleChange = (e) => {
@@ -23,8 +26,8 @@ const EditForm = ({
   function saveItem() {
     if (editedIndex == -1) {
       setLoading(true);
-      dbCol.add(item).then((doc) => {
-        setRows([{ ...item, id: doc.id }, ...rows]);
+      dbCol.add({...item, user:currentUser.email}).then((doc) => {
+        setRows([{ ...item, id: doc.id,user:currentUser.email }, ...rows]);
         setLoading(false);
         setEditedIndex(-1);
         setItem(defalutItem);
@@ -45,6 +48,14 @@ const EditForm = ({
           setOpen(false);
         });
     }
+
+    // 更新帳額餘額
+    setActiveAccount(function(prev){
+      return {...prev,balance:prev.balance-item.expense*1}
+    })
+
+    // setActiveAccount
+
   }
 
   const handleDelete = () => {

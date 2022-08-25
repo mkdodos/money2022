@@ -46,7 +46,7 @@ export default function ItemList({ rows, setItem, setEditedIndex, setOpen }) {
                 <Table.Cell>{row.date}</Table.Cell>
                 <Table.Cell>{row.title}</Table.Cell>
                 <Table.Cell>{row.expense}</Table.Cell>
-                {/* <Table.Cell>{row.user}</Table.Cell> */}
+                <Table.Cell>{row.account?.name}</Table.Cell>
                 <Table.Cell
                   onClick={() => {
                     handleEdit(row);
