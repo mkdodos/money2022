@@ -4,9 +4,13 @@ import { useState, useEffect } from 'react';
 import { db, auth } from '../../utils/firebase';
 import { Button, Header } from 'semantic-ui-react';
 
+import { useAuth } from '../../contexts/AuthContext';
+
 const Balances = () => {
 
-  const user = auth.currentUser;
+  const { currentUser, logout } = useAuth()
+
+  // const user = auth.currentUser;
   // console.log(user)
 
   // 顯示 Modal
@@ -33,12 +37,12 @@ const Balances = () => {
     //   setRows(res.data)
     // })
 
-    console.log(user?.uid)
+    console.log(currentUser?.uid)
     let dbCol = db.collection('balances')
       .orderBy('date', 'desc')
-      .limit(10)
-    if(user)
-      dbCol = dbCol.where('user','==',user?.email)
+      .limit(100)
+    // if(currentUser)
+    //   dbCol = dbCol.where('user','==',currentUser?.email)
      
 
       dbCol.get()

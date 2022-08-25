@@ -18,7 +18,7 @@ export default function Login() {
       setError('');
       setLoading(true);
       await login(emailRef.current.value, passwordRef.current.value);
-      history.push('/');
+      history.push('/balances');
     } catch {
       setError('Failed to log in');
     }
@@ -32,22 +32,30 @@ export default function Login() {
         <Form.Field>
           <label>Email</label>
           <input ref={emailRef} defaultValue="mkdodos@gmail.com"></input>
+          {/* <input ref={emailRef} ></input> */}
         </Form.Field>
         <Form.Field>
           <label>Password</label>
           <input ref={passwordRef} defaultValue="123456"></input>
+          {/* <input ref={passwordRef} ></input> */}
         </Form.Field>
-        <Button
-          type="submit"
-          size="large"
-          color="blue"
-        >
+        <Button type="submit" size="large" color="blue">
           Mark
         </Button>
-       
       </Form>
 
-     
+      <Button
+        basic
+        floated="right"
+        onClick={async () => {
+          await login('dada@gmail.com', '123456');
+          history.push('/balances');
+        }}
+        size="large"
+        color="blue"
+      >
+        Dada
+      </Button>
     </>
   );
 }

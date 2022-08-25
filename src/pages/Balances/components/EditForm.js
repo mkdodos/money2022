@@ -1,6 +1,7 @@
 import { Form, Button, Modal } from 'semantic-ui-react';
 import { useState } from 'react';
 import { v4 as uuid } from 'uuid';
+import { db } from '../../../utils/firebase';
 const EditForm = ({
   rows,
   setRows,
@@ -12,31 +13,52 @@ const EditForm = ({
   open,
   setOpen,
 }) => {
+  const [loading, setLoading] = useState(false);
   // 表單輸入時,設定 item 的值
   const handleChange = (e) => {
     setItem({ ...item, [e.target.name]: e.target.value });
   };
 
+  const dbCol = db.collection('balances');
   function saveItem() {
     if (editedIndex == -1) {
-      setRows([...rows, { ...item, id: uuid() }]);
+      setLoading(true);
+      dbCol.add(item).then((doc) => {
+        setRows([{ ...item, id: doc.id }, ...rows]);
+        setLoading(false);
+        setEditedIndex(-1);
+        setItem(defalutItem);
+        setOpen(false);
+      });
     } else {
-      let newItemList = rows.slice();
-      Object.assign(newItemList[editedIndex], item);
-      setRows(newItemList);
+      setLoading(true);
+      dbCol
+        .doc(item.id)
+        .update(item)
+        .then(() => {
+          let newItemList = rows.slice();
+          Object.assign(newItemList[editedIndex], item);
+          setRows(newItemList);
+          setLoading(false);
+          setEditedIndex(-1);
+          setItem(defalutItem);
+          setOpen(false);
+        });
     }
-
-    setEditedIndex(-1);
-    setItem(defalutItem);
-    setOpen(false);
   }
 
   const handleDelete = () => {
-    setRows(rows.filter((obj) => obj.id !== item.id));
-    // setOpen(false);
-    setEditedIndex(-1);
-    setItem(defalutItem);
-    setOpen(false);
+    setLoading(true);
+    dbCol
+      .doc(item.id)
+      .delete()
+      .then(() => {
+        setRows(rows.filter((obj) => obj.id !== item.id));
+        setEditedIndex(-1);
+        setItem(defalutItem);
+        setOpen(false);
+        setLoading(false);
+      });
   };
 
   return (
@@ -85,16 +107,20 @@ const EditForm = ({
           </Form>
         </Modal.Content>
         <Modal.Actions>
-        {editedIndex > -1 && (
-            <Button floated='left' color="red" onClick={handleDelete}>
+          {editedIndex > -1 && (
+            <Button
+              loading={loading}
+              floated="left"
+              color="red"
+              onClick={handleDelete}
+            >
               Delete
             </Button>
           )}
-          
-          <Button floated='right' primary onClick={saveItem}>
+
+          <Button loading={loading} floated="right" primary onClick={saveItem}>
             Save
           </Button>
-          
         </Modal.Actions>
       </Modal>
     </>

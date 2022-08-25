@@ -2,6 +2,7 @@ import React, { useState } from "react"
 // import { Card, Button, Alert } from "react-bootstrap"
 import { useAuth } from "../contexts/AuthContext"
 import { Link, useHistory } from "react-router-dom"
+import { Button } from "semantic-ui-react"
 
 export default function Dashboard() {
   const [error, setError] = useState("")
@@ -22,7 +23,10 @@ export default function Dashboard() {
   return (
     <>
     <div>Dashboard</div>
-    <strong>Email:</strong> {currentUser.email}
+    <strong>Email:</strong> {currentUser?.email}
+    <Button variant="link" onClick={handleLogout}>
+          Log Out
+        </Button>
       {/* <Card>
         <Card.Body>
           <h2 className="text-center mb-4">Profile</h2>
@@ -34,9 +38,7 @@ export default function Dashboard() {
         </Card.Body>
       </Card>
       <div className="w-100 text-center mt-2">
-        <Button variant="link" onClick={handleLogout}>
-          Log Out
-        </Button>
+        
       </div> */}
     </>
   )
