@@ -35,7 +35,7 @@ const Accounts = ({rows, accountClick, activeAccount}) => {
               accountClick(row);
             }}
           >
-            {row.name}{row.balance}
+            {row.name}
           </Segment>
         </Grid.Column>
       ))}

@@ -63,6 +63,7 @@ const Balances = () => {
 
     db.collection('accounts')
       .where('user', '==', currentUser.email)
+      .orderBy('prior')
       .limit(3)
       .get()
       .then((snapshot) => {

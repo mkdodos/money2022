@@ -5,7 +5,9 @@ import DataTable from './DataTable';
 import DataRow from './DataRow';
 import React from 'react';
 import EditForm from './EditForm';
+import { useAuth } from '../contexts/AuthContext';
 export default function Accounts() {
+  const {currentUser} = useAuth();
   const schema = [
     { text: '名稱', value: 'name', type: 'string' },
     { text: '順序', value: 'prior', type: 'number' },
@@ -16,6 +18,8 @@ export default function Accounts() {
   const [row, setRow] = React.useState(defalutItem);
   React.useEffect(() => {
     db.collection('accounts')
+    .orderBy('prior')
+    .where('user','==',currentUser.email)
       .get()
       .then((snapshot) => {
         setRows(
@@ -27,8 +31,8 @@ export default function Accounts() {
   }, []);
 
   function handleSubmit() {
-    const { name, balance } = row;
-    db.collection('accounts').doc(row.id).update({ name, balance });
+    const { name, balance,prior } = row;
+    db.collection('accounts').doc(row.id).update({ name, balance, prior });
     setRow(defalutItem)
     // console.log(row);
   }
@@ -62,6 +66,15 @@ export default function Accounts() {
               name="name"
               placeholder="First Name"
               value={row.name}
+              onChange={handleChange}
+            />
+          </Form.Field>
+          <Form.Field>
+            <label>順序</label>
+            <input
+            type="number"
+              name="prior"             
+              value={row.prior}
               onChange={handleChange}
             />
           </Form.Field>
