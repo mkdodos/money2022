@@ -118,6 +118,8 @@ const Balances = () => {
         defalutItem={defalutItem}
         rows={rows}
         setRows={setRows}
+        setRowsCopy={setRowsCopy}
+        rowsCopy={rowsCopy}
         item={item}
         setItem={setItem}
         editedIndex={editedIndex}
@@ -125,6 +127,7 @@ const Balances = () => {
         open={open}
         setOpen={setOpen}
         setActiveAccount={setActiveAccount}
+        activeAccount={activeAccount}
       />
       <ItemList
         setOpen={setOpen}
@@ -133,6 +136,7 @@ const Balances = () => {
         item={item}
         setItem={setItem}
         setEditedIndex={setEditedIndex}
+        activeAccount={activeAccount}
       />
     </>
   );

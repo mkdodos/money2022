@@ -2,9 +2,15 @@ import { db } from '../../../utils/firebase';
 import DataTable from '../../../components/DataTable';
 import React from 'react';
 import axios from 'axios';
-import { Table, Icon } from 'semantic-ui-react';
+import { Table, Icon, Label, Header } from 'semantic-ui-react';
 
-export default function ItemList({ rows, setItem, setEditedIndex, setOpen }) {
+export default function ItemList({
+  rows,
+  setItem,
+  setEditedIndex,
+  setOpen,
+  activeAccount,
+}) {
   // const [rows, setRows] = React.useState([]);
   const schema = [
     { text: '日期', value: 'date', type: 'date' },
@@ -23,7 +29,7 @@ export default function ItemList({ rows, setItem, setEditedIndex, setOpen }) {
   function handleEdit(row) {
     setItem(row);
     setEditedIndex(rows.indexOf(row));
-    setOpen(true)
+    setOpen(true);
   }
 
   return (
@@ -31,29 +37,57 @@ export default function ItemList({ rows, setItem, setEditedIndex, setOpen }) {
       {/* <pre>{JSON.stringify(rows)}</pre> */}
 
       <Table unstackable>
-        <Table.Header>
+        {/* <Table.Header>
           <Table.Row>
             <Table.HeaderCell>日期</Table.HeaderCell>
-            <Table.HeaderCell>項目</Table.HeaderCell>
+            <Table.HeaderCell>項目</Table.HeaderCell> 
             <Table.HeaderCell>金額</Table.HeaderCell>
-            <Table.HeaderCell>#</Table.HeaderCell>
+             <Table.HeaderCell>#</Table.HeaderCell>
           </Table.Row>
-        </Table.Header>
+        </Table.Header> */}
         <Table.Body>
           {rows.map((row) => {
             return (
-              <Table.Row key={row.id}>
-                <Table.Cell>{row.date}</Table.Cell>
+              <Table.Row
+                key={row.id}
+                onClick={() => {
+                  handleEdit(row);
+                }}
+              >
+                <Table.Cell>
+                  <Header as="h4">{row.title}</Header>
+                  <span>{row.date} </span>
+
+                  {!activeAccount && (
+                    <Label color="teal">{row.account?.name}</Label>
+                  )}
+                </Table.Cell>
+                <Table.Cell textAlign="right">
+                  {row.income ? (
+                    <Label color="teal" circular>
+                      存
+                    </Label>
+                  ) : (
+                    <Label color="orange" circular>
+                      提
+                    </Label>
+                  )}
+                  <br></br>$ {row.income ? row.income : row.expense + ''}
+                </Table.Cell>
+
+                {/* <Table.Cell>{row.date.slice(5,10)}</Table.Cell>
                 <Table.Cell>{row.title}</Table.Cell>
                 <Table.Cell>{row.expense}</Table.Cell>
-                <Table.Cell>{row.account?.name}</Table.Cell>
-                <Table.Cell
+                <Table.Cell>{row.account?.name}</Table.Cell> */}
+                {/* <Table.Cell
                   onClick={() => {
                     handleEdit(row);
                   }}
                 >
-             <a href="#"><Icon  name='edit' /></a>      
-                </Table.Cell>
+                  <a href="#">
+                    <Icon name="edit" />
+                  </a>
+                </Table.Cell> */}
               </Table.Row>
             );
           })}

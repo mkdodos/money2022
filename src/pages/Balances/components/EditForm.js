@@ -6,6 +6,8 @@ import { useAuth } from '../../../contexts/AuthContext';
 const EditForm = ({
   rows,
   setRows,
+  rowsCopy,
+  setRowsCopy,
   item,
   setItem,
   editedIndex,
@@ -13,7 +15,8 @@ const EditForm = ({
   setEditedIndex,
   open,
   setOpen,
-  setActiveAccount
+  setActiveAccount,
+  activeAccount
 }) => {
   const {currentUser} = useAuth()
   const [loading, setLoading] = useState(false);
@@ -25,9 +28,24 @@ const EditForm = ({
   const dbCol = db.collection('balances');
   function saveItem() {
     if (editedIndex == -1) {
-      setLoading(true);
-      dbCol.add({...item, user:currentUser.email}).then((doc) => {
-        setRows([{ ...item, id: doc.id,user:currentUser.email }, ...rows]);
+      setLoading(true);      
+      dbCol.add({...item,
+         user:currentUser.email,
+         account:activeAccount
+        }).then((doc) => {
+        setRows([{ ...item, id: doc.id,
+          user:currentUser.email ,
+          account:activeAccount
+        }, ...rows]);
+
+
+        // setRowsCopy(rows);
+
+        setRowsCopy([{ ...item, id: doc.id,
+          user:currentUser.email ,
+          account:activeAccount
+        }, ...rowsCopy]);
+
         setLoading(false);
         setEditedIndex(-1);
         setItem(defalutItem);
@@ -65,6 +83,7 @@ const EditForm = ({
       .delete()
       .then(() => {
         setRows(rows.filter((obj) => obj.id !== item.id));
+        setRowsCopy(rowsCopy.filter((obj) => obj.id !== item.id));
         setEditedIndex(-1);
         setItem(defalutItem);
         setOpen(false);
