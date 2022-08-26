@@ -58,7 +58,12 @@ export default function Header() {
         類別
       </Menu.Item>
 
-      <Menu.Item as={Link} to="/balances">
+      <Menu.Item as={Link} to="/balances"
+       name="balances"
+       onClick={handleClick}
+       active={activeItem === 'balances'}
+      
+      >
         收支
       </Menu.Item>
       <Menu.Item as={Link} to="/stocks">

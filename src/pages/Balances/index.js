@@ -46,7 +46,7 @@ const Balances = () => {
     // })
 
     // console.log(currentUser?.uid)
-    let dbCol = db.collection('balances').orderBy('date', 'desc').limit(100);
+    let dbCol = db.collection('balances').orderBy('date', 'desc').limit(300);
     if (currentUser) dbCol = dbCol.where('user', '==', currentUser?.email);
 
     dbCol.get().then((snapshot) => {
@@ -78,7 +78,8 @@ const Balances = () => {
 
   const handleAccountClick = (account) => {
     setActiveAccount(account)    
-    setRows(rowsCopy.filter(row=>row.account && row.account.name==account.name))   
+    setRows(rowsCopy.filter(row=>row.account && row.account.name==account.name)) 
+    
   };
 
   return (
@@ -120,6 +121,8 @@ const Balances = () => {
         setRows={setRows}
         setRowsCopy={setRowsCopy}
         rowsCopy={rowsCopy}
+        rowsAccount={rowsAccount}
+        setRowsAccount={setRowsAccount}
         item={item}
         setItem={setItem}
         editedIndex={editedIndex}
