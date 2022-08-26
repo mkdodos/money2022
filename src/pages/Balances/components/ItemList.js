@@ -7,6 +7,7 @@ import { Table, Icon, Label, Header } from 'semantic-ui-react';
 export default function ItemList({
   rows,
   setItem,
+  setItemCopy,
   setEditedIndex,
   setOpen,
   activeAccount,
@@ -28,14 +29,14 @@ export default function ItemList({
 
   function handleEdit(row) {
     setItem(row);
+    setItemCopy(row)
     setEditedIndex(rows.indexOf(row));
     setOpen(true);
   }
 
   return (
     <>
-      {/* <pre>{JSON.stringify(rows)}</pre> */}
-
+     
       <Table unstackable>
         {/* <Table.Header>
           <Table.Row>

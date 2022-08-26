@@ -35,6 +35,9 @@ const Balances = () => {
 
   // 單筆資料
   const [item, setItem] = useState(defalutItem);
+  
+  // 點選時編輯時,複製一份單筆資料,做為儲存時計算帳戶餘額之用 
+  const [itemCopy, setItemCopy] = useState(defalutItem);
 
   const [editedIndex, setEditedIndex] = useState(-1);
 
@@ -84,6 +87,8 @@ const Balances = () => {
 
   return (
     <>
+     {/* <pre>{JSON.stringify(itemCopy)}</pre> */}
+
       {/* {JSON.stringify(activeAccount?.balance)} */}
       <Grid>
         <Grid.Row>
@@ -131,6 +136,7 @@ const Balances = () => {
         setOpen={setOpen}
         setActiveAccount={setActiveAccount}
         activeAccount={activeAccount}
+        itemCopy={itemCopy}
       />
       <ItemList
         setOpen={setOpen}
@@ -138,6 +144,7 @@ const Balances = () => {
         rows={rows}
         item={item}
         setItem={setItem}
+        setItemCopy={setItemCopy}
         setEditedIndex={setEditedIndex}
         activeAccount={activeAccount}
       />

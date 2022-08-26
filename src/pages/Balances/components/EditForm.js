@@ -19,6 +19,7 @@ const EditForm = ({
   setOpen,
   setActiveAccount,
   activeAccount,
+  itemCopy,
 }) => {
   const { currentUser } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -50,7 +51,6 @@ const EditForm = ({
           // 更新帳額餘額
           let amt = activeAccount.balance - item.expense * 1;
           updateBalance(amt);
-          
         });
     } else {
       setLoading(true);
@@ -58,18 +58,24 @@ const EditForm = ({
         .doc(item.id)
         .update(item)
         .then(() => {
+          // 更新帳額餘額
+          let amt =
+            activeAccount.balance - item.expense * 1 + itemCopy.expense * 1;
+          updateBalance(amt);
+
+          // 先更新帳戶餘額再做表格更新,才會正常
           let newItemList = rows.slice();
           Object.assign(newItemList[editedIndex], item);
           setRows(newItemList);
+
           setLoading(false);
           setEditedIndex(-1);
           setItem(defalutItem);
           setOpen(false);
-          // console.log(rowsCopy)
         });
     }
 
-    console.log(activeAccount);
+    // console.log(activeAccount);
     // setRowsAccount()
     // setActiveAccount(function (prev) {
 
@@ -131,7 +137,8 @@ const EditForm = ({
 
   return (
     <>
-      {/* <pre>{JSON.stringify(editedIndex)}</pre> */}
+      {/* {itemCopy.expense} */}
+      {/* <pre>{JSON.stringify(itemCopy)}</pre> */}
 
       <Modal
         open={open}
