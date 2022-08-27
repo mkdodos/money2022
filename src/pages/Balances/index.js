@@ -35,8 +35,8 @@ const Balances = () => {
 
   // 單筆資料
   const [item, setItem] = useState(defalutItem);
-  
-  // 點選時編輯時,複製一份單筆資料,做為儲存時計算帳戶餘額之用 
+
+  // 點選時編輯時,複製一份單筆資料,做為儲存時計算帳戶餘額之用
   const [itemCopy, setItemCopy] = useState(defalutItem);
 
   const [editedIndex, setEditedIndex] = useState(-1);
@@ -58,7 +58,7 @@ const Balances = () => {
         return { ...doc.data(), id: doc.id };
       });
       setRows(data);
-      setRowsCopy(data)
+      setRowsCopy(data);
     });
 
     db.collection('accounts')
@@ -79,16 +79,16 @@ const Balances = () => {
     setItem(defalutItem);
   };
 
-
   const handleAccountClick = (account) => {
-    setActiveAccount(account)    
-    setRows(rowsCopy.filter(row=>row.account && row.account.name==account.name)) 
-    
+    setActiveAccount(account);
+    setRows(
+      rowsCopy.filter((row) => row.account && row.account.name == account.name)
+    );
   };
 
   return (
     <>
-     {/* <pre>{JSON.stringify(itemCopy)}</pre> */}
+      {/* <pre>{JSON.stringify(itemCopy)}</pre> */}
 
       {/* {JSON.stringify(activeAccount?.balance)} */}
       <Grid>
@@ -103,19 +103,39 @@ const Balances = () => {
         </Grid.Row>
       </Grid>
 
-      <Grid columns={2}>
+      {activeAccount && (
+        <Grid columns={2}>
+          <Grid.Row>
+            <Grid.Column>
+              {/* <Header>{rows.length}</Header> */}
+
+              <Statistic horizontal>
+                <Statistic.Value>{activeAccount?.balance}</Statistic.Value>
+              </Statistic>
+            </Grid.Column>
+            <Grid.Column verticalAlign="middle">
+              <Button onClick={handleOpen} floated="right" color="yellow">
+                ADD
+              </Button>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      )}
+
+      <Grid>
         <Grid.Row>
           <Grid.Column>
-            {/* <Header>{rows.length}</Header> */}
-
-            <Statistic horizontal>
-              <Statistic.Value>{activeAccount?.balance}</Statistic.Value>
-            </Statistic>
-          </Grid.Column>
-          <Grid.Column verticalAlign="middle">
-            <Button onClick={handleOpen} floated="right" color="yellow">
-              ADD
-            </Button>
+            <ItemList
+              setOpen={setOpen}
+              rows={rows}
+              rowsCopy={rowsCopy}
+              setRows={setRows}
+              item={item}
+              setItem={setItem}
+              setItemCopy={setItemCopy}
+              setEditedIndex={setEditedIndex}
+              activeAccount={activeAccount}
+            />
           </Grid.Column>
         </Grid.Row>
       </Grid>
@@ -138,16 +158,6 @@ const Balances = () => {
         setActiveAccount={setActiveAccount}
         activeAccount={activeAccount}
         itemCopy={itemCopy}
-      />
-      <ItemList
-        setOpen={setOpen}
-        // open={open}
-        rows={rows}
-        item={item}
-        setItem={setItem}
-        setItemCopy={setItemCopy}
-        setEditedIndex={setEditedIndex}
-        activeAccount={activeAccount}
       />
     </>
   );

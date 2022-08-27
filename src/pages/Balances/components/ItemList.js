@@ -1,17 +1,21 @@
 import { db } from '../../../utils/firebase';
 import DataTable from '../../../components/DataTable';
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import { Table, Icon, Label, Header } from 'semantic-ui-react';
+import { Table, Icon, Label, Header, Input } from 'semantic-ui-react';
 
 export default function ItemList({
   rows,
+  rowsCopy,
+  setRows,
   setItem,
   setItemCopy,
   setEditedIndex,
   setOpen,
   activeAccount,
 }) {
+
+  const [search, setSearch] = useState('')
   // const [rows, setRows] = React.useState([]);
   const schema = [
     { text: '日期', value: 'date', type: 'date' },
@@ -34,9 +38,18 @@ export default function ItemList({
     setOpen(true);
   }
 
+  function handleSearch(e) {
+    setSearch(e.target.value)
+    
+    // 要 toLowerCase 才能正確查詢
+    setRows(rowsCopy.filter(row=>row.title.toLowerCase().includes(e.target.value.toLowerCase())))
+  }
+
   return (
     <>
-     
+    {/* {search} */}
+    {/* {JSON.stringify(rows)} */}
+     <Input name="search" value={search} onChange={handleSearch} placeholder="Search..."></Input>
       <Table unstackable>
         {/* <Table.Header>
           <Table.Row>
