@@ -9,6 +9,7 @@ export default function Dashboard() {
   const { currentUser, logout } = useAuth()
   const history = useHistory()
 
+  console.log(currentUser)
   async function handleLogout() {
     setError("")
 
@@ -22,6 +23,7 @@ export default function Dashboard() {
 
   return (
     <>
+    <pre>{JSON.stringify(currentUser)}</pre>
     <div>Dashboard</div>
     <strong>Email:</strong> {currentUser?.email}
     <Button variant="link" onClick={handleLogout}>

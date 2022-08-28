@@ -1,4 +1,4 @@
-import { Form, Button, Modal } from 'semantic-ui-react';
+import { Form, Button, Modal, Menu } from 'semantic-ui-react';
 import { useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { db } from '../../../utils/firebase';
@@ -19,10 +19,13 @@ const EditForm = ({
   setOpen,
   setActiveAccount,
   activeAccount,
-  itemCopy,
+  itemCopy,  
+  isIncome,
+  setIsIncome
 }) => {
   const { currentUser } = useAuth();
   const [loading, setLoading] = useState(false);
+ 
   // 表單輸入時,設定 item 的值
   const handleChange = (e) => {
     setItem({ ...item, [e.target.name]: e.target.value });
@@ -135,9 +138,16 @@ const EditForm = ({
       });
   };
 
+  function handleItemClick() {
+    setIsIncome((prev)=>{
+      return !prev
+    });
+  }
+
   return (
     <>
-      {/* {itemCopy.expense} */}
+
+     
       {/* <pre>{JSON.stringify(itemCopy)}</pre> */}
 
       <Modal
@@ -147,8 +157,31 @@ const EditForm = ({
           setOpen(false);
         }}
       >
-        <Modal.Header>編輯表單</Modal.Header>
+        <Modal.Header>編輯表單
+        {item.expense?'expense':'income'}
+
+        </Modal.Header>
         <Modal.Content>
+        <Menu fluid widths={2} pointing secondary>
+              <Menu.Item
+                color="teal"
+                name="income"
+                active={isIncome}
+                onClick={handleItemClick}
+              >
+                收入
+              </Menu.Item>
+              <Menu.Item
+                color="orange"
+                name="expense"
+                active={!isIncome}
+                onClick={handleItemClick}
+              >
+                支出
+              </Menu.Item>
+            </Menu>
+
+
           <Form>
             <Form.Field>
               <label>日期</label>
@@ -175,7 +208,7 @@ const EditForm = ({
                 name="expense"
                 type="number"
                 placeholder=""
-                value={item.expense}
+                value={isIncome?item.income:item.expense}
                 onChange={handleChange}
               />
             </Form.Field>

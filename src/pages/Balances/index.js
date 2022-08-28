@@ -41,6 +41,11 @@ const Balances = () => {
 
   const [editedIndex, setEditedIndex] = useState(-1);
 
+
+ // 收支判斷
+ const [isIncome, setIsIncome] = useState(false);
+
+
   // const [item, setItem] = useState({});
 
   useEffect(() => {
@@ -133,8 +138,10 @@ const Balances = () => {
               item={item}
               setItem={setItem}
               setItemCopy={setItemCopy}
+              setIsIncome={setIsIncome}
               setEditedIndex={setEditedIndex}
               activeAccount={activeAccount}
+              // setIsIncome={setIsIncome}
             />
           </Grid.Column>
         </Grid.Row>
@@ -142,6 +149,8 @@ const Balances = () => {
 
       {/* {JSON.stringify(item)} */}
       <EditForm
+      setIsIncome={setIsIncome}
+      isIncome={isIncome}
         defalutItem={defalutItem}
         rows={rows}
         setRows={setRows}

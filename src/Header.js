@@ -16,7 +16,7 @@ import { useHistory } from 'react-router-dom';
 export default function Header() {
   const [activeItem, setActiveItem] = React.useState('');
 
-  const { currentUser, logout } = useAuth()
+  const { currentUser, logout } = useAuth();
 
   const history = useHistory();
   function handleClick(e, { name }) {
@@ -27,8 +27,8 @@ export default function Header() {
     // setError("")
 
     try {
-      await logout()
-      history.push("/login")
+      await logout();
+      history.push('/login');
     } catch {
       // setError("Failed to log out")
     }
@@ -58,17 +58,22 @@ export default function Header() {
         類別
       </Menu.Item>
 
-      <Menu.Item as={Link} to="/balances"
-       name="balances"
-       onClick={handleClick}
-       active={activeItem === 'balances'}
-      
+      <Menu.Item
+        as={Link}
+        to="/balances"
+        name="balances"
+        onClick={handleClick}
+        active={activeItem === 'balances'}
       >
         收支
       </Menu.Item>
-      <Menu.Item as={Link} to="/stocks">
-        股票
-      </Menu.Item>
+
+      {currentUser?.email == 'mkdodos@gmail.com' && (
+        <Menu.Item as={Link} to="/stocks">
+          股票
+        </Menu.Item>
+      )}
+
       {/* <Menu.Item as={Link} to="/books">
         書本
       </Menu.Item> */}

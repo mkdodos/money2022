@@ -13,6 +13,7 @@ export default function ItemList({
   setEditedIndex,
   setOpen,
   activeAccount,
+  setIsIncome
 }) {
 
   const [search, setSearch] = useState('')
@@ -34,6 +35,7 @@ export default function ItemList({
   function handleEdit(row) {
     setItem(row);
     setItemCopy(row)
+    setIsIncome(row.income?true:false)
     setEditedIndex(rows.indexOf(row));
     setOpen(true);
   }
@@ -49,7 +51,7 @@ export default function ItemList({
     <>
     {/* {search} */}
     {/* {JSON.stringify(rows)} */}
-     <Input name="search" value={search} onChange={handleSearch} placeholder="Search..."></Input>
+     <Input name="search" fluid value={search} onChange={handleSearch} placeholder="Search..."></Input>
       <Table unstackable>
         {/* <Table.Header>
           <Table.Row>

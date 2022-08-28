@@ -31,6 +31,7 @@ export default function Login() {
                   <input ref={password} defaultValue="123456"></input>
                 </Form.Field>
                 <Button
+                fluid
                   onClick={() => {
                     auth
                       .signInWithEmailAndPassword(
@@ -49,6 +50,7 @@ export default function Login() {
                   Mark
                 </Button>
                 <Button
+                fluid
                   basic
                   floated="right"
                   onClick={() => {
@@ -70,6 +72,7 @@ export default function Login() {
           <Grid.Column mobile={16} tablet={3} computer={5}></Grid.Column>
         </Grid.Row>
       </Grid>
+      <Button fluid>Fits to Container</Button>
     </Container>
   );
 }
