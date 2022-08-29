@@ -19,30 +19,60 @@ const EditForm = ({
   setOpen,
   setActiveAccount,
   activeAccount,
-  itemCopy,  
+  itemCopy,
   isIncome,
-  setIsIncome
+  setIsIncome,
 }) => {
   const { currentUser } = useAuth();
   const [loading, setLoading] = useState(false);
- 
+
+  const [amt, setAmt] = useState('');
   // 表單輸入時,設定 item 的值
-  const handleChange = (e) => {
+  const handleChange = (e) => {    
+    console.log(item)
     setItem({ ...item, [e.target.name]: e.target.value });
   };
 
-  const dbCol = db.collection('balances');
+  // const handleAmtChange = (e) => {    
+  //   setItem({ ...item, [e.target.name]: e.target.value });
+  // };
+
+  const dbCol = db.collection('balances2');
+
+
+  // .add({ ...item, user: currentUser.email, account: activeAccount })
+  //       .then((doc) => {
+  //         const row = {
+  //           ...item,
+  //           id: doc.id,
+  //           user: currentUser.email,
+  //           account: activeAccount,
+  //         };
+  //         setRows([row, ...rows]);
+  //         setRowsCopy([row, ...rowsCopy]);
+  //         setLoading(false);
+  //         setEditedIndex(-1);
+  //         setItem(defalutItem);
+  //         setOpen(false);
+
+
   function saveItem() {
+    // 新增(判斷 isIncome 收入或支出 )
     if (editedIndex == -1) {
+      let editedRow = { date:item.date,title:item.title,expense:item.amt, user: currentUser.email, account: activeAccount }
+     if(isIncome)
+    editedRow = { date:item.date,title:item.title,income:item.amt, user: currentUser.email, account: activeAccount }
+
+
       setLoading(true);
       dbCol
-        .add({ ...item, user: currentUser.email, account: activeAccount })
+        .add(editedRow)
         .then((doc) => {
           const row = {
-            ...item,
+            ...editedRow,
             id: doc.id,
-            user: currentUser.email,
-            account: activeAccount,
+            // user: currentUser.email,
+            // account: activeAccount,
           };
           setRows([row, ...rows]);
           setRowsCopy([row, ...rowsCopy]);
@@ -52,7 +82,9 @@ const EditForm = ({
           setOpen(false);
 
           // 更新帳額餘額
-          let amt = activeAccount.balance - item.expense * 1;
+          let amt = activeAccount.balance - item.amt * 1;
+          if(isIncome)
+          amt = activeAccount.balance + item.amt * 1;
           updateBalance(amt);
         });
     } else {
@@ -78,27 +110,7 @@ const EditForm = ({
         });
     }
 
-    // console.log(activeAccount);
-    // setRowsAccount()
-    // setActiveAccount(function (prev) {
-
-    //   // 原來的帳戶陣列資料也要更新,在點選時才能顯示更新後資料
-    //   let amt = prev.balance - item.expense * 1
-    //   const accounts = rowsAccount.slice();
-    //   Object.assign(accounts[accounts.indexOf(prev)],{ ...prev, balance: amt })
-
-    //   setRowsAccount(accounts)
-    //   // 新增支出
-    //   // 修改支出
-    //   // 刪除支出
-    //   db.collection('accounts')
-    //     .doc(activeAccount.id)
-    //     .update({ balance: amt });
-
-    //   return { ...prev, balance: amt };
-    // });
-
-    // setActiveAccount
+   
   }
 
   function updateBalance(amt) {
@@ -122,7 +134,10 @@ const EditForm = ({
         setOpen(false);
         setLoading(false);
 
-        let amt = activeAccount.balance + item.expense * 1;
+        let amt = activeAccount.balance + item.amt * 1;
+        if(isIncome)
+        amt = activeAccount.balance - item.amt * 1;
+
         updateBalance(amt);
 
         // setActiveAccount(function (prev) {
@@ -138,16 +153,38 @@ const EditForm = ({
       });
   };
 
-  function handleItemClick() {
-    setIsIncome((prev)=>{
-      return !prev
-    });
+  function handleAmtChange(e) {
+    setAmt(e.target.value)
+  }
+
+  function handleItemClick(e, { name }) {
+    // setIsIncome(true)
+
+    // setAmt(123)
+    // setItem({ ...item, [e.target.name]: e.target.value });
+
+    console.log(item)
+    // 設定作用中項目樣式
+    // 設定金額為收入或支出
+    if (name === 'income'){
+      setIsIncome(true);
+      // setItem({...item, income:})
+    } 
+    else
+    {
+      setIsIncome(false);
+    }
+   
+    // setIsIncome((prev)=>{
+    //   if(prev==true){
+    //     return true
+    //   }
+    //   return false
+    // });
   }
 
   return (
     <>
-
-     
       {/* <pre>{JSON.stringify(itemCopy)}</pre> */}
 
       <Modal
@@ -157,30 +194,31 @@ const EditForm = ({
           setOpen(false);
         }}
       >
-        <Modal.Header>編輯表單
-        {item.expense?'expense':'income'}
-
+        <Modal.Header>
+          編輯表單
+         
+          {isIncome?'income':'expense'}
         </Modal.Header>
         <Modal.Content>
-        <Menu fluid widths={2} pointing secondary>
-              <Menu.Item
-                color="teal"
-                name="income"
-                active={isIncome}
-                onClick={handleItemClick}
-              >
-                收入
-              </Menu.Item>
-              <Menu.Item
-                color="orange"
-                name="expense"
-                active={!isIncome}
-                onClick={handleItemClick}
-              >
-                支出
-              </Menu.Item>
-            </Menu>
-
+        {/* {JSON.stringify(item)} */}
+          <Menu fluid widths={2} pointing secondary>
+            <Menu.Item
+              color="teal"
+              name="income"
+              active={isIncome}
+              onClick={handleItemClick}
+            >
+              收入
+            </Menu.Item>
+            <Menu.Item
+              color="orange"
+              name="expense"
+              active={!isIncome}
+              onClick={handleItemClick}
+            >
+              支出
+            </Menu.Item>
+          </Menu>
 
           <Form>
             <Form.Field>
@@ -205,10 +243,11 @@ const EditForm = ({
             <Form.Field>
               <label>金額</label>
               <input
-                name="expense"
+                name="amt"
                 type="number"
                 placeholder=""
-                value={isIncome?item.income:item.expense}
+                value={item.amt}
+                // value={isIncome?item.income:item.expense}
                 onChange={handleChange}
               />
             </Form.Field>

@@ -13,10 +13,10 @@ export default function ItemList({
   setEditedIndex,
   setOpen,
   activeAccount,
-  setIsIncome
+  setIsIncome,
+  isIncome,
 }) {
-
-  const [search, setSearch] = useState('')
+  const [search, setSearch] = useState('');
   // const [rows, setRows] = React.useState([]);
   const schema = [
     { text: '日期', value: 'date', type: 'date' },
@@ -33,25 +33,48 @@ export default function ItemList({
   // })
 
   function handleEdit(row) {
-    setItem(row);
-    setItemCopy(row)
-    setIsIncome(row.income?true:false)
+    // setIsIncome(row.income?true:false)
+
+    // 設定作用中項目(收入或支出),同時更新表單中的金額
+    setIsIncome((prev) => {
+      let editedRow = { date: row.date, title: row.title, id: row.id };
+      if (row.income) {
+        setItem({ ...editedRow, amt: row.income });
+        return true;
+      } else {
+        setItem({ ...editedRow, amt: row.expense });
+        return false;
+      }
+    });
+
+    setItemCopy(row);
+
     setEditedIndex(rows.indexOf(row));
     setOpen(true);
   }
 
   function handleSearch(e) {
-    setSearch(e.target.value)
-    
+    setSearch(e.target.value);
+
     // 要 toLowerCase 才能正確查詢
-    setRows(rowsCopy.filter(row=>row.title.toLowerCase().includes(e.target.value.toLowerCase())))
+    setRows(
+      rowsCopy.filter((row) =>
+        row.title.toLowerCase().includes(e.target.value.toLowerCase())
+      )
+    );
   }
 
   return (
     <>
-    {/* {search} */}
-    {/* {JSON.stringify(rows)} */}
-     <Input name="search" fluid value={search} onChange={handleSearch} placeholder="Search..."></Input>
+      {/* {search} */}
+      {/* {JSON.stringify(rows)} */}
+      <Input
+        name="search"
+        fluid
+        value={search}
+        onChange={handleSearch}
+        placeholder="Search..."
+      ></Input>
       <Table unstackable>
         {/* <Table.Header>
           <Table.Row>
@@ -89,6 +112,7 @@ export default function ItemList({
                     </Label>
                   )}
                   <br></br>$ {row.income ? row.income : row.expense + ''}
+                  {/* {JSON.stringify(row)} */}
                 </Table.Cell>
 
                 {/* <Table.Cell>{row.date.slice(5,10)}</Table.Cell>

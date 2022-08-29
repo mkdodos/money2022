@@ -30,7 +30,7 @@ const Balances = () => {
   const defalutItem = {
     date: new Date().toISOString().slice(0, 10),
     title: '',
-    expense: '',
+    amt: '',
   };
 
   // 單筆資料
@@ -54,8 +54,8 @@ const Balances = () => {
     // })
 
     // console.log(currentUser?.uid)
-    let dbCol = db.collection('balances').orderBy('date', 'desc').limit(300);
-    if (currentUser) dbCol = dbCol.where('user', '==', currentUser?.email);
+    let dbCol = db.collection('balances2').orderBy('date', 'desc').limit(300);
+    // if (currentUser) dbCol = dbCol.where('user', '==', currentUser?.email);
 
     dbCol.get().then((snapshot) => {
       // console.log(snapshot.size);
@@ -82,6 +82,7 @@ const Balances = () => {
   const handleOpen = () => {
     setOpen(true);
     setItem(defalutItem);
+    setEditedIndex(-1)
   };
 
   const handleAccountClick = (account) => {
@@ -141,6 +142,7 @@ const Balances = () => {
               setIsIncome={setIsIncome}
               setEditedIndex={setEditedIndex}
               activeAccount={activeAccount}
+              isIncome={isIncome}
               // setIsIncome={setIsIncome}
             />
           </Grid.Column>
