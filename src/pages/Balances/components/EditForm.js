@@ -28,17 +28,16 @@ const EditForm = ({
 
   const [amt, setAmt] = useState('');
   // 表單輸入時,設定 item 的值
-  const handleChange = (e) => {    
-    console.log(item)
+  const handleChange = (e) => {
+    console.log(item);
     setItem({ ...item, [e.target.name]: e.target.value });
   };
 
-  // const handleAmtChange = (e) => {    
+  // const handleAmtChange = (e) => {
   //   setItem({ ...item, [e.target.name]: e.target.value });
   // };
 
   const dbCol = db.collection('balances2');
-
 
   // .add({ ...item, user: currentUser.email, account: activeAccount })
   //       .then((doc) => {
@@ -55,52 +54,84 @@ const EditForm = ({
   //         setItem(defalutItem);
   //         setOpen(false);
 
-
   function saveItem() {
     // 新增(判斷 isIncome 收入或支出 )
     if (editedIndex == -1) {
-      let editedRow = { date:item.date,title:item.title,expense:item.amt, user: currentUser.email, account: activeAccount }
-     if(isIncome)
-    editedRow = { date:item.date,title:item.title,income:item.amt, user: currentUser.email, account: activeAccount }
-
+      let editedRow = {
+        date: item.date,
+        title: item.title,
+        user: currentUser.email,
+        account: activeAccount,
+      };
+      if (isIncome) {
+        editedRow = {
+          ...editedRow,
+          income: item.amt,
+        };
+      } else {
+        editedRow = {
+          ...editedRow,
+          expense: item.amt,
+        };
+      }
 
       setLoading(true);
-      dbCol
-        .add(editedRow)
-        .then((doc) => {
-          const row = {
-            ...editedRow,
-            id: doc.id,
-            // user: currentUser.email,
-            // account: activeAccount,
-          };
-          setRows([row, ...rows]);
-          setRowsCopy([row, ...rowsCopy]);
-          setLoading(false);
-          setEditedIndex(-1);
-          setItem(defalutItem);
-          setOpen(false);
+      dbCol.add(editedRow).then((doc) => {
+        const row = {
+          ...editedRow,
+          id: doc.id,
+          // user: currentUser.email,
+          // account: activeAccount,
+        };
+        setRows([row, ...rows]);
+        setRowsCopy([row, ...rowsCopy]);
+        setLoading(false);
+        setEditedIndex(-1);
+        setItem(defalutItem);
+        setOpen(false);
 
-          // 更新帳額餘額
-          let amt = activeAccount.balance - item.amt * 1;
-          if(isIncome)
-          amt = activeAccount.balance + item.amt * 1;
-          updateBalance(amt);
-        });
+        // 更新帳額餘額
+        let amt = activeAccount.balance - item.amt * 1;
+        if (isIncome) amt = activeAccount.balance + item.amt * 1;
+        updateBalance(amt);
+      });
     } else {
+      // 更新
+      let editedRow = {
+        date: item.date,
+        title: item.title,
+      };
+
+      if (isIncome) {
+        editedRow = {
+          ...editedRow,
+          income: item.amt,
+        };
+      } else {
+        editedRow = {
+          ...editedRow,
+          expense: item.amt,
+        };
+      }
+
       setLoading(true);
       dbCol
         .doc(item.id)
-        .update(item)
+        .update(editedRow)
+        // .update(item)
         .then(() => {
           // 更新帳額餘額
           let amt =
-            activeAccount.balance - item.expense * 1 + itemCopy.expense * 1;
+            // activeAccount.balance - item.expense * 1 + itemCopy.expense * 1;
+            activeAccount.balance - item.amt * 1 + itemCopy.amt * 1;
+          if (isIncome)
+            amt = activeAccount.balance + item.amt * 1 - itemCopy.amt * 1;
           updateBalance(amt);
 
           // 先更新帳戶餘額再做表格更新,才會正常
           let newItemList = rows.slice();
-          Object.assign(newItemList[editedIndex], item);
+          // Object.assign(newItemList[editedIndex], item);
+          Object.assign(newItemList[editedIndex], editedRow);
           setRows(newItemList);
 
           setLoading(false);
@@ -109,8 +140,6 @@ const EditForm = ({
           setOpen(false);
         });
     }
-
-   
   }
 
   function updateBalance(amt) {
@@ -135,8 +164,7 @@ const EditForm = ({
         setLoading(false);
 
         let amt = activeAccount.balance + item.amt * 1;
-        if(isIncome)
-        amt = activeAccount.balance - item.amt * 1;
+        if (isIncome) amt = activeAccount.balance - item.amt * 1;
 
         updateBalance(amt);
 
@@ -154,7 +182,7 @@ const EditForm = ({
   };
 
   function handleAmtChange(e) {
-    setAmt(e.target.value)
+    setAmt(e.target.value);
   }
 
   function handleItemClick(e, { name }) {
@@ -163,18 +191,16 @@ const EditForm = ({
     // setAmt(123)
     // setItem({ ...item, [e.target.name]: e.target.value });
 
-    console.log(item)
+    console.log(item);
     // 設定作用中項目樣式
     // 設定金額為收入或支出
-    if (name === 'income'){
+    if (name === 'income') {
       setIsIncome(true);
       // setItem({...item, income:})
-    } 
-    else
-    {
+    } else {
       setIsIncome(false);
     }
-   
+
     // setIsIncome((prev)=>{
     //   if(prev==true){
     //     return true
@@ -196,11 +222,10 @@ const EditForm = ({
       >
         <Modal.Header>
           編輯表單
-         
-          {isIncome?'income':'expense'}
+          {isIncome ? 'income' : 'expense'}
         </Modal.Header>
         <Modal.Content>
-        {/* {JSON.stringify(item)} */}
+          {/* {JSON.stringify(item)} */}
           <Menu fluid widths={2} pointing secondary>
             <Menu.Item
               color="teal"

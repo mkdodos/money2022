@@ -40,14 +40,16 @@ export default function ItemList({
       let editedRow = { date: row.date, title: row.title, id: row.id };
       if (row.income) {
         setItem({ ...editedRow, amt: row.income });
+        setItemCopy({...editedRow, amt: row.income});
         return true;
       } else {
         setItem({ ...editedRow, amt: row.expense });
+        setItemCopy({ ...editedRow, amt: row.expense });
         return false;
       }
     });
 
-    setItemCopy(row);
+    
 
     setEditedIndex(rows.indexOf(row));
     setOpen(true);
