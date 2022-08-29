@@ -41,10 +41,13 @@ const Balances = () => {
 
   const [editedIndex, setEditedIndex] = useState(-1);
 
+  // 收支判斷
+  const [isIncome, setIsIncome] = useState(false);
 
- // 收支判斷
- const [isIncome, setIsIncome] = useState(false);
-
+  // 收支判斷(在更新時,有可能收支互換,用此作用判斷以便更新帳戶餘額)
+  // 在 ItemList row click 事件設定
+  // 在 EditForm save 時,用來判斷
+  const [isIncomeOrigin, setIsIncomeOrigin] = useState(false);
 
   // const [item, setItem] = useState({});
 
@@ -82,7 +85,7 @@ const Balances = () => {
   const handleOpen = () => {
     setOpen(true);
     setItem(defalutItem);
-    setEditedIndex(-1)
+    setEditedIndex(-1);
   };
 
   const handleAccountClick = (account) => {
@@ -139,11 +142,12 @@ const Balances = () => {
               item={item}
               setItem={setItem}
               setItemCopy={setItemCopy}
+              isIncome={isIncome}
               setIsIncome={setIsIncome}
+              isIncomeOrigin={isIncomeOrigin}
+              setIsIncomeOrigin={setIsIncomeOrigin}
               setEditedIndex={setEditedIndex}
               activeAccount={activeAccount}
-              isIncome={isIncome}
-              // setIsIncome={setIsIncome}
             />
           </Grid.Column>
         </Grid.Row>
@@ -151,8 +155,9 @@ const Balances = () => {
 
       {/* {JSON.stringify(item)} */}
       <EditForm
-      setIsIncome={setIsIncome}
-      isIncome={isIncome}
+        isIncomeOrigin={isIncomeOrigin}
+        setIsIncome={setIsIncome}
+        isIncome={isIncome}
         defalutItem={defalutItem}
         rows={rows}
         setRows={setRows}

@@ -22,6 +22,7 @@ const EditForm = ({
   itemCopy,
   isIncome,
   setIsIncome,
+  isIncomeOrigin,
 }) => {
   const { currentUser } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -100,24 +101,38 @@ const EditForm = ({
       let editedRow = {
         date: item.date,
         title: item.title,
+        user: currentUser.email,
+        account: activeAccount,
       };
 
       if (isIncome) {
         editedRow = {
-          ...editedRow,
+          date: item.date,
+          title: item.title,
+          user: currentUser.email,
+          account: activeAccount,
           income: item.amt,
+          expense:null
         };
+        // delete editedRow.expense;
       } else {
         editedRow = {
-          ...editedRow,
+          date: item.date,
+          title: item.title,
+          user: currentUser.email,
+          account: activeAccount,
           expense: item.amt,
+          income: null,
         };
+        // delete editedRow.income;
       }
 
       setLoading(true);
       dbCol
         .doc(item.id)
-        .update(editedRow)
+        // .update(editedRow)
+        // 用 set 避免收支互改時,資料庫一筆資料同時有收支的情形
+        .set(editedRow)
         // .update(item)
         .then(() => {
           // 更新帳額餘額
@@ -126,12 +141,22 @@ const EditForm = ({
             activeAccount.balance - item.amt * 1 + itemCopy.amt * 1;
           if (isIncome)
             amt = activeAccount.balance + item.amt * 1 - itemCopy.amt * 1;
+
+          // 原來是支出=>收入
+          if (!isIncomeOrigin && isIncome)
+            amt = activeAccount.balance + item.amt * 1 + itemCopy.amt * 1;
+
+          // 原來是收入=>支出
+          if (isIncomeOrigin && !isIncome)
+            amt = activeAccount.balance - item.amt * 1 - itemCopy.amt * 1;
           updateBalance(amt);
 
           // 先更新帳戶餘額再做表格更新,才會正常
           let newItemList = rows.slice();
           // Object.assign(newItemList[editedIndex], item);
+          // delete editedRow["income"];
           Object.assign(newItemList[editedIndex], editedRow);
+          // console.log(newItemList);
           setRows(newItemList);
 
           setLoading(false);
@@ -222,7 +247,7 @@ const EditForm = ({
       >
         <Modal.Header>
           編輯表單
-          {isIncome ? 'income' : 'expense'}
+          {isIncomeOrigin ? 'income' : 'expense'}
         </Modal.Header>
         <Modal.Content>
           {/* {JSON.stringify(item)} */}

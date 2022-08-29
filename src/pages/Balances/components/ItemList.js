@@ -15,6 +15,7 @@ export default function ItemList({
   activeAccount,
   setIsIncome,
   isIncome,
+  setIsIncomeOrigin,
 }) {
   const [search, setSearch] = useState('');
   // const [rows, setRows] = React.useState([]);
@@ -40,7 +41,7 @@ export default function ItemList({
       let editedRow = { date: row.date, title: row.title, id: row.id };
       if (row.income) {
         setItem({ ...editedRow, amt: row.income });
-        setItemCopy({...editedRow, amt: row.income});
+        setItemCopy({ ...editedRow, amt: row.income });
         return true;
       } else {
         setItem({ ...editedRow, amt: row.expense });
@@ -49,7 +50,10 @@ export default function ItemList({
       }
     });
 
-    
+    setIsIncomeOrigin(() => {
+      if (row.income) return true;
+      return false;
+    });
 
     setEditedIndex(rows.indexOf(row));
     setOpen(true);
