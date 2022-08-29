@@ -49,16 +49,31 @@ const Balances = () => {
   // 在 EditForm save 時,用來判斷
   const [isIncomeOrigin, setIsIncomeOrigin] = useState(false);
 
-  // const [item, setItem] = useState({});
+  // 類別下拉
+  const [cate, setCate] = useState();
+  const [cates, setCates] = useState([]);
 
   useEffect(() => {
     // axios.get('http://192.168.0.12:9000/balances').then(res=>{
     //   setRows(res.data)
     // })
 
+    // 類別資料
+    // let colCates = db.collection('cates').orderBy('prior');
+    let colCates = db.collection('cates');
+    if (currentUser) colCates = colCates.where('user', '==', currentUser.email);
+
+    colCates = colCates.get().then((snapshot) => {
+      const rows = snapshot.docs.map((doc) => {
+        const d = doc.data();
+        return { text: d.name, value: d.name, key: doc.id };
+      });
+      setCates(rows);
+    });
+
     // console.log(currentUser?.uid)
-    let dbCol = db.collection('balances2').orderBy('date', 'desc').limit(300);
-    // if (currentUser) dbCol = dbCol.where('user', '==', currentUser?.email);
+    let dbCol = db.collection('balances').orderBy('date', 'desc').limit(300);
+    if (currentUser) dbCol = dbCol.where('user', '==', currentUser?.email);
 
     dbCol.get().then((snapshot) => {
       // console.log(snapshot.size);
@@ -135,6 +150,7 @@ const Balances = () => {
         <Grid.Row>
           <Grid.Column>
             <ItemList
+            setCate={setCate}
               setOpen={setOpen}
               rows={rows}
               rowsCopy={rowsCopy}
@@ -155,6 +171,9 @@ const Balances = () => {
 
       {/* {JSON.stringify(item)} */}
       <EditForm
+        cates={cates}
+        cate={cate}
+        setCate={setCate}
         isIncomeOrigin={isIncomeOrigin}
         setIsIncome={setIsIncome}
         isIncome={isIncome}

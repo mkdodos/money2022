@@ -23,37 +23,22 @@ const EditForm = ({
   isIncome,
   setIsIncome,
   isIncomeOrigin,
+  cates,
+  cate,
+  setCate,
 }) => {
   const { currentUser } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  const [amt, setAmt] = useState('');
+  // const [amt, setAmt] = useState('');
+
   // 表單輸入時,設定 item 的值
   const handleChange = (e) => {
     console.log(item);
     setItem({ ...item, [e.target.name]: e.target.value });
   };
 
-  // const handleAmtChange = (e) => {
-  //   setItem({ ...item, [e.target.name]: e.target.value });
-  // };
-
-  const dbCol = db.collection('balances2');
-
-  // .add({ ...item, user: currentUser.email, account: activeAccount })
-  //       .then((doc) => {
-  //         const row = {
-  //           ...item,
-  //           id: doc.id,
-  //           user: currentUser.email,
-  //           account: activeAccount,
-  //         };
-  //         setRows([row, ...rows]);
-  //         setRowsCopy([row, ...rowsCopy]);
-  //         setLoading(false);
-  //         setEditedIndex(-1);
-  //         setItem(defalutItem);
-  //         setOpen(false);
+  const dbCol = db.collection('balances');
 
   function saveItem() {
     // 新增(判斷 isIncome 收入或支出 )
@@ -61,6 +46,7 @@ const EditForm = ({
       let editedRow = {
         date: item.date,
         title: item.title,
+        cate: cate,
         user: currentUser.email,
         account: activeAccount,
       };
@@ -101,26 +87,31 @@ const EditForm = ({
       let editedRow = {
         date: item.date,
         title: item.title,
+        cate: cate,
         user: currentUser.email,
         account: activeAccount,
       };
 
       if (isIncome) {
         editedRow = {
-          date: item.date,
-          title: item.title,
-          user: currentUser.email,
-          account: activeAccount,
+          // date: item.date,
+          // title: item.title,
+          // cate: cate,
+          // user: currentUser.email,
+          // account: activeAccount,
+          ...editedRow,
           income: item.amt,
-          expense:null
+          expense: null,
         };
         // delete editedRow.expense;
       } else {
         editedRow = {
-          date: item.date,
-          title: item.title,
-          user: currentUser.email,
-          account: activeAccount,
+          // date: item.date,
+          // title: item.title,
+          // cate: cate,
+          // user: currentUser.email,
+          // account: activeAccount,
+          ...editedRow,
           expense: item.amt,
           income: null,
         };
@@ -281,6 +272,20 @@ const EditForm = ({
                 onChange={handleChange}
               />
             </Form.Field>
+
+            <Form.Select
+              selection
+              fluid
+              label="類別"
+              placeholder=""
+              value={cate}
+              options={cates}
+              onChange={(e, obj) => {
+                setCate(obj.value);
+                console.log(obj.value);
+              }}
+            />
+
             <Form.Field>
               <label>項目</label>
               <input

@@ -1,7 +1,10 @@
 import React from 'react';
 import { Button, Table, Modal, Form, Input } from 'semantic-ui-react';
 import {db} from "../utils/firebase"
+import { useAuth } from '../contexts/AuthContext';
+
 export default function AutoTable(props) {
+  const {currentUser} = useAuth()
   const defalutItem = props.defalutItem;
   const schema = props.schema;
   // const data = props.data;
@@ -16,7 +19,9 @@ export default function AutoTable(props) {
 
 
   React.useEffect(()=>{
-    db.collection(props.collectionName).get().then((snapshot)=>{
+    db.collection(props.collectionName)
+    .where('user','==',currentUser.email)
+    .get().then((snapshot)=>{
       const rows = snapshot.docs.map((doc)=>{
         return {...doc.data(),id:doc.id}
       })
