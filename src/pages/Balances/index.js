@@ -59,8 +59,8 @@ const Balances = () => {
     // })
 
     // 類別資料
-    // let colCates = db.collection('cates').orderBy('prior');
-    let colCates = db.collection('cates');
+    let colCates = db.collection('cates').orderBy('prior');
+    // let colCates = db.collection('cates');
     if (currentUser) colCates = colCates.where('user', '==', currentUser.email);
 
     colCates = colCates.get().then((snapshot) => {
@@ -151,6 +151,7 @@ const Balances = () => {
           <Grid.Column>
             <ItemList
             setCate={setCate}
+            cates={cates}
               setOpen={setOpen}
               rows={rows}
               rowsCopy={rowsCopy}

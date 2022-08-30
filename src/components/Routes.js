@@ -1,8 +1,9 @@
 import Accounts from '../components/Accounts'
-import Cates from '../components/Cates'
+// import Cates from '../components/Cates'
+import Cates from '../pages/Cates'
 import TicTacToe from '../components/TicTacToe'
 import Balances from '../pages/Balances'
-
+import EditCate from '../pages/Cates/components/EditCate'
 // import Balances from './Balances';
 
 import Stocks from '../pages/Stocks'
@@ -34,7 +35,13 @@ export default function Routes() {
       <Route path="/accounts">
         <Accounts />
       </Route>
-      <Route path="/cates" component={Cates} />
+      <Route path="/cates" exact component={Cates} />
+
+
+      <Route path={"/cates/edit/:id"} exact component={EditCate} />
+
+
+
       <Route path="/tictactoe" component={TicTacToe}/>
       {/* <Route path="/balances" component={Balances} /> */}
       <PrivateRoute path="/balances" exact component={Balances} />

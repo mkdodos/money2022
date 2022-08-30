@@ -1,16 +1,27 @@
-import AutoTable from "./AutoTable";
-import {db} from "../utils/firebase"
-import React from "react";
+import AutoTable from './AutoTable';
+import { db } from '../utils/firebase';
+import React, { useEffect, useState } from 'react';
+
+import { useAuth } from '../contexts/AuthContext';
+
+
 export default function Cates() {
-  // const [data, setData] = React.useState([])
-  // React.useEffect(()=>{
-  //   db.collection('cates').get().then((snapshot)=>{
-  //     const rows = snapshot.docs.map((doc)=>{
-  //       return doc.data()
-  //     })
-  //     setData(rows)
-  //   })
-  // },[])
+
+  const {currentUser} = useAuth()
+
+  const [rows, setRows] = useState([]);
+  React.useEffect(() => {
+    db.collection('cates')
+    .where('user','==',currentUser.email)
+    .orderBy('prior')
+      .get()
+      .then((snapshot) => {
+        const data = snapshot.docs.map((doc) => {
+          return { ...doc.data(), id: doc.id };
+        });
+        setRows(data);
+      });
+  }, []);
   const schema = [
     // {
     //   name: '欄位名稱',
@@ -42,8 +53,6 @@ export default function Cates() {
       text: '順序',
       type: 'number',
     },
-   
-    
   ];
 
   const defalutItem = {
@@ -51,9 +60,15 @@ export default function Cates() {
     // title: '',
     // expense: '',
     name: '',
-    prior:''
-    
+    prior: '',
   };
 
-  return <AutoTable collectionName="cates" schema={schema} defalutItem={defalutItem}  />
+  return (
+    <AutoTable
+      rows={rows}
+      // collectionName="cates"
+      schema={schema}
+      defalutItem={defalutItem}
+    />
+  );
 }

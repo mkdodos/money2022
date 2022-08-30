@@ -46,10 +46,13 @@ const EditForm = ({
       let editedRow = {
         date: item.date,
         title: item.title,
-        cate: cate,
+        // cate: cate,
         user: currentUser.email,
         account: activeAccount,
       };
+      // 有選類別才寫入
+      if (cate) editedRow.cate = cate;
+
       if (isIncome) {
         editedRow = {
           ...editedRow,
@@ -64,6 +67,7 @@ const EditForm = ({
 
       setLoading(true);
       dbCol.add(editedRow).then((doc) => {
+        console.log(doc.id)
         const row = {
           ...editedRow,
           id: doc.id,
@@ -87,10 +91,13 @@ const EditForm = ({
       let editedRow = {
         date: item.date,
         title: item.title,
-        cate: cate,
+        // cate: cate,
         user: currentUser.email,
         account: activeAccount,
       };
+
+      // 有選類別才寫入
+      if (cate) editedRow.cate = cate;
 
       if (isIncome) {
         editedRow = {
@@ -123,7 +130,8 @@ const EditForm = ({
         .doc(item.id)
         // .update(editedRow)
         // 用 set 避免收支互改時,資料庫一筆資料同時有收支的情形
-        .set(editedRow)
+        // 已有設定值為 null 可用 update
+        .update(editedRow)
         // .update(item)
         .then(() => {
           // 更新帳額餘額

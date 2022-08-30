@@ -19,14 +19,15 @@ export default function AutoTable(props) {
 
 
   React.useEffect(()=>{
-    db.collection(props.collectionName)
-    .where('user','==',currentUser.email)
-    .get().then((snapshot)=>{
-      const rows = snapshot.docs.map((doc)=>{
-        return {...doc.data(),id:doc.id}
-      })
-      setItemList(rows)
-    })
+    // console.log(props.rows)
+    // db.collection(props.collectionName)
+    // .where('user','==',currentUser.email)
+    // .get().then((snapshot)=>{
+    //   const rows = snapshot.docs.map((doc)=>{
+    //     return {...doc.data(),id:doc.id}
+    //   })
+    //   setItemList(rows)
+    // })
   },[])
 
 
@@ -40,6 +41,8 @@ export default function AutoTable(props) {
 
   function handleUpdate() {
     // 新增
+
+    // db.collection(props.collectionName)
     if (editedIndex == -1) {
       setItemList([...itemList, { ...item, id: Date.now() }]);
     }
@@ -121,7 +124,7 @@ export default function AutoTable(props) {
         新增
       </button>
 
-      <MyTable edit={handleEdit} schema={schema} rows={itemList} />
+      <MyTable edit={handleEdit} schema={schema} rows={props.rows} />
     </>
   );
 }

@@ -2,9 +2,18 @@ import { db } from '../../../utils/firebase';
 import DataTable from '../../../components/DataTable';
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Table, Icon, Label, Header, Input } from 'semantic-ui-react';
+import {
+  Table,
+  Icon,
+  Label,
+  Header,
+  Input,
+  Select,
+  Grid,
+} from 'semantic-ui-react';
 
 export default function ItemList({
+  cates,
   rows,
   rowsCopy,
   setRows,
@@ -16,7 +25,7 @@ export default function ItemList({
   setIsIncome,
   isIncome,
   setIsIncomeOrigin,
-  setCate
+  setCate,
 }) {
   const [search, setSearch] = useState('');
   // const [rows, setRows] = React.useState([]);
@@ -37,9 +46,7 @@ export default function ItemList({
   function handleEdit(row) {
     // setIsIncome(row.income?true:false)
 
-
     setCate(row.cate);
-
 
     // 設定作用中項目(收入或支出),同時更新表單中的金額
     setIsIncome((prev) => {
@@ -75,17 +82,43 @@ export default function ItemList({
     );
   }
 
+  function handleCateSearch(e, obj) {
+    console.log(obj.value);
+    // setSearch(e.target.value);
+
+    // 要 toLowerCase 才能正確查詢
+    setRows(rowsCopy.filter((row) => (row.cate === obj.value)));
+  }
+
   return (
     <>
       {/* {search} */}
       {/* {JSON.stringify(rows)} */}
-      <Input
-        name="search"
-        fluid
-        value={search}
-        onChange={handleSearch}
-        placeholder="Search..."
-      ></Input>
+      <Grid>
+        <Grid.Row columns={2}>
+          <Grid.Column>
+            <Input
+              name="search"
+              fluid
+              value={search}
+              onChange={handleSearch}
+              placeholder="Search..."
+            ></Input>
+          </Grid.Column>
+          <Grid.Column>
+            <Select
+              selection
+              fluid
+              label="類別"
+              placeholder=""
+              // value={cate}
+              options={cates}
+              onChange={handleCateSearch}
+            />
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+
       <Table unstackable>
         {/* <Table.Header>
           <Table.Row>
@@ -111,7 +144,7 @@ export default function ItemList({
                   {!activeAccount && (
                     <Label color="teal">{row.account?.name}</Label>
                   )}
-                   {row.cate && <Label>{row.cate}</Label>}
+                  {row.cate && <Label>{row.cate}</Label>}
                 </Table.Cell>
                 <Table.Cell textAlign="right">
                   {row.income ? (
