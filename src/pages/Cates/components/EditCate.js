@@ -49,10 +49,14 @@ const handleSave =  () => {
 
   var docRef = db.collection('cates').doc(id);
 
-  docRef.update(item)
+  // 將順序從文字轉成數字,排序看起來才會正常
+  
+  docRef.update({...item, prior:Number(item.prior)}).then(()=>{
+    history.push('/cates')
+  })
  
   
-  history.push('/cates')
+  
  
 };
 
@@ -80,6 +84,7 @@ const handleDelete = async () => {
         <Form.Field>
           <label>順序</label>
           <input
+          type="number"
             name="prior"
             placeholder=""
             value={item.prior}
