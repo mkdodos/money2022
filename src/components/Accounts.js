@@ -24,7 +24,7 @@ export default function Accounts() {
   // 控制 Modal 顯示
   const [modalOpen, setModalOpen] = useState(false);
 
-  const dbCol = db.collection('accounts2');
+  const dbCol = db.collection('accounts');
   React.useEffect(() => {
     dbCol
       // .orderBy('prior')
@@ -40,41 +40,31 @@ export default function Accounts() {
   }, []);
 
   // 儲存
-  function handleSubmit() {
+  function handleSave() {
     const { name, balance, prior } = row;
     if (editedIndex > -1) {
-      db.collection('accounts2')
+      dbCol
+        // db.collection('accounts2')
         .doc(row.id)
         .update({ name, balance, prior })
         .then(() => {
-          // console.log(row)
-
           let newItemList = rows.slice();
-          // Object.assign(newItemList[editedIndex], item);
-          // delete editedRow["income"];
           Object.assign(newItemList[editedIndex], row);
-          // console.log(newItemList);
           setRows(newItemList);
-
           setModalOpen(false);
           setRow(defalutItem);
-          // Object.assign(rows[editedIndex], row);
         });
     } else {
-      db.collection('accounts2')
+      dbCol      
         .add({ name, balance, prior, user: currentUser.email })
         .then((doc) => {
           setModalOpen(false);
-          setRow(defalutItem);
-          // const newRow = row;
+          setRow(defalutItem);          
           setRows([...rows, { ...row, id: doc.id }]);
         });
     }
 
-  
-
     
-    // console.log(row);
   }
 
   function handleClick(row) {
@@ -100,13 +90,22 @@ export default function Accounts() {
     setModalOpen(true);
   }
 
+  
+  function handleDelete() {
+    dbCol.doc(row.id).delete();
+    setRows(rows.filter((obj) => obj.id !== row.id));
+    setModalOpen(false)
+  }
+
   return (
     <>
-      <Modal open={modalOpen}>
+      <Modal open={modalOpen} closeIcon onClose={()=>{
+        setModalOpen(false)
+      }}>
         <Modal.Header>編輯帳戶</Modal.Header>
         <Modal.Content>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group>
+          <Form>
+           
               <Form.Field>
                 <label>名稱</label>
                 <input
@@ -135,13 +134,16 @@ export default function Accounts() {
                   onChange={handleChange}
                 />
               </Form.Field>
-            </Form.Group>
-            <Button type="submit">Submit</Button>
+            
           </Form>
         </Modal.Content>
+        <Modal.Actions>
+          <Button floated='left' color='red' onClick={handleDelete}>Delete</Button>
+          <Button primary onClick={handleSave}>Save</Button>
+        </Modal.Actions>
       </Modal>
       {/* {editedIndex} */}
-      <Button onClick={handleAdd}>ADD</Button>
+      <Button onClick={handleAdd} color="olive">ADD</Button>
       <Table unstackable>
         <Table.Header>
           <Table.Row>

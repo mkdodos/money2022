@@ -67,7 +67,7 @@ const EditForm = ({
 
       setLoading(true);
       dbCol.add(editedRow).then((doc) => {
-        console.log(doc.id)
+        console.log(doc.id);
         const row = {
           ...editedRow,
           id: doc.id,
@@ -139,7 +139,7 @@ const EditForm = ({
             // activeAccount.balance - item.expense * 1 + itemCopy.expense * 1;
             activeAccount.balance - item.amt * 1 + itemCopy.amt * 1;
           if (isIncome)
-            amt = activeAccount.balance + item.amt * 1 - itemCopy.amt * 1;
+            amt = activeAccount.balance * 1 + item.amt * 1 - itemCopy.amt * 1;
 
           // 原來是支出=>收入
           if (!isIncomeOrigin && isIncome)
