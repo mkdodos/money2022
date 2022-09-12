@@ -1,13 +1,13 @@
-import Accounts from '../components/Accounts'
+import Accounts from './Accounts'
 // import Cates from '../components/Cates'
 import Cates from '../pages/Cates'
-import TicTacToe from '../components/TicTacToe'
+import TicTacToe from './TicTacToe'
 import Balances from '../pages/Balances'
 import EditCate from '../pages/Cates/components/EditCate'
 // import Balances from './Balances';
 
 import Stocks from '../pages/Stocks'
-import Books from '../components/Books'
+import Books from './Books'
 
 import ContactList from '../demo/contacts/ContactList';
 import ViewContact from '../demo/contacts/ViewContact';
@@ -28,6 +28,8 @@ import {
   Redirect,
 } from 'react-router-dom';
 import Dashboard from './Dashboard'
+
+import EmpBasic from './EmpBasic'
 export default function Routes() {
   const {currentUser} = useAuth()
   return (
@@ -36,6 +38,8 @@ export default function Routes() {
         <Accounts />
       </Route>
       <Route path="/cates" exact component={Cates} />
+
+      <Route path="/emp-basic" exact component={EmpBasic} />
 
 
       <Route path={"/cates/edit/:id"} exact component={EditCate} />

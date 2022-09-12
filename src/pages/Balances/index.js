@@ -10,9 +10,6 @@ import { useAuth } from '../../contexts/AuthContext';
 const Balances = () => {
   const { currentUser, logout } = useAuth();
 
-  // const user = auth.currentUser;
-  // console.log(user)
-
   // 顯示 Modal
   const [open, setOpen] = useState(false);
 
@@ -75,15 +72,7 @@ const Balances = () => {
     let dbCol = db.collection('balances').orderBy('date', 'desc').limit(300);
     if (currentUser) dbCol = dbCol.where('user', '==', currentUser?.email);
 
-    dbCol.get().then((snapshot) => {
-      // console.log(snapshot.size);
-      const data = snapshot.docs.map((doc) => {
-        return { ...doc.data(), id: doc.id };
-      });
-      setRows(data);
-      setRowsCopy(data);
-    });
-
+    // 帳戶資料
     db.collection('accounts')
       .where('user', '==', currentUser.email)
       .orderBy('prior')
@@ -91,9 +80,35 @@ const Balances = () => {
       .get()
       .then((snapshot) => {
         const data = snapshot.docs.map((doc) => {
+          console.log(doc.data().name);
           return { ...doc.data(), id: doc.id };
         });
+
+        // 帳戶預設值
+        setActiveAccount(data[0]);
+
         setRowsAccount(data);
+
+        // 收支資料(只顯示當月)
+        dbCol
+          .where('date', '>', '2022-09')
+          // .where('account','==',activeAccount)
+          .get()
+          .then((snapshot) => {
+            // console.log(snapshot.size);
+            const data2 = snapshot.docs.map((doc) => {
+              return { ...doc.data(), id: doc.id };
+            });
+            // setRows(data);
+
+            setRowsCopy(data2);
+            setRows(
+              data2.filter(
+                (row) => row.account && row.account.name == data[0].name
+                // (row) => row.account && row.account.name == '現金'
+              )
+            );
+          });
       });
   }, []);
 
@@ -150,8 +165,8 @@ const Balances = () => {
         <Grid.Row>
           <Grid.Column>
             <ItemList
-            setCate={setCate}
-            cates={cates}
+              setCate={setCate}
+              cates={cates}
               setOpen={setOpen}
               rows={rows}
               rowsCopy={rowsCopy}

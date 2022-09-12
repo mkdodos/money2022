@@ -9,6 +9,7 @@ import {
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
+// import { useAuth } from './contexts/AuthContext';
 import { useAuth } from './contexts/AuthContext';
 
 import { useHistory } from 'react-router-dom';
@@ -74,9 +75,9 @@ export default function Header() {
         </Menu.Item>
       )}
 
-      {/* <Menu.Item as={Link} to="/books">
-        書本
-      </Menu.Item> */}
+      <Menu.Item as={Link} to="/dashboard">
+        統計
+      </Menu.Item>
       <Menu.Menu position="right">
         {currentUser ? (
           <Menu.Item name="" onClick={handleLogout}>
