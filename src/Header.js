@@ -75,7 +75,11 @@ export default function Header() {
         </Menu.Item>
       )}
 
-      <Menu.Item as={Link} to="/dashboard">
+      <Menu.Item as={Link} to="/dashboard"
+       name="dashboard"
+       onClick={handleClick}
+       active={activeItem === 'dashboard'}
+      >
         統計
       </Menu.Item>
       <Menu.Menu position="right">

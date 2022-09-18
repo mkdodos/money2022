@@ -61,7 +61,7 @@ export default function Routes() {
       <Route path="/books" component={Books} />
 
       <Route path="/login" exact component={Login} />
-      <Route path="/" exact component={Dashboard} />
+      <Route path="/" exact component={Balances} />
       <PrivateRoute path="/dashboard" exact component={Dashboard} />
 
       <Route path="/contacts" exact component={ContactList} />
