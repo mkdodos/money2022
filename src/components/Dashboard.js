@@ -14,18 +14,19 @@ export default function Dashboard() {
   const [bonus, setBonus] = useState(0);
   const [total, setTotal] = useState(0);
   const [totalData, setTotalData] = useState([]);
+  const [totalDataCopy, setTotalDataCopy] = useState([]);
 
   useEffect(() => {
-    db.collection('balances')
-      .where('cate', '==', '股息')
-      .get()
-      .then((snapshot) => {
-        let total = 0;
-        snapshot.docs.map((doc) => {
-          total += doc.data().income * 1;
-        });
-        setBonus(total);
-      });
+    // db.collection('balances')
+    //   .where('cate', '==', '股息')
+    //   .get()
+    //   .then((snapshot) => {
+    //     let total = 0;
+    //     snapshot.docs.map((doc) => {
+    //       total += doc.data().income * 1;
+    //     });
+    //     setBonus(total);
+    //   });
 
     db.collection('balances')
       .where('date', '>=', '2022-09')
@@ -40,6 +41,7 @@ export default function Dashboard() {
 
         let filterdData = data.filter((row) => row.expense > 0) 
         setTotalData(filterdData);
+        setTotalDataCopy(filterdData);
         let total = 0;
         filterdData.map(row=>{
           total += row.expense*1; 
@@ -60,6 +62,18 @@ export default function Dashboard() {
     }
   }
 
+  function calTotal(arr) {
+
+    let total = 0;
+    arr.map(row=>{
+      total += row.expense*1; 
+    })
+
+    return total;
+
+    
+  }
+
   return (
     <>
       {/* <pre>{JSON.stringify(currentUser)}</pre> */}
@@ -70,23 +84,32 @@ export default function Dashboard() {
         <Statistic.Label>股息</Statistic.Label>
       </Statistic> */}
 
-      <Grid columns={2}>
+      <Grid columns={1}>
         <Grid.Row>
-          <Grid.Column>
+          {/* <Grid.Column>
             <Card>
               <Card.Content>
                 <Card.Header textAlign="center">月支出</Card.Header>
               </Card.Content>
               <Card.Content>{total}</Card.Content>
             </Card>
-          </Grid.Column>
+          </Grid.Column> */}
           <Grid.Column>
+          <Card fluid>
+              <Card.Content>
+                <Card.Header textAlign="center" onClick={()=>{
+                  setTotalData(totalDataCopy)
+                  setTotal(calTotal(totalDataCopy))
+                }}>月支出</Card.Header>
+              </Card.Content>
+              {/* <Card.Content>{total}</Card.Content> */}
+            </Card>
             <Table celled unstackable>
               <Table.Header>
                 <Table.Row>
                   <Table.HeaderCell>Date</Table.HeaderCell>
                   <Table.HeaderCell>Header</Table.HeaderCell>
-                  <Table.HeaderCell>Header</Table.HeaderCell>
+                  <Table.HeaderCell>{total}</Table.HeaderCell>
                 </Table.Row>
               </Table.Header>
 
