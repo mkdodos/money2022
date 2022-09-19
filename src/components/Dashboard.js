@@ -34,18 +34,28 @@ export default function Dashboard() {
       .get()
       .then((snapshot) => {
         
-        const data = snapshot.docs.map((doc) => {
-          // if (doc.data().expense) total += doc.data().expense * 1;
-          return { id: doc.id, ...doc.data() };
+        const data = snapshot.docs.map((doc) => {          
+          return {
+            id: doc.id,
+            ...doc.data(),
+            // 將金額字串轉為數字才能正確做排序
+            expense: parseInt(doc.data().expense),
+          };         
         });
 
-        let filterdData = data.filter((row) => row.expense > 0) 
+        let filterdData = data.filter((row) => row.expense > 0);
+        // 金額排序
+        filterdData.sort((a, b) => {
+          return b.expense - a.expense;
+        });
+
         setTotalData(filterdData);
         setTotalDataCopy(filterdData);
+        // 合計
         let total = 0;
-        filterdData.map(row=>{
-          total += row.expense*1; 
-        })
+        filterdData.map((row) => {
+          total += row.expense * 1;
+        });
         setTotal(total);
       });
   }, []);
@@ -63,15 +73,12 @@ export default function Dashboard() {
   }
 
   function calTotal(arr) {
-
     let total = 0;
-    arr.map(row=>{
-      total += row.expense*1; 
-    })
+    arr.map((row) => {
+      total += row.expense * 1;
+    });
 
     return total;
-
-    
   }
 
   return (
@@ -95,12 +102,17 @@ export default function Dashboard() {
             </Card>
           </Grid.Column> */}
           <Grid.Column>
-          <Card fluid>
+            <Card fluid>
               <Card.Content>
-                <Card.Header textAlign="center" onClick={()=>{
-                  setTotalData(totalDataCopy)
-                  setTotal(calTotal(totalDataCopy))
-                }}>月支出</Card.Header>
+                <Card.Header
+                  textAlign="center"
+                  onClick={() => {
+                    setTotalData(totalDataCopy);
+                    setTotal(calTotal(totalDataCopy));
+                  }}
+                >
+                  月支出
+                </Card.Header>
               </Card.Content>
               {/* <Card.Content>{total}</Card.Content> */}
             </Card>
@@ -116,21 +128,25 @@ export default function Dashboard() {
               <Table.Body>
                 {totalData.map((row) => {
                   return (
-                    <Table.Row key={row.id}>                      
-                      <Table.Cell onClick={()=>{
-                       let temp =  totalData.filter(obj=>obj.date==row.date)
-                      //  console.log(temp)
+                    <Table.Row key={row.id}>
+                      <Table.Cell
+                        onClick={() => {
+                          let temp = totalData.filter(
+                            (obj) => obj.date == row.date
+                          );
+                          //  console.log(temp)
 
-                       setTotalData(temp)
+                          setTotalData(temp);
 
-                       let total = 0;
-                       temp.map(row=>{
-                         total += row.expense*1; 
-                       })
-                       setTotal(total);
-
-
-                      }}>{row.date}</Table.Cell>
+                          let total = 0;
+                          temp.map((row) => {
+                            total += row.expense * 1;
+                          });
+                          setTotal(total);
+                        }}
+                      >
+                        {row.date}
+                      </Table.Cell>
                       <Table.Cell>{row.title}</Table.Cell>
                       <Table.Cell>{row.expense}</Table.Cell>
                     </Table.Row>
