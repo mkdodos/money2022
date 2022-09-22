@@ -1,11 +1,15 @@
 import { db } from '../utils/firebase';
 // import {db as dada} from '../utils/firebase-dada'
-import { Table, Form, Button, Modal, Tab } from 'semantic-ui-react';
+import { Table, Form, Button, Modal, Tab , Segment,Statistic} from 'semantic-ui-react';
 import DataTable from './DataTable';
 import DataRow from './DataRow';
 import React, { useState } from 'react';
 import EditForm from './EditForm';
 import { useAuth } from '../contexts/AuthContext';
+import numberFormat from '../utils/numberFormat';
+
+import _ from 'lodash'
+
 export default function Accounts() {
   const { currentUser } = useAuth();
   const schema = [
@@ -18,6 +22,8 @@ export default function Accounts() {
   const [rows, setRows] = React.useState([]);
   const [row, setRow] = React.useState(defalutItem);
 
+  const [total, setTotal] = React.useState(0);
+
   // 用來判斷新增或修改,還有修改後將資料更新回該列
   const [editedIndex, setEditedIndex] = useState(-1);
 
@@ -27,15 +33,29 @@ export default function Accounts() {
   const dbCol = db.collection('accounts');
   React.useEffect(() => {
     dbCol
-      // .orderBy('prior')
+      // .orderBy('balance','desc')
       .where('user', '==', currentUser.email)
       .get()
       .then((snapshot) => {
-        setRows(
-          snapshot.docs.map((doc) => {
-            return { ...doc.data(), id: doc.id };
-          })
-        );
+        let temp = 0 ;
+        let data = snapshot.docs.map((doc) => {
+          temp += doc.data().balance * 1;
+          return { ...doc.data(), id: doc.id, 
+            // 將金額字串轉為數字才能正確做排序
+          balance: parseInt(doc.data().balance),
+         };
+        });
+        data = _.sortBy(data,'balance')
+        // data = data.reverse()
+        data = data.slice().reverse()
+        setRows(data);
+        console.log(temp)
+        setTotal(temp)
+        // setRows(
+        //   snapshot.docs.map((doc) => {
+        //     return { ...doc.data(), id: doc.id };
+        //   })
+        // );
       });
   }, []);
 
@@ -55,16 +75,14 @@ export default function Accounts() {
           setRow(defalutItem);
         });
     } else {
-      dbCol      
+      dbCol
         .add({ name, balance, prior, user: currentUser.email })
         .then((doc) => {
           setModalOpen(false);
-          setRow(defalutItem);          
+          setRow(defalutItem);
           setRows([...rows, { ...row, id: doc.id }]);
         });
     }
-
-    
   }
 
   function handleClick(row) {
@@ -90,60 +108,84 @@ export default function Accounts() {
     setModalOpen(true);
   }
 
-  
   function handleDelete() {
     dbCol.doc(row.id).delete();
     setRows(rows.filter((obj) => obj.id !== row.id));
-    setModalOpen(false)
+    setModalOpen(false);
   }
 
   return (
     <>
-      <Modal open={modalOpen} closeIcon onClose={()=>{
-        setModalOpen(false)
-      }}>
+      <Modal
+        open={modalOpen}
+        closeIcon
+        onClose={() => {
+          setModalOpen(false);
+        }}
+      >
         <Modal.Header>編輯帳戶</Modal.Header>
         <Modal.Content>
           <Form>
-           
-              <Form.Field>
-                <label>名稱</label>
-                <input
-                  name="name"
-                  placeholder="First Name"
-                  value={row.name}
-                  onChange={handleChange}
-                />
-              </Form.Field>
-              <Form.Field>
-                <label>順序</label>
-                <input
-                  type="number"
-                  name="prior"
-                  value={row.prior}
-                  onChange={handleChange}
-                />
-              </Form.Field>
-              <Form.Field>
-                <label>餘額</label>
-                <input
-                  type="number"
-                  name="balance"
-                  // placeholder="Last Name"
-                  value={row.balance}
-                  onChange={handleChange}
-                />
-              </Form.Field>
-            
+            <Form.Field>
+              <label>名稱</label>
+              <input
+                name="name"
+                placeholder="First Name"
+                value={row.name}
+                onChange={handleChange}
+              />
+            </Form.Field>
+            <Form.Field>
+              <label>順序</label>
+              <input
+                type="number"
+                name="prior"
+                value={row.prior}
+                onChange={handleChange}
+              />
+            </Form.Field>
+            <Form.Field>
+              <label>餘額</label>
+              <input
+                type="number"
+                name="balance"
+                // placeholder="Last Name"
+                value={row.balance}
+                onChange={handleChange}
+              />
+            </Form.Field>
           </Form>
         </Modal.Content>
         <Modal.Actions>
-          <Button floated='left' color='red' onClick={handleDelete}>Delete</Button>
-          <Button primary onClick={handleSave}>Save</Button>
+          <Button floated="left" color="red" onClick={handleDelete}>
+            Delete
+          </Button>
+          <Button primary onClick={handleSave}>
+            Save
+          </Button>
         </Modal.Actions>
       </Modal>
       {/* {editedIndex} */}
-      <Button onClick={handleAdd} color="olive">ADD</Button>
+      
+      
+      
+      <Segment textAlign="center" >
+        <Statistic inverted
+          color="red"          
+        >
+          <Statistic.Value>{numberFormat(total)}</Statistic.Value>
+          
+        </Statistic>
+      </Segment>
+      
+      
+      
+      <Button onClick={handleAdd} color="olive">
+        ADD
+      </Button>
+      
+      
+      
       <Table unstackable>
         <Table.Header>
           <Table.Row>
@@ -166,7 +208,7 @@ export default function Accounts() {
                 {/* <Table.Cell>{row.id}</Table.Cell> */}
                 <Table.Cell>{row.name}</Table.Cell>
                 <Table.Cell>{row.prior}</Table.Cell>
-                <Table.Cell>{row.balance}</Table.Cell>
+                <Table.Cell >{numberFormat(row.balance)}</Table.Cell>
               </Table.Row>
             );
             // )
