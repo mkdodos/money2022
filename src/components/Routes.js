@@ -28,12 +28,14 @@ import {
   Redirect,
 } from 'react-router-dom';
 import Dashboard from './Dashboard'
+import Balances2 from '../pages/Balances2/Balances2'
 
 import EmpBasic from './EmpBasic'
 export default function Routes() {
   const {currentUser} = useAuth()
   return (
     <Switch>
+      <Route path="/balances2" exact component={Balances2} />
       <Route path="/accounts">
         <Accounts />
       </Route>

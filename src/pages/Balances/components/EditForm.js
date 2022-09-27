@@ -30,6 +30,12 @@ const EditForm = ({
   const { currentUser } = useAuth();
   const [loading, setLoading] = useState(false);
 
+  const types = [
+    { key: 'm', text: '一般', value: 'male' },
+    { key: 'f', text: '轉帳', value: 'female' },
+    { key: 'o', text: '投資', value: 'other' },
+  ];
+
   // const [amt, setAmt] = useState('');
 
   // 表單輸入時,設定 item 的值
@@ -209,11 +215,7 @@ const EditForm = ({
     setAmt(e.target.value);
   }
 
-  function handleItemClick(e, { name }) {
-    // setIsIncome(true)
-
-    // setAmt(123)
-    // setItem({ ...item, [e.target.name]: e.target.value });
+  function handleItemClick(e, { name }) {  
 
     console.log(item);
     // 設定作用中項目樣式
@@ -224,13 +226,7 @@ const EditForm = ({
     } else {
       setIsIncome(false);
     }
-
-    // setIsIncome((prev)=>{
-    //   if(prev==true){
-    //     return true
-    //   }
-    //   return false
-    // });
+   
   }
 
   return (
@@ -314,6 +310,13 @@ const EditForm = ({
                 onChange={handleChange}
               />
             </Form.Field>
+
+            <Form.Select
+              fluid
+              label="統計類型"
+              options={types}
+              placeholder=""
+            />
           </Form>
         </Modal.Content>
         <Modal.Actions>

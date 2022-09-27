@@ -71,7 +71,7 @@ export default function Dashboard() {
             expense: parseInt(doc.data().expense),
           };
         });
-        let filterdData = rows.filter((row) => row.expense > 0);
+        let filterdData = rows.filter((row) => row.expense > 0 && row.type!=='轉帳');
         // 合計
         let temp = 0;
         filterdData.map((row) => {

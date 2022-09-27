@@ -3,7 +3,7 @@ import EditForm from './components/EditForm';
 import Accounts from './components/Accounts';
 import { useState, useEffect } from 'react';
 import { db, auth } from '../../utils/firebase';
-import { Button, Grid, Header, Statistic } from 'semantic-ui-react';
+import { Button, Grid, Header, Statistic,Dropdown } from 'semantic-ui-react';
 
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -130,6 +130,8 @@ const Balances = () => {
       {/* <pre>{JSON.stringify(itemCopy)}</pre> */}
 
       {/* {JSON.stringify(activeAccount?.balance)} */}
+      
+
       <Grid>
         <Grid.Row>
           <Grid.Column>
@@ -141,6 +143,9 @@ const Balances = () => {
           </Grid.Column>
         </Grid.Row>
       </Grid>
+
+      
+
 
       {activeAccount && (
         <Grid columns={2}>
