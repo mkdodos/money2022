@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react';
 export default function Scores() {
   const styleGrid = {
     display: 'grid',
-    gridTemplateColumns: 'repeat(3, 50px)',
-    gridTemplateRows: 'repeat(3, 50px)',
+    gridTemplateColumns: 'repeat(6, 50px)',
+    gridTemplateRows: 'repeat(4, 50px)',
     gap: '5px',
     justifyContent: 'center',
   };
@@ -16,59 +16,63 @@ export default function Scores() {
   };
 
   const data = [
-    { id: 1, correct: true },
-    { id: 2, correct: true },
-    { id: 3, correct: true },
-    { id: 4, correct: true },
-    { id: 5, correct: true },
-    { id: 6, correct: true },
-    { id: 7, correct: true },
-    { id: 8, correct: true },
-    { id: 9, correct: true },
+    // { id: 1, correct: true },
+    // { id: 2, correct: true },
+    // { id: 3, correct: true },
+    // { id: 4, correct: true },
+    // { id: 5, correct: true },
+    // { id: 6, correct: true },
+    // { id: 7, correct: true },
+    // { id: 8, correct: true },
+    // { id: 9, correct: true },
+    // { id: 10, correct: true },
   ];
 
-  const [rows, setRows] = useState(data)
-  useEffect(()=>{
+  for (let i = 1; i < 25; i++) {
+    data.push({ id: i, correct: true });
+  }
 
+  const [rows, setRows] = useState(data);
+  useEffect(() => {
     // setRows(data)
     let total = 0;
-    rows.map(item=>{
-      if(item.correct)
-        return total+=5;  
-      return total;    
-    })
-    setScore(total)
-
-  })
+    rows.map((item) => {
+      if (item.correct) return (total += 5);
+      return total;
+    });
+    setScore(total);
+  });
 
   const onClick = (item) => {
-    console.log(rows)
+    console.log(rows);
     let newRows = rows.slice();
     let row = item;
-    Object.assign(row,{ ...row, correct: !row.correct })
+    Object.assign(row, { ...row, correct: !row.correct });
     // setRows([...rows,{ id: 9, correct: false }])
-    setRows(newRows)
-    
+    setRows(newRows);
+
     let total = 0;
-    rows.map(item=>{
-      if(item.correct)
-        return total+=5;  
-      return total;    
-    })
-    setScore(total)
+    rows.map((item) => {
+      if (item.correct) return (total += 5);
+      return total;
+    });
+    setScore(total);
     // data[3].correct = false;
-  }
-  
-  const [score, setScore]= useState(10)
+  };
+
+  const [score, setScore] = useState(10);
 
   return (
     <>
       <Board score={score}></Board>
       <div style={styleGrid}>
         {rows.map((item) => (
-          <Circle 
-          onClick={()=>onClick(item)}
-          active={item.correct} key={item.id} num={item.id} />
+          <Circle
+            onClick={() => onClick(item)}
+            active={item.correct}
+            key={item.id}
+            num={item.id}
+          />
         ))}
       </div>
     </>
