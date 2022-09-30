@@ -1,6 +1,8 @@
 import Circle from './components/Circle';
 import Board from './components/Board';
 import { useEffect, useState } from 'react';
+import { db } from '../../utils/firebase';
+import { Loader } from 'semantic-ui-react';
 
 export default function Scores() {
   const styleGrid = {
@@ -15,40 +17,53 @@ export default function Scores() {
     backgroundColor: '#fc6471',
   };
 
-  const data = [
-    // { id: 1, correct: true },
-    // { id: 2, correct: true },
-    // { id: 3, correct: true },
-    // { id: 4, correct: true },
-    // { id: 5, correct: true },
-    // { id: 6, correct: true },
-    // { id: 7, correct: true },
-    // { id: 8, correct: true },
-    // { id: 9, correct: true },
-    // { id: 10, correct: true },
-  ];
+  // for (let i = 1; i < 25; i++) {
+  //   data.push({ id: i, correct: true });
+  // }
 
-  for (let i = 1; i < 25; i++) {
-    data.push({ id: i, correct: true });
-  }
+  const [rows, setRows] = useState([]);
 
-  const [rows, setRows] = useState(data);
+  const [score, setScore] = useState(0);
+
+  const [loading, setLoading] = useState(false);
+
+  const dbCol = db.collection('scores');
+
   useEffect(() => {
+    for (let i = 1; i < 25; i++) {
+      // db.collection('scores').add({ sn: i, correct: true, round:1 })
+    }
+
+    setLoading(true);
+
+    dbCol
+      .orderBy('sn')
+      .get()
+      .then((snapshot) => {
+        const data = snapshot.docs.map((doc) => {
+          return { ...doc.data(), id: doc.id };
+        });
+        setRows(data);
+        console.log(data);
+        let total = 0;
+        data.map((item) => {
+          if (item.correct) return (total += 5);
+          return total;
+        });
+        setScore(total);
+        setLoading(false);
+      });
+
     // setRows(data)
-    let total = 0;
-    rows.map((item) => {
-      if (item.correct) return (total += 5);
-      return total;
-    });
-    setScore(total);
-  });
+  }, []);
 
   const onClick = (item) => {
-    console.log(rows);
+    console.log(item.id);
+    dbCol.doc(item.id).update({ correct: !item.correct });
     let newRows = rows.slice();
     let row = item;
     Object.assign(row, { ...row, correct: !row.correct });
-    // setRows([...rows,{ id: 9, correct: false }])
+
     setRows(newRows);
 
     let total = 0;
@@ -57,21 +72,20 @@ export default function Scores() {
       return total;
     });
     setScore(total);
-    // data[3].correct = false;
   };
-
-  const [score, setScore] = useState(10);
 
   return (
     <>
-      <Board score={score}></Board>
+      {loading ? <Loader active inline='centered' /> : <Board score={score}></Board>}
+
+      {/* <Board score={loading ? 'Loading' : score}></Board> */}
       <div style={styleGrid}>
         {rows.map((item) => (
           <Circle
             onClick={() => onClick(item)}
             active={item.correct}
             key={item.id}
-            num={item.id}
+            num={item.sn}
           />
         ))}
       </div>
