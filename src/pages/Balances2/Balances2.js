@@ -1,16 +1,27 @@
 import { compact, filter } from 'lodash';
 import { useEffect, useState } from 'react';
-import { Table, Form, Button, Input, Modal, Dropdown } from 'semantic-ui-react';
+import {
+  Table,
+  Form,
+  Button,
+  Input,
+  Modal,
+  Dropdown,
+  Grid,
+  GridRow,
+} from 'semantic-ui-react';
 import { db } from '../../utils/firebase';
 export default function Balances2() {
-  // 帳戶下拉資料
+  // 帳戶類別下拉資料
   const [accountOptions, setAccountOptions] = useState([]);
+  const [cateOptions, setCateOptions] = useState([]);
   // 記帳資料
   const [rows, setRows] = useState([]);
   // 查詢用
   const [rowsCopy, setRowsCopy] = useState([]);
 
-  const [filters, setFilters] = useState({});
+  // 篩選條件
+  const [filters, setFilters] = useState({ title: '', account: '', cate:'' });
 
   const handleFilters = (e, obj) => {
     setFilters({
@@ -53,15 +64,17 @@ export default function Balances2() {
   useEffect(() => {
     getBalancesData();
     getAccountsData();
+    getCatesData();
   }, []);
 
   useEffect(() => {
     setRows(
-      rowsCopy.filter((row) => 
-         row.account.name?.includes(filters.account) &&
-         row.title?.toLowerCase().includes(filters.title?.toLowerCase())
-        // row.title?.toLowerCase().includes(filters.title.toLowerCase())
-        //  row.title?.toLowerCase().includes(filters.title)
+      rowsCopy.filter(
+        (row) =>
+          row.account.name.includes(filters.account) &&
+          //  row.title?.toLowerCase().includes(filters.title?.toLowerCase())
+          row.title.includes(filters.title) &&
+          row.cate?.includes(filters.cate)
       )
     );
 
@@ -75,7 +88,7 @@ export default function Balances2() {
     // );
   }, [filters]);
 
-  // 取得帳戶資料
+  // 取得帳戶下拉資料
   const getAccountsData = () => {
     setLoading(true);
     db.collection('accounts')
@@ -88,6 +101,23 @@ export default function Balances2() {
         });
         // console.log(data);
         setAccountOptions(data);
+        setLoading(false);
+      });
+  };
+
+  // 取得類別下拉資料
+  const getCatesData = () => {
+    setLoading(true);
+    db.collection('cates')
+      .where('user', '==', 'mkdodos@gmail.com')
+      .orderBy('prior')
+      .get()
+      .then((snapshot) => {
+        let data = snapshot.docs.map((doc) => {
+          return { key: doc.id, text: doc.data().name, value: doc.data().name };
+        });
+        // console.log(data);
+        setCateOptions(data);
         setLoading(false);
       });
   };
@@ -198,38 +228,52 @@ export default function Balances2() {
         </Modal.Actions>
       </Modal>
 
-      <Input
-        name="search"
-        fluid
-        // value={search}
-        onChange={(e) => {
-          setFilters({ ...filters, title: e.target.value });
-          // 要 toLowerCase 才能正確查詢
-          // setRows(
-          //   rowsCopy.filter((row) =>
-          //     row.title?.toLowerCase().includes(e.target.value.toLowerCase())
-          //   )
-          // );
-        }}
-        placeholder="Search..."
-      ></Input>
+      {/* 查詢 */}
+      <Grid>
+        <Grid.Row columns={3}>
+          <Grid.Column>
+            <Input
+              name="search"
+              fluid
+              // value={search}
+              onChange={(e) => {
+                setFilters({ ...filters, title: e.target.value });
+              }}
+              placeholder="Search..."
+            ></Input>
+          </Grid.Column>
+          <Grid.Column>
+            <Dropdown
+              selection
+              clearable
+              options={accountOptions}
+              label="帳戶"
+              onChange={(e, obj) => {
+                setFilters({ ...filters, account: obj.value });
+              }}
+            ></Dropdown>
+          </Grid.Column>
+          <Grid.Column>
+            <Dropdown
+              selection
+              clearable
+              options={cateOptions}
+              label="類別"
+              onChange={(e, obj) => {
+                setFilters({ ...filters, cate: obj.value });
+              }}
+            ></Dropdown>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
 
-      <Dropdown
-        selection
-        clearable
-        options={accountOptions}
-        label="帳戶"
-        name="account"
-        onChange={handleFilters}
-      ></Dropdown>
-
-      <Table>
+      <Table striped unstackable>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell>日期</Table.HeaderCell>
-            <Table.HeaderCell>帳戶</Table.HeaderCell>
-            <Table.HeaderCell>項目</Table.HeaderCell>
-            <Table.HeaderCell>金額</Table.HeaderCell>
+            <Table.HeaderCell width={2}>日期</Table.HeaderCell>
+            <Table.HeaderCell width={1}>帳戶</Table.HeaderCell>
+            <Table.HeaderCell width={4}>項目</Table.HeaderCell>
+            <Table.HeaderCell width={2}>金額</Table.HeaderCell>
             <Table.HeaderCell>記帳類型</Table.HeaderCell>
             {/* <Table.HeaderCell>#</Table.HeaderCell> */}
           </Table.Row>
