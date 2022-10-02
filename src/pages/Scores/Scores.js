@@ -3,6 +3,7 @@ import Board from './components/Board';
 import { useEffect, useState } from 'react';
 import { db } from '../../utils/firebase';
 import { Loader } from 'semantic-ui-react';
+import List from './components/List';
 
 export default function Scores() {
   const styleGrid = {
@@ -76,9 +77,14 @@ export default function Scores() {
 
   return (
     <>
-      {loading ? <Loader active inline='centered' /> : <Board score={score}></Board>}
+      <List></List>
 
-      {/* <Board score={loading ? 'Loading' : score}></Board> */}
+      {loading ? (
+        <Loader active inline="centered" />
+      ) : (
+        <Board score={score}></Board>
+      )}
+
       <div style={styleGrid}>
         {rows.map((item) => (
           <Circle

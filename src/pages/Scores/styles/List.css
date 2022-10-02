@@ -1,0 +1,23 @@
+* {
+  /* margin: 0; */
+}
+.wrapper {
+  margin: auto;
+  width: 300px;
+  /* background-color:#55d6be ; */
+}
+table {
+  border: 0;
+  border-collapse: collapse;
+  border-radius: 8px;
+  /* 寬度 100% 在上層元素 margin: auto 才看的出置中 */
+  width: 100%;
+  /* width: 300px; */
+}
+td,
+th {
+  border: solid 1px #55d6be;
+  text-align: center;
+  padding: 8px;
+  color: #757575;
+}
