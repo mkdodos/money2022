@@ -12,6 +12,7 @@ export default function Scores() {
     gridTemplateRows: 'repeat(4, 50px)',
     gap: '5px',
     justifyContent: 'center',
+    marginBottom: '20px'
   };
 
   const active = {
@@ -20,7 +21,10 @@ export default function Scores() {
 
   const [rows, setRows] = useState([]);
   const [rowDetails, setRowDetails] = useState([]);
+  const [rowDetailsBasic, setRowDetailsBasic] = useState([]);
+  const [rowDetailsAdvance, setRowDetailsAdvance] = useState([]);
   const [score, setScore] = useState(0);
+  const [scoreAdvance, setScoreAdvance] = useState(0);
   const [loading, setLoading] = useState(false);
   const [seletedRow, setSelectedRow] = useState({});
   const [year, setYear] = useState(0);
@@ -52,20 +56,29 @@ export default function Scores() {
   };
 
   useEffect(() => {
-    for (let i = 1; i < 25; i++) {
-      //
-      // dbColScoreDetails.add({ ...schemaScoreDetails, sn: i });
+    for (let y = 2017; y < 2022; y++) {
+      // dbColScores.add({ ...schemaScores, year: y });
+      // for (let i = 1; i < 25; i++) {
+      //   dbColScoreDetails.add({ ...schemaScoreDetails, sn: i, year: y });
+      // }
+      // for (let i = 1; i < 11; i++) {
+      //   dbColScoreDetails.add({ ...schemaScoreDetails, sn: i, year: y,type:'advance' });
+      // }
     }
 
     // setLoading(true);
 
-    // dbColScores
-    //   .get()
-    //   .then((snapshot) => {
-    //     snapshot.docs.map((doc) => {
-    //       dbColScores.doc(doc.id).delete();
-    //     });
+    // dbColScores.get().then((snapshot) => {
+    //   snapshot.docs.map((doc) => {
+    //     dbColScores.doc(doc.id).delete();
     //   });
+    // });
+
+    // dbColScoreDetails.get().then((snapshot) => {
+    //   snapshot.docs.map((doc) => {
+    //     dbColScoreDetails.doc(doc.id).delete();
+    //   });
+    // });
 
     // 設定分數資料
     dbColScores
@@ -77,6 +90,7 @@ export default function Scores() {
         });
 
         setRows(data);
+        
       });
   }, []);
 
@@ -93,8 +107,15 @@ export default function Scores() {
         });
 
         // 計算分數
-        calTotal(data);
-        setRowDetails(data);
+        const basic = data.filter(row=>row.type==='basic')
+        setRowDetailsBasic(basic)
+        calTotal(basic);
+
+        const advance = data.filter(row=>row.type==='advance')
+        setRowDetailsAdvance(advance)
+        calScoreAdvance(advance);
+        // setRowDetails(data);
+        
       });
   }, [year]);
 
@@ -113,6 +134,21 @@ export default function Scores() {
     }
   }, [score]);
 
+
+  useEffect(() => {
+    const index = rows.indexOf(seletedRow);
+    if (index !== -1) {
+      dbColScores
+        .doc(seletedRow.id)
+        .update({ advance: scoreAdvance })
+        .then(() => {
+          let newScores = rows.slice();
+          Object.assign(newScores[index], { ...seletedRow, advance: scoreAdvance });
+          setRows(newScores);
+        });
+    }
+  }, [scoreAdvance]);
+
   // 計算分數
   const calTotal = (data) => {
     let total = 0;
@@ -123,17 +159,38 @@ export default function Scores() {
     setScore(total);
   };
 
+  // 計算分數
+  const calScoreAdvance = (data) => {
+    let total = 0;
+    data.map((item) => {
+      if (item.correct) return (total += 8);
+      return total;
+    });
+    setScoreAdvance(total);
+  };
+
   // 點選明細球(計算分數, 更新該筆的對錯)
   const onClick = (item) => {
     dbColScoreDetails
       .doc(item.id)
       .update({ correct: !item.correct })
       .then(() => {
-        let newRows = rowDetails.slice();
-        let row = item;
-        Object.assign(row, { ...row, correct: !row.correct });
-        setRowDetails(newRows);
-        calTotal(rowDetails);
+        if(item.type==='basic'){
+          let newRows = rowDetailsBasic.slice();
+          let row = item;
+          Object.assign(row, { ...row, correct: !row.correct });
+          setRowDetailsBasic(newRows);
+          calTotal(newRows);
+        }
+
+        if(item.type==='advance'){
+          let newRows = rowDetailsAdvance.slice();
+          let row = item;
+          Object.assign(row, { ...row, correct: !row.correct });
+          setRowDetailsAdvance(newRows);
+          calScoreAdvance(newRows);
+        }
+        
       });
   };
 
@@ -160,7 +217,19 @@ export default function Scores() {
         <>
           <Board score={score}></Board>
           <div style={styleGrid}>
-            {rowDetails.map((item) => (
+            {rowDetailsBasic.map((item) => (
+              <Circle
+                onClick={() => onClick(item)}
+                active={item.correct}
+                key={item.id}
+                num={item.sn}
+              />
+            ))}
+          </div>
+
+          <Board score={scoreAdvance}></Board>
+          <div style={styleGrid}>
+            {rowDetailsAdvance.map((item) => (
               <Circle
                 onClick={() => onClick(item)}
                 active={item.correct}
