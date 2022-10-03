@@ -23,7 +23,7 @@ export default function Scores() {
   const [score, setScore] = useState(0);
   const [loading, setLoading] = useState(false);
   const [seletedRow, setSelectedRow] = useState({});
-  const [year, setYear] = useState(2017);
+  const [year, setYear] = useState(0);
 
   // 分數
   const dbColScores = db.collection('scores');
@@ -67,21 +67,22 @@ export default function Scores() {
     //     });
     //   });
 
+    // 設定分數資料
     dbColScores
       .orderBy('year')
       .get()
       .then((snapshot) => {
         const data = snapshot.docs.map((doc, index) => {
-          if (index === 0) {
-            setSelectedRow({ ...doc.data(), id: doc.id });
-          }
           return { ...doc.data(), id: doc.id };
         });
 
-        console.log(data);
         setRows(data);
       });
+  }, []);
 
+  // 年有變化時更新明細資料
+  useEffect(() => {
+    // 設定分數明細資料
     dbColScoreDetails
       .orderBy('sn')
       .where('year', '==', year)
@@ -91,33 +92,28 @@ export default function Scores() {
           return { ...doc.data(), id: doc.id };
         });
 
+        // 計算分數
         calTotal(data);
-        console.log(data);
         setRowDetails(data);
       });
   }, [year]);
 
+  // 分數有變化時更新主表的分數
   useEffect(() => {
-    // console.log(seletedRow.id)
-    if (seletedRow.id !== undefined) {
+    const index = rows.indexOf(seletedRow);
+    if (index !== -1) {
       dbColScores
         .doc(seletedRow.id)
         .update({ basic: score })
         .then(() => {
-          // dbColScores
-          //   .orderBy('year')
-          //   .get()
-          //   .then((snapshot) => {
-          //     const data = snapshot.docs.map((doc, index) => {
-          //       return { ...doc.data(), id: doc.id };
-          //     });
-
-          //     setRows(data);
-          //   });
+          let newScores = rows.slice();
+          Object.assign(newScores[index], { ...seletedRow, basic: score });
+          setRows(newScores);
         });
     }
   }, [score]);
 
+  // 計算分數
   const calTotal = (data) => {
     let total = 0;
     data.map((item) => {
@@ -125,27 +121,26 @@ export default function Scores() {
       return total;
     });
     setScore(total);
-    // dbColScores.doc(seletedRow.id).update({ basic: score });
   };
 
+  // 點選明細球(計算分數, 更新該筆的對錯)
   const onClick = (item) => {
-    console.log(item.id);
-    console.log(seletedRow.id);
-
-    let newRows = rowDetails.slice();
-    let row = item;
-    Object.assign(row, { ...row, correct: !row.correct });
-
-    setRowDetails(newRows);
-
-    calTotal(rowDetails);
-
     dbColScoreDetails
       .doc(item.id)
       .update({ correct: !item.correct })
       .then(() => {
-        // dbColScores.doc(seletedRow.id).update({ basic:  score });
+        let newRows = rowDetails.slice();
+        let row = item;
+        Object.assign(row, { ...row, correct: !row.correct });
+        setRowDetails(newRows);
+        calTotal(rowDetails);
       });
+  };
+
+  // 點選年
+  const onYearClick = (row) => {
+    setYear(row.year);
+    setSelectedRow(row);
   };
 
   return (
@@ -156,6 +151,7 @@ export default function Scores() {
         setYear={setYear}
         rows={rows}
         setSelectedRow={setSelectedRow}
+        onYearClick={onYearClick}
       ></List>
 
       {loading ? (

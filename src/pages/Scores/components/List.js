@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import '../styles/List.css';
 
-export default function List({ year, setYear, rows, setSelectedRow }) {
+export default function List({ year, setYear, rows, setSelectedRow,onYearClick }) {
   // const [active, setActive] = useState('');
   return (
     <div>
@@ -19,15 +19,16 @@ export default function List({ year, setYear, rows, setSelectedRow }) {
             {rows.map((row) => {
               return (
                 <tr key={row.id}
-                  onClick={() => {
-                    setYear(row.year);
-                    setSelectedRow(row)
+                onClick={()=>onYearClick(row)}
+                  // onClick={() => {
+                  //   setYear(row.year);
+                  //   setSelectedRow(row)
                     
-                  }}
+                  // }}
                 >
                   <td className={year == row.year ? 'active' : ''}>{row.year}</td>
                   <td>{row.basic}</td>
-                  <td>70</td>
+                  <td>{row.advance}</td>
                 </tr>
               );
             })}
