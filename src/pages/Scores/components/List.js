@@ -1,34 +1,46 @@
-import React from 'react';
+import { useState } from 'react';
 import '../styles/List.css';
 
-export default function List() {
+export default function List({ year, setYear, rows, setSelectedRow }) {
+  // const [active, setActive] = useState('');
   return (
     <div>
+     
       <div className="wrapper">
         <table>
           <thead>
             <tr>
-              <th>Round</th>
+              <th>Year</th>
               <th>Basic</th>
               <th>Advance</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>
-                1
-              </td>
-              <td>115</td>
-              <td>70</td>
-            </tr>
-            <tr>
-              <td>
-                2
-              </td>
+            {rows.map((row) => {
+              return (
+                <tr key={row.id}
+                  onClick={() => {
+                    setYear(row.year);
+                    setSelectedRow(row)
+                    
+                  }}
+                >
+                  <td className={year == row.year ? 'active' : ''}>{row.year}</td>
+                  <td>{row.basic}</td>
+                  <td>70</td>
+                </tr>
+              );
+            })}
+
+            {/* <tr
+            onClick={() => {
+              setYear(2018);
+            }}
+            >
+              <td className={year == '2018' ? 'active' : ''}>2018</td>
               <td>120</td>
               <td>72</td>
-            </tr>
-           
+            </tr> */}
           </tbody>
         </table>
       </div>

@@ -1,6 +1,4 @@
-* {
-  /* margin: 0; */
-}
+
 .wrapper {
   margin: auto;
   width: 300px;
@@ -19,5 +17,9 @@ th {
   border: solid 1px #55d6be;
   text-align: center;
   padding: 8px;
-  color: #757575;
+  /* color: #757575; */
+}
+
+td.active {
+  background-color: #55d6be;
 }

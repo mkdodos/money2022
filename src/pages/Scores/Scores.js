@@ -18,83 +18,163 @@ export default function Scores() {
     backgroundColor: '#fc6471',
   };
 
-  // for (let i = 1; i < 25; i++) {
-  //   data.push({ id: i, correct: true });
-  // }
-
   const [rows, setRows] = useState([]);
-
+  const [rowDetails, setRowDetails] = useState([]);
   const [score, setScore] = useState(0);
-
   const [loading, setLoading] = useState(false);
+  const [seletedRow, setSelectedRow] = useState({});
+  const [year, setYear] = useState(2017);
 
-  const dbCol = db.collection('scores');
+  // 分數
+  const dbColScores = db.collection('scores');
+  // 分數明細
+  const dbColScoreDetails = db.collection('scoreDetails');
+
+  // 欄位
+  const schemaScores = {
+    // 年份 number
+    year: 2017,
+    // 基礎題分數 number
+    basic: 120,
+    // 進階題分數 number
+    advance: 80,
+  };
+
+  const schemaScoreDetails = {
+    // 年份 number
+    year: 2018,
+    // 題型 string ['basic','advance']
+    type: 'basic',
+    // 題號 number
+    sn: 1,
+    // 對錯 boolean
+    correct: true,
+  };
 
   useEffect(() => {
     for (let i = 1; i < 25; i++) {
-      // db.collection('scores').add({ sn: i, correct: true, round:1 })
+      //
+      // dbColScoreDetails.add({ ...schemaScoreDetails, sn: i });
     }
 
-    setLoading(true);
+    // setLoading(true);
 
-    dbCol
+    // dbColScores
+    //   .get()
+    //   .then((snapshot) => {
+    //     snapshot.docs.map((doc) => {
+    //       dbColScores.doc(doc.id).delete();
+    //     });
+    //   });
+
+    dbColScores
+      .orderBy('year')
+      .get()
+      .then((snapshot) => {
+        const data = snapshot.docs.map((doc, index) => {
+          if (index === 0) {
+            setSelectedRow({ ...doc.data(), id: doc.id });
+          }
+          return { ...doc.data(), id: doc.id };
+        });
+
+        console.log(data);
+        setRows(data);
+      });
+
+    dbColScoreDetails
       .orderBy('sn')
+      .where('year', '==', year)
       .get()
       .then((snapshot) => {
         const data = snapshot.docs.map((doc) => {
           return { ...doc.data(), id: doc.id };
         });
-        setRows(data);
+
+        calTotal(data);
         console.log(data);
-        let total = 0;
-        data.map((item) => {
-          if (item.correct) return (total += 5);
-          return total;
-        });
-        setScore(total);
-        setLoading(false);
+        setRowDetails(data);
       });
+  }, [year]);
 
-    // setRows(data)
-  }, []);
+  useEffect(() => {
+    // console.log(seletedRow.id)
+    if (seletedRow.id !== undefined) {
+      dbColScores
+        .doc(seletedRow.id)
+        .update({ basic: score })
+        .then(() => {
+          // dbColScores
+          //   .orderBy('year')
+          //   .get()
+          //   .then((snapshot) => {
+          //     const data = snapshot.docs.map((doc, index) => {
+          //       return { ...doc.data(), id: doc.id };
+          //     });
 
-  const onClick = (item) => {
-    console.log(item.id);
-    dbCol.doc(item.id).update({ correct: !item.correct });
-    let newRows = rows.slice();
-    let row = item;
-    Object.assign(row, { ...row, correct: !row.correct });
+          //     setRows(data);
+          //   });
+        });
+    }
+  }, [score]);
 
-    setRows(newRows);
-
+  const calTotal = (data) => {
     let total = 0;
-    rows.map((item) => {
+    data.map((item) => {
       if (item.correct) return (total += 5);
       return total;
     });
     setScore(total);
+    // dbColScores.doc(seletedRow.id).update({ basic: score });
+  };
+
+  const onClick = (item) => {
+    console.log(item.id);
+    console.log(seletedRow.id);
+
+    let newRows = rowDetails.slice();
+    let row = item;
+    Object.assign(row, { ...row, correct: !row.correct });
+
+    setRowDetails(newRows);
+
+    calTotal(rowDetails);
+
+    dbColScoreDetails
+      .doc(item.id)
+      .update({ correct: !item.correct })
+      .then(() => {
+        // dbColScores.doc(seletedRow.id).update({ basic:  score });
+      });
   };
 
   return (
     <>
-      <List></List>
+      {/* {typeof year} */}
+      <List
+        year={year}
+        setYear={setYear}
+        rows={rows}
+        setSelectedRow={setSelectedRow}
+      ></List>
 
       {loading ? (
         <Loader active inline="centered" />
       ) : (
-        <Board score={score}></Board>
+        <>
+          <Board score={score}></Board>
+          <div style={styleGrid}>
+            {rowDetails.map((item) => (
+              <Circle
+                onClick={() => onClick(item)}
+                active={item.correct}
+                key={item.id}
+                num={item.sn}
+              />
+            ))}
+          </div>
+        </>
       )}
-
-      <div style={styleGrid}>
-        {rows.map((item) => (
-          <Circle
-            onClick={() => onClick(item)}
-            active={item.correct}
-            key={item.id}
-            num={item.sn}
-          />
-        ))}
-      </div>
     </>
   );
 }
