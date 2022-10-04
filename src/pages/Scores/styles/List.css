@@ -4,7 +4,8 @@
   width: 300px;
   /* background-color:#55d6be ; */
 }
-table {
+/* 原本寫 table 會影響到其他元件的 table */
+.scores-table {
   border: 0;
   border-collapse: collapse;
   border-radius: 8px;
@@ -12,14 +13,14 @@ table {
   width: 100%;
   /* width: 300px; */
 }
-td,
-th {
+.scores-table td,
+.scores-table th {
   border: solid 1px #55d6be;
   text-align: center;
   padding: 8px;
   /* color: #757575; */
 }
 
-td.active {
+.scores-table td.active {
   background-color: #55d6be;
 }

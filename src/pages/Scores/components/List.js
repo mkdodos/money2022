@@ -7,7 +7,7 @@ export default function List({ year, setYear, rows, setSelectedRow,onYearClick }
     <div>
      
       <div className="wrapper">
-        <table>
+        <table className='scores-table'>
           <thead>
             <tr>
               <th>Year</th>

@@ -40,7 +40,10 @@ export default function Header() {
       {/* <Menu.Item as={Link} to="/tictactoe">
         TicTacToe
       </Menu.Item> */}
-      <Menu.Item
+
+     
+
+      {/* <Menu.Item
         as={Link}
         to="/accounts"
         name="accounts"
@@ -48,8 +51,8 @@ export default function Header() {
         active={activeItem === 'accounts'}
       >
         帳戶
-      </Menu.Item>
-      <Menu.Item
+      </Menu.Item> */}
+      {/* <Menu.Item
         as={Link}
         to="/cates"
         name="cates"
@@ -57,6 +60,40 @@ export default function Header() {
         active={activeItem === 'cates'}
       >
         類別
+      </Menu.Item> */}
+
+     
+
+      {currentUser?.email == 'mkdodos@gmail.com' && (
+        <Menu.Item
+          as={Link}
+          to="/stocks"
+          name="stocks"
+          onClick={handleClick}
+          active={activeItem === 'stocks'}
+        >
+          股票
+        </Menu.Item>
+      )}
+
+      <Menu.Item
+        as={Link}
+        to="/dashboard"
+        name="dashboard"
+        onClick={handleClick}
+        active={activeItem === 'dashboard'}
+      >
+        統計
+      </Menu.Item>
+
+      <Menu.Item
+        as={Link}
+        to="/scores"
+        name="scores"
+        onClick={handleClick}
+        active={activeItem === 'scores'}
+      >
+        分數
       </Menu.Item>
 
       <Menu.Item
@@ -69,19 +106,33 @@ export default function Header() {
         收支
       </Menu.Item>
 
-      {currentUser?.email == 'mkdodos@gmail.com' && (
-        <Menu.Item as={Link} to="/stocks">
-          股票
-        </Menu.Item>
-      )}
+      <Dropdown item icon="setting">
+        <Dropdown.Menu>
+          {/* <Dropdown.Item>
+            <Icon name='dropdown' />
+            <span className='text'>New</span>
+            <Dropdown.Menu>
+              <Dropdown.Item>Document</Dropdown.Item>
+              <Dropdown.Item>Image</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown.Item> */}
+         
+         <Dropdown.Item as={Link} to="/accounts" name="accounts">
+            帳戶
+          </Dropdown.Item>
+          <Dropdown.Item as={Link} to="/cates">
+            類別
+          </Dropdown.Item>
+         
+          {/* <Dropdown.Item>Edit Permissions</Dropdown.Item>
+          <Dropdown.Divider />
+          <Dropdown.Header>Export</Dropdown.Header>
+          <Dropdown.Item>Share</Dropdown.Item> */}
+        </Dropdown.Menu>
+      </Dropdown>
 
-      <Menu.Item as={Link} to="/dashboard"
-       name="dashboard"
-       onClick={handleClick}
-       active={activeItem === 'dashboard'}
-      >
-        統計
-      </Menu.Item>
+
+
       <Menu.Menu position="right">
         {currentUser ? (
           <Menu.Item name="" onClick={handleLogout}>

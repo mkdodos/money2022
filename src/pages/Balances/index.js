@@ -3,7 +3,7 @@ import EditForm from './components/EditForm';
 import Accounts from './components/Accounts';
 import { useState, useEffect } from 'react';
 import { db, auth } from '../../utils/firebase';
-import { Button, Grid, Header, Statistic,Dropdown } from 'semantic-ui-react';
+import { Button, Grid, Header, Statistic, Dropdown } from 'semantic-ui-react';
 
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -89,9 +89,15 @@ const Balances = () => {
 
         setRowsAccount(data);
 
-        // 收支資料(只顯示當月)
+        // 收支資料(只顯示近三個月)
+        let yyyy = new Date().getFullYear();
+        let mm = new Date().getMonth() - 1;
+
+        if (mm < 10) mm = '0' + mm;
+        // console.log(mm);
         dbCol
-          .where('date', '>', '2022-09')
+          .where('date', '>', `${yyyy}-${mm}`)
+          // .where('date', '<', `${yyyy}-${mm}`)
           // .where('account','==',activeAccount)
           .get()
           .then((snapshot) => {
@@ -130,7 +136,6 @@ const Balances = () => {
       {/* <pre>{JSON.stringify(itemCopy)}</pre> */}
 
       {/* {JSON.stringify(activeAccount?.balance)} */}
-      
 
       <Grid>
         <Grid.Row>
@@ -143,9 +148,6 @@ const Balances = () => {
           </Grid.Column>
         </Grid.Row>
       </Grid>
-
-      
-
 
       {activeAccount && (
         <Grid columns={2}>

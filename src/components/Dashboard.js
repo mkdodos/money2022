@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useState } from 'react';
-import { Table, Segment, Statistic } from 'semantic-ui-react';
+import { Table, Segment, Statistic, Label } from 'semantic-ui-react';
 import { db } from '../utils/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import numberFormat from '../utils/numberFormat';
@@ -56,9 +56,11 @@ export default function Dashboard() {
 
   const { column, data, direction, dataCopy } = state;
   useEffect(() => {
+    let mm = '';
+    month >= 10 ? (mm = month) : (mm = '0' + month);
     db.collection('balances')
-      .where('date', '>=', `2022-0${month}-01`)
-      .where('date', '<=', `2022-0${month}-31`)
+      .where('date', '>=', `2022-${mm}-01`)
+      .where('date', '<=', `2022-${mm}-31`)
       // .where('date', 'startAt', '2022-07')
       .where('user', '==', currentUser.email)
       .get()
@@ -71,7 +73,9 @@ export default function Dashboard() {
             expense: parseInt(doc.data().expense),
           };
         });
-        let filterdData = rows.filter((row) => row.expense > 0 && row.type!=='轉帳');
+        let filterdData = rows.filter(
+          (row) => row.expense > 0 && row.type !== '轉帳'
+        );
         // 合計
         let temp = 0;
         filterdData.map((row) => {
@@ -104,19 +108,9 @@ export default function Dashboard() {
         onClick={() => {
           setMonth(new Date().getMonth() + 1);
         }}
-        // onDoubleClick={() => {
-        //   setMonth(0);
-        // }}
+      
         onMinusClick={() => {
-          // setMonth(month - 1)
-
-          // setMonth((prev)=>{
-          //   if(prev==1)
-          //   return 12
-          //   return prev-1
-          // })
-         
-          // setMonth(12)
+          
           if (month == 1) setMonth(12);
           else setMonth(month - 1);
         }}
@@ -140,7 +134,8 @@ export default function Dashboard() {
       <Table celled unstackable sortable>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell width={3}
+            <Table.HeaderCell
+              width={3}
               // 顯示向上向下箭頭(sorted='ascending' || 'descending')
               sorted={state.column === 'date' ? direction : null}
               onClick={() => {
@@ -186,9 +181,11 @@ export default function Dashboard() {
                     // setTotal(total);
                   }}
                 >
-                  {row.date.slice(5,10)}
+                  {row.date.slice(5, 10)}
                 </Table.Cell>
-                <Table.Cell>{row.title}</Table.Cell>
+                <Table.Cell>
+                  {row.title ? row.title : <Label>{row.cate}</Label>}
+                </Table.Cell>
                 <Table.Cell>{row.expense}</Table.Cell>
               </Table.Row>
             );
