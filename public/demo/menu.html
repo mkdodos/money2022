@@ -13,7 +13,7 @@
       }
 
       .header {
-        height: 160px;
+        height: 60px;
         background-color: #94c9a9;
         position: relative;
       }
@@ -28,21 +28,22 @@
 
       .menu-btn {
         /* 寬高要搭配 block 的元素才有作用 */
-        width: 120px;
-        height: 130px;
+        width: 50px;
+        height: 40px;
         display: block;
         background-color: #c6ecae;
         /* 定位 父元素要設定 position: relative 此定位才會以父元素為基準 */
         position: absolute;
-        right: 50px;
+        right: 15px;
         top: 10px;
+        border-radius: 10%;
       }
 
       /* ::before 偽元素 */
       .menu-btn::before {
         content: '';
-        width: 100px;
-        height: 10px;
+        width: 30px;
+        height: 3px;
         left: 10px;
 
         /* 垂直置中 */
@@ -54,26 +55,29 @@
         position: absolute;
 
         /* 以置中那條為基準,在上下各出現一條 */
-        box-shadow: 0px 30px 0px #fff, 0px -30px 0px #fff;
+        box-shadow: 0px 10px 0px #fff, 0px -10px 0px #fff;
       }
 
       nav {
         /* calc(100vh-10px) 這樣不行, 中間的減號前後要有空白 */
-        height: calc(100vh - 160px);
+        height: calc(100vh - 60px);
         /* 高度有扣掉 header 才會剛好,沒有扣掉的話會太長,需要捲動 */
         /* height: 100vh; */
-        width: 80%;
+        width: 60%;
         position: absolute;
-        top: 160px;
+        /* 留 header 高度,才會貼齊 header 下緣 */
+        top: 60px;
         /* 讓選單跑到畫面外面 */
         left: -100%;
-        background-color: #777da7;
+        /* background-color: #777da7; */
+        /* 慢慢移出 */
+        transition: 0.5s;
       }
 
       /* 讓checkbox不見,圖層下方 */
       #menu-control {
         position: absolute;
-        z-index: 2;
+        /* z-index: 2; */
       }
 
 
@@ -87,7 +91,9 @@
         display: block ;
         text-decoration: none;
         /* margin: 20px 10px; */
-        color: #c6ecae;
+        /* color: #c6ecae; */
+        color: #94c9a9;
+        /* border-right: 1px solid #94c9a9; */
         border-bottom: 1px solid #94c9a9;
         padding: 10px 20px;
       }
@@ -102,12 +108,11 @@
       </h1>
       <label for="menu-control" class="menu-btn"></label>
       <nav>
-        <a href="#">link</a>
-        <a href="#">link</a>
-        <a href="#">link</a>
-        <a href="#">link</a>
-        <a href="#">link</a>
-        <a href="#">link</a>
+        <a href="#">Math</a>
+        <a href="#">Social</a>
+        <a href="#">English</a>
+        <a href="#">Chinese</a>
+       
       </nav>
     </div>
   </body>
