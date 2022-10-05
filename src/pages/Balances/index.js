@@ -50,6 +50,8 @@ const Balances = () => {
   const [cate, setCate] = useState();
   const [cates, setCates] = useState([]);
 
+  const [type, setType] = useState();
+
   useEffect(() => {
     // axios.get('http://192.168.0.12:9000/balances').then(res=>{
     //   setRows(res.data)
@@ -172,6 +174,7 @@ const Balances = () => {
         <Grid.Row>
           <Grid.Column>
             <ItemList
+              setType={setType}
               setCate={setCate}
               cates={cates}
               setOpen={setOpen}
@@ -194,6 +197,8 @@ const Balances = () => {
 
       {/* {JSON.stringify(item)} */}
       <EditForm
+        type={type}
+        setType={setType}
         cates={cates}
         cate={cate}
         setCate={setCate}

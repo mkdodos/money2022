@@ -73,6 +73,8 @@ export default function Dashboard() {
             expense: parseInt(doc.data().expense),
           };
         });
+
+        // 篩選資料
         let filterdData = rows.filter(
           (row) => row.expense > 0 && row.type !== '轉帳'
         );

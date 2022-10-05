@@ -25,15 +25,17 @@ const EditForm = ({
   isIncomeOrigin,
   cates,
   cate,
+  type,
   setCate,
+  setType,
 }) => {
   const { currentUser } = useAuth();
   const [loading, setLoading] = useState(false);
 
   const types = [
-    { key: 'm', text: '一般', value: 'male' },
-    { key: 'f', text: '轉帳', value: 'female' },
-    { key: 'o', text: '投資', value: 'other' },
+    { key: 'm', text: '一般', value: '一般' },
+    { key: 'f', text: '轉帳', value: '轉帳' },
+    { key: 'o', text: '投資', value: '投資' },
   ];
 
   // const [amt, setAmt] = useState('');
@@ -58,6 +60,9 @@ const EditForm = ({
       };
       // 有選類別才寫入
       if (cate) editedRow.cate = cate;
+
+      // 有選 type 才寫入
+      if (type) editedRow.type = type;
 
       if (isIncome) {
         editedRow = {
@@ -104,6 +109,8 @@ const EditForm = ({
 
       // 有選類別才寫入
       if (cate) editedRow.cate = cate;
+      // 有選 type 才寫入
+      if (type) editedRow.type = type;
 
       if (isIncome) {
         editedRow = {
@@ -119,11 +126,6 @@ const EditForm = ({
         // delete editedRow.expense;
       } else {
         editedRow = {
-          // date: item.date,
-          // title: item.title,
-          // cate: cate,
-          // user: currentUser.email,
-          // account: activeAccount,
           ...editedRow,
           expense: item.amt,
           income: null,
@@ -215,8 +217,7 @@ const EditForm = ({
     setAmt(e.target.value);
   }
 
-  function handleItemClick(e, { name }) {  
-
+  function handleItemClick(e, { name }) {
     console.log(item);
     // 設定作用中項目樣式
     // 設定金額為收入或支出
@@ -226,7 +227,6 @@ const EditForm = ({
     } else {
       setIsIncome(false);
     }
-   
   }
 
   return (
@@ -286,7 +286,6 @@ const EditForm = ({
               options={cates}
               onChange={(e, obj) => {
                 setCate(obj.value);
-                console.log(obj.value);
               }}
             />
 
@@ -314,8 +313,11 @@ const EditForm = ({
             <Form.Select
               fluid
               label="統計類型"
+              value={type}
               options={types}
-              placeholder=""
+              onChange={(e, obj) => {
+                setType(obj.value);
+              }}
             />
           </Form>
         </Modal.Content>

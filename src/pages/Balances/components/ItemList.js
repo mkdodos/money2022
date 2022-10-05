@@ -26,6 +26,7 @@ export default function ItemList({
   isIncome,
   setIsIncomeOrigin,
   setCate,
+  setType
 }) {
   const [search, setSearch] = useState('');
   // const [rows, setRows] = React.useState([]);
@@ -47,6 +48,8 @@ export default function ItemList({
     // setIsIncome(row.income?true:false)
 
     setCate(row.cate);
+
+    setType(row.type);
 
     // 設定作用中項目(收入或支出),同時更新表單中的金額
     setIsIncome((prev) => {

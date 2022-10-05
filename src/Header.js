@@ -36,12 +36,39 @@ export default function Header() {
   }
 
   return (
-    <Menu secondary pointing>
+    // Menu secondary Dropdown simple
+    // 會產生 gap 變成 Dropdown 內的 item 不好點
+    <Menu pointing secondary>
+       {/* <Menu secondary pointing  attached='top'> */}
+      <Dropdown item icon="setting">
+        <Dropdown.Menu>
+          {/* <Dropdown.Item>
+            <Icon name='dropdown' />
+            <span className='text'>New</span>
+            <Dropdown.Menu>
+              <Dropdown.Item>Document</Dropdown.Item>
+              <Dropdown.Item>Image</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown.Item> */}
+
+          <Dropdown.Item as={Link} to="/accounts" name="accounts">
+            帳戶
+          </Dropdown.Item>
+          <Dropdown.Item as={Link} to="/cates">
+            類別
+          </Dropdown.Item>
+
+          {/* <Dropdown.Item>Edit Permissions</Dropdown.Item>
+          <Dropdown.Divider />
+          <Dropdown.Header>Export</Dropdown.Header>
+          <Dropdown.Item>Share</Dropdown.Item> */}
+        </Dropdown.Menu>
+      </Dropdown>
+
+     
       {/* <Menu.Item as={Link} to="/tictactoe">
         TicTacToe
       </Menu.Item> */}
-
-     
 
       {/* <Menu.Item
         as={Link}
@@ -61,8 +88,6 @@ export default function Header() {
       >
         類別
       </Menu.Item> */}
-
-     
 
       {currentUser?.email == 'mkdodos@gmail.com' && (
         <Menu.Item
@@ -105,33 +130,6 @@ export default function Header() {
       >
         收支
       </Menu.Item>
-
-      <Dropdown item icon="setting">
-        <Dropdown.Menu>
-          {/* <Dropdown.Item>
-            <Icon name='dropdown' />
-            <span className='text'>New</span>
-            <Dropdown.Menu>
-              <Dropdown.Item>Document</Dropdown.Item>
-              <Dropdown.Item>Image</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown.Item> */}
-         
-         <Dropdown.Item as={Link} to="/accounts" name="accounts">
-            帳戶
-          </Dropdown.Item>
-          <Dropdown.Item as={Link} to="/cates">
-            類別
-          </Dropdown.Item>
-         
-          {/* <Dropdown.Item>Edit Permissions</Dropdown.Item>
-          <Dropdown.Divider />
-          <Dropdown.Header>Export</Dropdown.Header>
-          <Dropdown.Item>Share</Dropdown.Item> */}
-        </Dropdown.Menu>
-      </Dropdown>
-
-
 
       <Menu.Menu position="right">
         {currentUser ? (
