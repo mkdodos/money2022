@@ -78,7 +78,7 @@ const Balances = () => {
     db.collection('accounts')
       .where('user', '==', currentUser.email)
       .orderBy('prior')
-      .limit(3)
+      .limit(5)
       .get()
       .then((snapshot) => {
         const data = snapshot.docs.map((doc) => {

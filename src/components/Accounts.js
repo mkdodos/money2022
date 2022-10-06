@@ -73,6 +73,7 @@ export default function Accounts() {
           setRows(newItemList);
           setModalOpen(false);
           setRow(defalutItem);
+          console.log(row.id)
         });
     } else {
       dbCol
@@ -99,7 +100,8 @@ export default function Accounts() {
   }
 
   function handleChange(e) {
-    setRow({ ...row, [e.target.name]: e.target.value });
+    // 順序要存成數字,方便排序
+    setRow({ ...row, [e.target.name]: Number(e.target.value) });
     // setRow({ [event.target.name]: event.target.value });
   }
 

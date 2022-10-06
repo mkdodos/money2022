@@ -4,7 +4,7 @@ import { db } from '../../../utils/firebase';
 
 import { useAuth } from '../../../contexts/AuthContext';
 
-const Accounts = ({rows, accountClick, activeAccount}) => {
+const Accounts = ({ rows, accountClick, activeAccount }) => {
   const { currentUser } = useAuth();
   // const [topAccounts, setTopAccounts] = useState([]);
   // 選取帳戶
@@ -23,10 +23,11 @@ const Accounts = ({rows, accountClick, activeAccount}) => {
   // }, []);
 
   return (
-    <Grid columns={3}>
-      {rows.map((row, i) => (
-        <Grid.Column key={row.id}>
+    <>
+      <Segment.Group horizontal>
+        {rows.map((row, i) => (
           <Segment
+            key={row.id}
             textAlign="center"
             color="teal"
             // 點選反白
@@ -37,9 +38,27 @@ const Accounts = ({rows, accountClick, activeAccount}) => {
           >
             {row.name}
           </Segment>
-        </Grid.Column>
-      ))}
-    </Grid>
+        ))}
+      </Segment.Group>
+    </>
+
+    // <Grid columns={3}>
+    //   {rows.map((row, i) => (
+    //     <Grid.Column key={row.id}>
+    //       <Segment
+    //         textAlign="center"
+    //         color="teal"
+    //         // 點選反白
+    //         inverted={activeAccount?.name === row.name}
+    //         onClick={() => {
+    //           accountClick(row);
+    //         }}
+    //       >
+    //         {row.name}
+    //       </Segment>
+    //     </Grid.Column>
+    //   ))}
+    // </Grid>
   );
 };
 
