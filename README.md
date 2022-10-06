@@ -17,3 +17,12 @@ pages/Balances/index.js
     <Segment>Middle</Segment>
     <Segment>Right</Segment>
   </Segment.Group>
+
+
+```json
+{
+  "firstName": "John",
+  "lastName": "Smith",
+  "age": 25
+}
+```
