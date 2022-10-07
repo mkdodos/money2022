@@ -1,15 +1,31 @@
 import { useEffect, useState } from 'react';
 import { Table, Form, Button, Modal } from 'semantic-ui-react';
 import { v4 as uuidv4 } from 'uuid';
-import { db } from '../../utils/firebase';
 
 export default function Mortgages() {
+  const data = [
+    {
+      id: 1,
+      date: '2022-10-07',
+      basic: 11302,
+      interest: 5256,
+      account: '房貸A',
+    },
+    {
+      id: 2,
+      date: '2022-10-07',
+      basic: 2568,
+      interest: 382,
+      account: '房貸B',
+    },
+  ];
+
   const options = [
     { key: 'm', text: '房貸A', value: '房貸A' },
     { key: 'f', text: '房貸B', value: '房貸B' },
   ];
 
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState(data);
   const defaultRow = {
     date: new Date().toISOString().slice(0, 10),
     basic: '',
@@ -21,16 +37,9 @@ export default function Mortgages() {
   const [editedIndex, setEditedIndex] = useState(-1);
 
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  const dbCol = db.collection('mortgages');
   useEffect(() => {
-    dbCol.get().then((snapshot) => {
-      const data = snapshot.docs.map((doc) => {
-        return { ...doc.data(), id: doc.id };
-      });
-      setRows(data);
-    });
+    console.log(editedRow);
   }, []);
 
   // 一般文字輸入
@@ -46,51 +55,35 @@ export default function Mortgages() {
   const saveRow = () => {
     // 新增
     if (editedIndex === -1) {
-      setLoading(true);
       const item = {
         ...editedRow,
         basic: Number(editedRow.basic),
         id: uuidv4(),
       };
-      dbCol.add(item).then(() => {
-        setRows([...rows, item]);
-        setEditedRow(defaultRow);
-        setOpen(false);
-        setLoading(false);
-      });
+      setRows([...rows, item]);
+      setEditedRow(defaultRow);
+      setOpen(false);
     }
     // 更新
     else {
-      setLoading(true);
-      dbCol
-        .doc(editedRow.id)
-        .update(editedRow)
-        .then(() => {
-          const newRows = rows.slice();
-          Object.assign(newRows[editedIndex], editedRow);
-          setRows(newRows);
-          setEditedRow(defaultRow);
-          setEditedIndex(-1);
-          setOpen(false);
-          setLoading(false);
-        });
+      const newRows = rows.slice();
+      Object.assign(newRows[editedIndex], editedRow);
+
+      setRows(newRows);
+      setEditedRow(defaultRow);
+      setEditedIndex(-1);
+      setOpen(false);
     }
   };
 
   const deleteRow = () => {
     if (!confirm('確定刪除')) return;
-    setLoading(true);
-    dbCol
-      .doc(editedRow.id)
-      .delete()
-      .then(() => {
-        const newRows = rows.slice();
-        newRows.splice(editedIndex, 1);
-        setRows(newRows);
-        setEditedRow(defaultRow);
-        setOpen(false);
-        setLoading(false);
-      });
+    const newRows = rows.slice();
+    newRows.splice(editedIndex, 1);
+    // console.log(newRows)
+    setRows(newRows);
+    setEditedRow(defaultRow);
+    setOpen(false);
   };
 
   const rowClick = (item, index) => {
@@ -162,11 +155,11 @@ export default function Mortgages() {
         </Modal.Content>
         <Modal.Actions>
           {editedIndex > -1 && (
-            <Button onClick={deleteRow} color="red" floated="left" loading={loading}>
+            <Button onClick={deleteRow} color="red" floated="left">
               刪除
             </Button>
           )}
-          <Button onClick={saveRow} color="blue" loading={loading}>
+          <Button onClick={saveRow} color="blue">
             儲存
           </Button>
         </Modal.Actions>
