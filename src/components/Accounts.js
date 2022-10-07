@@ -64,9 +64,9 @@ export default function Accounts() {
     const { name, balance, prior } = row;
     if (editedIndex > -1) {
       dbCol
-        // db.collection('accounts2')
+        // 順序要存成數字,方便排序
         .doc(row.id)
-        .update({ name, balance, prior })
+        .update({ name, balance, prior:Number(prior) })
         .then(() => {
           let newItemList = rows.slice();
           Object.assign(newItemList[editedIndex], row);
@@ -100,8 +100,8 @@ export default function Accounts() {
   }
 
   function handleChange(e) {
-    // 順序要存成數字,方便排序
-    setRow({ ...row, [e.target.name]: Number(e.target.value) });
+    
+    setRow({ ...row, [e.target.name]: e.target.value });
     // setRow({ [event.target.name]: event.target.value });
   }
 
@@ -131,8 +131,7 @@ export default function Accounts() {
             <Form.Field>
               <label>名稱</label>
               <input
-                name="name"
-                placeholder="First Name"
+                name="name"                
                 value={row.name}
                 onChange={handleChange}
               />

@@ -42,14 +42,7 @@ export default function Header() {
        {/* <Menu secondary pointing  attached='top'> */}
       <Dropdown item icon="setting">
         <Dropdown.Menu>
-          {/* <Dropdown.Item>
-            <Icon name='dropdown' />
-            <span className='text'>New</span>
-            <Dropdown.Menu>
-              <Dropdown.Item>Document</Dropdown.Item>
-              <Dropdown.Item>Image</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown.Item> */}
+         
 
           <Dropdown.Item as={Link} to="/accounts" name="accounts">
             帳戶
@@ -57,6 +50,14 @@ export default function Header() {
           <Dropdown.Item as={Link} to="/cates">
             類別
           </Dropdown.Item>
+
+          <Dropdown.Divider />
+          <Dropdown.Item as={Link} to="/stocks">
+            股票
+          </Dropdown.Item>
+
+          
+
 
           {/* <Dropdown.Item>Edit Permissions</Dropdown.Item>
           <Dropdown.Divider />
@@ -66,38 +67,17 @@ export default function Header() {
       </Dropdown>
 
      
-      {/* <Menu.Item as={Link} to="/tictactoe">
-        TicTacToe
-      </Menu.Item> */}
-
-      {/* <Menu.Item
-        as={Link}
-        to="/accounts"
-        name="accounts"
-        onClick={handleClick}
-        active={activeItem === 'accounts'}
-      >
-        帳戶
-      </Menu.Item> */}
-      {/* <Menu.Item
-        as={Link}
-        to="/cates"
-        name="cates"
-        onClick={handleClick}
-        active={activeItem === 'cates'}
-      >
-        類別
-      </Menu.Item> */}
+     
 
       {currentUser?.email == 'mkdodos@gmail.com' && (
         <Menu.Item
           as={Link}
-          to="/stocks"
-          name="stocks"
+          to="/mortgages"
+          name="mortgages"
           onClick={handleClick}
-          active={activeItem === 'stocks'}
+          active={activeItem === 'mortgages'}
         >
-          股票
+          房貸
         </Menu.Item>
       )}
 

@@ -33,12 +33,13 @@ import Balances2 from '../pages/Balances2/Balances2'
 import EmpBasic from './EmpBasic'
 
 import Scores from '../pages/Scores/Scores'
-
+import Mortgages from '../pages/Mortgages/Mortgages'
 
 export default function Routes() {
   const {currentUser} = useAuth()
   return (
     <Switch>
+      <Route path="/mortgages" exact component={Mortgages} />
       <Route path="/scores" exact component={Scores} />
       <Route path="/balances2" exact component={Balances2} />
       <Route path="/accounts">
