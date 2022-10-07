@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
-import { Table, Form, Button, Modal } from 'semantic-ui-react';
-import { v4 as uuidv4 } from 'uuid';
+import { Table, Form, Button, Modal, Segment, Header } from 'semantic-ui-react';
+// import { v4 as uuidv4 } from 'uuid';
 import { db } from '../../utils/firebase';
 
 export default function Mortgages() {
-  const options = [
-    { key: 'm', text: '房貸A', value: '房貸A' },
-    { key: 'f', text: '房貸B', value: '房貸B' },
-  ];
+  // const options = [
+  //   { key: 'm', text: '房貸A', value: '房貸A' },
+  //   { key: 'f', text: '房貸B', value: '房貸B' },
+  // ];
 
   const [rows, setRows] = useState([]);
+  const [options, setOptions] = useState([]);
+
   const defaultRow = {
     date: new Date().toISOString().slice(0, 10),
     basic: '',
@@ -20,10 +22,16 @@ export default function Mortgages() {
 
   const [editedIndex, setEditedIndex] = useState(-1);
 
+  const [account, setAccount] = useState({});
+
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const dbCol = db.collection('mortgages');
+  const dbColAcc = db.collection('accounts');
+
+  /***************************************/
+
   useEffect(() => {
     dbCol.get().then((snapshot) => {
       const data = snapshot.docs.map((doc) => {
@@ -31,6 +39,25 @@ export default function Mortgages() {
       });
       setRows(data);
     });
+
+    dbColAcc
+      .where('name', 'in', ['房貸B', '房貸A', '土銀'])
+      .orderBy('prior')
+      // .where('name', '==', '房貸B')
+      .get()
+      .then((snapshot) => {
+        const data = snapshot.docs.map((doc) => {
+          let d = doc.data();
+          return {
+            text: d.name,
+            value: d.name,
+            key: doc.id,
+            balance: d.balance,
+          };
+        });
+        console.log(data);
+        setOptions(data);
+      });
   }, []);
 
   // 一般文字輸入
@@ -40,23 +67,33 @@ export default function Mortgages() {
 
   // 下拉選項輸入
   const selectChange = (e, obj) => {
+    const f = options.filter((v) => v.value === obj.value)[0];
+    // console.log(f)
+    setAccount({ id: f.key, balance: f.balance });
     setEditedRow({ ...editedRow, [obj.name]: obj.value });
   };
 
   const saveRow = () => {
     // 新增
     if (editedIndex === -1) {
+      console.log(account);
       setLoading(true);
       const item = {
         ...editedRow,
         basic: Number(editedRow.basic),
-        id: uuidv4(),
+        interest: Number(editedRow.interest),
       };
-      dbCol.add(item).then(() => {
-        setRows([...rows, item]);
-        setEditedRow(defaultRow);
-        setOpen(false);
-        setLoading(false);
+      dbCol.add(item).then((doc) => {
+        // 更新帳戶餘額
+        dbColAcc
+          .doc(account.id)
+          .update({ balance: account.balance * 1 + editedRow.basic * 1 })
+          .then(() => {
+            setRows([...rows, { ...item, id: doc.id }]);
+            setEditedRow(defaultRow);
+            setOpen(false);
+            setLoading(false);
+          });
       });
     }
     // 更新
@@ -99,9 +136,21 @@ export default function Mortgages() {
     setEditedIndex(index);
   };
 
+  /*************************************/
   return (
     <div>
       <h1>Mortgages</h1>
+
+      <Segment.Group horizontal>
+        {options.map((obj) => (
+          <Segment key={obj.key}>
+            <Header as="h2">
+              {obj.balance}
+              <Header.Subheader>{obj.text}</Header.Subheader>
+            </Header>
+          </Segment>
+        ))}
+      </Segment.Group>
 
       <Button
         floated="right"
@@ -162,7 +211,12 @@ export default function Mortgages() {
         </Modal.Content>
         <Modal.Actions>
           {editedIndex > -1 && (
-            <Button onClick={deleteRow} color="red" floated="left" loading={loading}>
+            <Button
+              onClick={deleteRow}
+              color="red"
+              floated="left"
+              loading={loading}
+            >
               刪除
             </Button>
           )}
@@ -179,6 +233,7 @@ export default function Mortgages() {
             <Table.HeaderCell>本金</Table.HeaderCell>
             <Table.HeaderCell>利息</Table.HeaderCell>
             <Table.HeaderCell>帳戶</Table.HeaderCell>
+            {/* <Table.HeaderCell></Table.HeaderCell> */}
           </Table.Row>
         </Table.Header>
 
@@ -189,6 +244,7 @@ export default function Mortgages() {
               <Table.Cell>{row.basic}</Table.Cell>
               <Table.Cell>{row.interest}</Table.Cell>
               <Table.Cell>{row.account}</Table.Cell>
+              {/* <Table.Cell>{row.basic*1+row.interest*1}</Table.Cell> */}
             </Table.Row>
           ))}
         </Table.Body>
