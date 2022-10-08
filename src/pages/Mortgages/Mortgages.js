@@ -10,7 +10,11 @@ export default function Mortgages() {
   // ];
 
   const [rows, setRows] = useState([]);
+  // 帳戶資料
   const [options, setOptions] = useState([]);
+
+  // 房貸帳戶下拉選項
+  const [mortgageOptions, setMortgageOptions] = useState([]);
 
   const defaultRow = {
     date: new Date().toISOString().slice(0, 10),
@@ -55,8 +59,11 @@ export default function Mortgages() {
             balance: d.balance,
           };
         });
-        console.log(data);
+        // console.log(data);
         setOptions(data);
+        const mor = data.filter((obj) => obj.text !== '土銀');
+        console.log(mor);
+        setMortgageOptions(mor);
       });
   }, []);
 
@@ -68,12 +75,13 @@ export default function Mortgages() {
   // 下拉選項輸入
   const selectChange = (e, obj) => {
     const f = options.filter((v) => v.value === obj.value)[0];
-    console.log(f);
+
     // setAccount({ id: f.key, balance: f.balance });
     setAccount({ ...f });
     setEditedRow({ ...editedRow, [obj.name]: obj.value });
   };
 
+  // 儲存
   const saveRow = () => {
     // 由於無法直接在陣列中比對物件，
     // 因此必須先簡化這個含有許多物件的陣列，
@@ -90,7 +98,7 @@ export default function Mortgages() {
         interest: Number(editedRow.interest),
       };
       dbCol.add(item).then((doc) => {
-        const newBalance = account.balance * 1 + editedRow.basic * 1;
+        const newBalance = account.balance * 1 - editedRow.basic * 1;
         // 更新帳戶餘額
         dbColAcc
           .doc(account.key)
@@ -99,7 +107,7 @@ export default function Mortgages() {
             const newAccounts = options.slice();
             // 先簡化 options 這個物件陣列
             const newArr = options.map((obj) => obj.key);
-            const index = newArr.indexOf(account.key);          
+            const index = newArr.indexOf(account.key);
             Object.assign(newAccounts[index], {
               ...account,
               balance: newBalance,
@@ -138,16 +146,41 @@ export default function Mortgages() {
       .doc(editedRow.id)
       .delete()
       .then(() => {
-        const newRows = rows.slice();
-        newRows.splice(editedIndex, 1);
-        setRows(newRows);
-        setEditedRow(defaultRow);
-        setOpen(false);
-        setLoading(false);
+        // 更新帳戶餘額
+        const newBalance = account.balance * 1 + editedRow.basic * 1;
+        dbColAcc
+          .doc(account.key)
+          .update({ balance: newBalance })
+          .then(() => {
+            const newAccounts = options.slice();
+            // 先簡化 options 這個物件陣列
+            const newArr = options.map((obj) => obj.key);
+            const index = newArr.indexOf(account.key);
+            Object.assign(newAccounts[index], {
+              ...account,
+              balance: newBalance,
+            });
+            setOptions(newAccounts);      
+            
+            
+            const newRows = rows.slice();
+            newRows.splice(editedIndex, 1);
+            setRows(newRows);
+            setEditedRow(defaultRow);
+            setOpen(false);
+            setLoading(false);
+
+
+          });
+
+      
       });
   };
 
   const rowClick = (item, index) => {
+    const f = options.filter((v) => v.value === item.account)[0];
+    setAccount({ ...f });
+    // console.log(f)
     setOpen(true);
     setEditedRow(item);
     setEditedIndex(index);
@@ -188,6 +221,16 @@ export default function Mortgages() {
         <Modal.Header>編輯房貸</Modal.Header>
         <Modal.Content>
           <Form>
+
+          <Form.Select
+              fluid
+              label="帳戶"
+              name="account"
+              options={mortgageOptions}
+              onChange={selectChange}
+              value={editedRow.account}
+            />
+
             <Form.Field>
               <label>日期</label>
               <input
@@ -216,14 +259,7 @@ export default function Mortgages() {
               />
             </Form.Field>
 
-            <Form.Select
-              fluid
-              label="帳戶"
-              name="account"
-              options={options}
-              onChange={selectChange}
-              value={editedRow.account}
-            />
+            
           </Form>
         </Modal.Content>
         <Modal.Actions>
