@@ -68,12 +68,18 @@ export default function Mortgages() {
   // 下拉選項輸入
   const selectChange = (e, obj) => {
     const f = options.filter((v) => v.value === obj.value)[0];
-    // console.log(f)
-    setAccount({ id: f.key, balance: f.balance });
+    console.log(f);
+    // setAccount({ id: f.key, balance: f.balance });
+    setAccount({ ...f });
     setEditedRow({ ...editedRow, [obj.name]: obj.value });
   };
 
   const saveRow = () => {
+    // 由於無法直接在陣列中比對物件，
+    // 因此必須先簡化這個含有許多物件的陣列，
+    // 成為只含有單一欄位的陣列，再做尋找比對。
+    // 其中欄位的內容可為字串、數字這種基礎型別的值。
+
     // 新增
     if (editedIndex === -1) {
       console.log(account);
@@ -84,11 +90,22 @@ export default function Mortgages() {
         interest: Number(editedRow.interest),
       };
       dbCol.add(item).then((doc) => {
+        const newBalance = account.balance * 1 + editedRow.basic * 1;
         // 更新帳戶餘額
         dbColAcc
-          .doc(account.id)
-          .update({ balance: account.balance * 1 + editedRow.basic * 1 })
+          .doc(account.key)
+          .update({ balance: newBalance })
           .then(() => {
+            const newAccounts = options.slice();
+            // 先簡化 options 這個物件陣列
+            const newArr = options.map((obj) => obj.key);
+            const index = newArr.indexOf(account.key);          
+            Object.assign(newAccounts[index], {
+              ...account,
+              balance: newBalance,
+            });
+            setOptions(newAccounts);
+
             setRows([...rows, { ...item, id: doc.id }]);
             setEditedRow(defaultRow);
             setOpen(false);
@@ -115,7 +132,7 @@ export default function Mortgages() {
   };
 
   const deleteRow = () => {
-    if (!confirm('確定刪除')) return;
+    // if (!confirm('確定刪除')) return;
     setLoading(true);
     dbCol
       .doc(editedRow.id)
