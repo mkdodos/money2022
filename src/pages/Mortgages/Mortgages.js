@@ -14,8 +14,9 @@ export default function Mortgages() {
   // 帳戶資料
   const [accountData, setAccountData] = useState([]);
 
-  // 房貸支出資料
+  // 房貸支出資料另外複製一份作為篩選用(在新增和刪除時都要同步更新這二份資料)
   const [mortgageData, setMorgageData] = useState([]);
+  const [mortgageDataCopy, setMorgageDataCopy] = useState([]);
 
   // 作用中帳戶
   const [activeAccount, setActiveAccount] = useState();
@@ -37,48 +38,91 @@ export default function Mortgages() {
 
   useEffect(() => {
     setAccountData(accounts);
+    // 設定原始資料
     setMorgageData(mortgages);
+    setMorgageDataCopy(mortgages);
   }, []);
 
+  useEffect(() => {
+    // const filterData = mortgageData
+    //   .slice()
+    //   .filter((obj) => obj.account === activeAccount?.name);
+    // setMorgageData(filterData);
+    // setMorgageData(mortgages);
+  }, [activeAccount]);
+
+  // 點擊帳戶
   const handleAccountClick = (item, index) => {
-    // console.log(item);
-    setActiveAccount({ ...item, index });
+    // 設定作用中帳戶和索引
+    setActiveAccount({ ...item, index });    
+    setMorgageData(mortgageDataCopy.filter((obj) => obj.account === item.name));   
+  };
+
+  const deleteRow = () => {
+    // 計算新的帳戶餘額
+    const newBalance = activeAccount.balance * 1 + editedRow.basic * 1;
+    updateBalance(newBalance);
+
+    setMorgageData(mortgageData.filter((obj) => obj.id !== editedRow.id));
+    setMorgageDataCopy(
+      mortgageDataCopy.filter((obj) => obj.id !== editedRow.id)
+    );
+   
+    setOpen(false);
   };
 
   // 一般文字輸入
   const inputChange = (e) => {
+    // 設定編輯列的值
     setEditedRow({ ...editedRow, [e.target.name]: e.target.value });
   };
 
   // 儲存
   const saveRow = () => {
+    if (editedIndex > -1) {
+    } else {
+      createRow();
+    }
+  };
+
+  const createRow = () => {
+    // 將新的值加入陣列
     const newRow = { ...editedRow, account: activeAccount.name, id: uuidv4() };
-    setMorgageData([...mortgageData, newRow]);
+    setMorgageData([newRow, ...mortgageData]);
+    setMorgageDataCopy([newRow, ...mortgageDataCopy]);
 
-    // 更新帳戶餘額
+    // 計算新的帳戶餘額
     const newBalance = activeAccount.balance * 1 - editedRow.basic * 1;
+    updateBalance(newBalance);
 
-    
+    setOpen(false);
+    setEditedRow(defaultRow);
+  };
 
+  const updateBalance = (balance) => {
     // 複製一份帳戶資料
     const newAccountData = accountData.slice();
     // 更新該筆作用中帳戶的餘額
     Object.assign(newAccountData[activeAccount.index], {
       ...activeAccount,
-      balance: newBalance,
+      balance,
     });
 
     // 將資料寫入原資料
     setAccountData(newAccountData);
 
     // 更新作用中帳戶的餘額,再下次新增支出時計算餘額才會正確
-    setActiveAccount({ ...activeAccount, balance: newBalance });
-
-    console.log(activeAccount.balance);
-    setOpen(false);
-    setEditedRow(defaultRow);
+    setActiveAccount({ ...activeAccount, balance });
   };
 
+  // 點擊表格列
+  const tableRowClick = (item, index) => {
+    // 設定編輯列的值
+    setEditedRow(item);
+    setEditedIndex(index);
+    setOpen(true);
+    console.log(item);
+  };
   return (
     <div>
       {/* 編輯視窗 */}
@@ -139,6 +183,7 @@ export default function Mortgages() {
         </Modal.Actions>
       </Modal>
 
+      {/* 帳戶 */}
       <Grid columns={2}>
         <Grid.Row>
           {accountData.map((obj, index) => (
@@ -166,6 +211,8 @@ export default function Mortgages() {
                 color="yellow"
                 onClick={() => {
                   setOpen(true);
+                  setEditedIndex(-1);
+                  setEditedRow(defaultRow);
                 }}
               >
                 ADD
@@ -174,7 +221,7 @@ export default function Mortgages() {
           </Grid.Column>
         </Grid.Row>
       </Grid>
-
+      {/* 表格 */}
       <Table celled unstackable>
         <Table.Header>
           <Table.Row>
@@ -187,7 +234,7 @@ export default function Mortgages() {
 
         <Table.Body>
           {mortgageData.map((row, index) => (
-            <Table.Row key={row.id}>
+            <Table.Row key={row.id} onClick={() => tableRowClick(row, index)}>
               <Table.Cell>{row.date}</Table.Cell>
               <Table.Cell>{row.basic}</Table.Cell>
               <Table.Cell>{row.interest}</Table.Cell>

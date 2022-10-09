@@ -29,6 +29,13 @@ const mortgageData=
     "basic": "247",
     "interest":"123"
   },
+  {
+    "id": "3",
+    "account":"房貸B",
+    "date":"2022-10-08",
+    "basic": "10",
+    "interest":"13"
+  },
 ]
 
 
