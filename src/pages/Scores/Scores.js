@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { db } from '../../utils/firebase';
 import { Loader } from 'semantic-ui-react';
 import List from './components/List';
+import Clock from './components/Clock';
 
 export default function Scores() {
   const styleGrid = {
@@ -199,9 +200,11 @@ export default function Scores() {
     setYear(row.year);
     setSelectedRow(row);
   };
-
+/*************************************************/
   return (
     <>
+    <Clock/>
+
       {/* {typeof year} */}
       <List
         year={year}
