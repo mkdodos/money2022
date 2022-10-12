@@ -11,8 +11,11 @@ import {
   Form,
 } from 'semantic-ui-react';
 export default function Mortgages() {
-  // 帳戶資料
+  // 房貸帳戶資料
   const [accountData, setAccountData] = useState([]);
+
+  // 銀行帳戶資料
+  const [bankData, setBankData] = useState({});
 
   // 房貸支出資料另外複製一份作為篩選用(在新增和刪除時都要同步更新這二份資料)
   const [mortgageData, setMorgageData] = useState([]);
@@ -37,25 +40,22 @@ export default function Mortgages() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setAccountData(accounts);
+    setAccountData(
+      accounts.filter((obj) => obj.name === '房貸A' || obj.name === '房貸B')
+    );
+
+    setBankData(accounts.filter((obj) => obj.name === '土銀')[0]);
+
     // 設定原始資料
     setMorgageData(mortgages);
     setMorgageDataCopy(mortgages);
   }, []);
 
-  useEffect(() => {
-    // const filterData = mortgageData
-    //   .slice()
-    //   .filter((obj) => obj.account === activeAccount?.name);
-    // setMorgageData(filterData);
-    // setMorgageData(mortgages);
-  }, [activeAccount]);
-
   // 點擊帳戶
   const handleAccountClick = (item, index) => {
     // 設定作用中帳戶和索引
-    setActiveAccount({ ...item, index });    
-    setMorgageData(mortgageDataCopy.filter((obj) => obj.account === item.name));   
+    setActiveAccount({ ...item, index });
+    setMorgageData(mortgageDataCopy.filter((obj) => obj.account === item.name));
   };
 
   const deleteRow = () => {
@@ -63,11 +63,13 @@ export default function Mortgages() {
     const newBalance = activeAccount.balance * 1 + editedRow.basic * 1;
     updateBalance(newBalance);
 
+    updateBank('delete');
+
     setMorgageData(mortgageData.filter((obj) => obj.id !== editedRow.id));
     setMorgageDataCopy(
       mortgageDataCopy.filter((obj) => obj.id !== editedRow.id)
     );
-   
+
     setOpen(false);
   };
 
@@ -81,6 +83,7 @@ export default function Mortgages() {
   const saveRow = () => {
     if (editedIndex > -1) {
     } else {
+      // 新增
       createRow();
     }
   };
@@ -94,6 +97,8 @@ export default function Mortgages() {
     // 計算新的帳戶餘額
     const newBalance = activeAccount.balance * 1 - editedRow.basic * 1;
     updateBalance(newBalance);
+
+    updateBank('create');
 
     setOpen(false);
     setEditedRow(defaultRow);
@@ -113,6 +118,35 @@ export default function Mortgages() {
 
     // 更新作用中帳戶的餘額,再下次新增支出時計算餘額才會正確
     setActiveAccount({ ...activeAccount, balance });
+  };
+
+  // 更新銀行餘額
+  const updateBank = (action) => {
+    switch (action) {
+      case 'create':
+        setBankData((prev) => {
+          return {
+            ...prev,
+            balance:
+              Number(prev.balance) -
+              Number(editedRow.basic) -
+              Number(editedRow.interest),
+          };
+        });
+        break;
+
+      case 'delete':
+        setBankData((prev) => {
+          return {
+            ...prev,
+            balance:
+              Number(prev.balance) +
+              Number(editedRow.basic) +
+              Number(editedRow.interest),
+          };
+        });
+        break;
+    }
   };
 
   // 點擊表格列
@@ -202,7 +236,10 @@ export default function Mortgages() {
           ))}
         </Grid.Row>
         <Grid.Row>
-          <Grid.Column></Grid.Column>
+          <Grid.Column>
+            {bankData.name}
+            {bankData.balance}
+          </Grid.Column>
           {/* 新增鈕 */}
           <Grid.Column>
             {activeAccount && (
