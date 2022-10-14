@@ -52,3 +52,8 @@ pages/Balances/index.js
     <Table.Footer></Table.Footer>
   </Table>  
 ``` 
+
+
+日期
+時間
+new Date().toLocaleTimeString()

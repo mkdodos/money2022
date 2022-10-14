@@ -118,40 +118,30 @@ const Refresh = styled.div`
 `;
 
 const AUTHORIZATION_KEY = 'CWB-9428EFB2-0CCE-4FA9-89FB-82EBBBB1415E';
-const LOCATION_NAME = '臺北';
+const LOCATION_NAME = '臺南';
 const LOCATION_NAME_FORECAST = '臺北市';
 
 export default function Weather() {
-  const [weatherElements, setWeatherElements] = useState({
-    TEMP: '',
-    WDSD: '',
-    observationTime: new Date().toLocaleTimeString(),
-  });
+  const [weatherElements, setWeatherElements] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const setCurrentWeather = async () => {
-    setLoading(true);
-    const data = await fetchData();
-    setWeatherElements({
-      ...data,
-      observationTime: new Date().toLocaleTimeString(),
-    });
-    setLoading(false);
-  };
-
   useEffect(() => {
-    setCurrentWeather();
+    // const data = await fetchData();
+    // console.log(data)
+    // setWeatherElements(data);
   }, []);
 
-  // 將取得資料獨立一個函式,之後在有需要的地方再用 async , await 方式設定資料
   const fetchData = () => {
-    return fetch(
+    setLoading(true);
+
+    fetch(
       `https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=${AUTHORIZATION_KEY}&locationName=${LOCATION_NAME}`
     )
       .then((response) => response.json())
       .then((data) => {
         const locationData = data.records.location[0];
-        const elements = locationData.weatherElement.reduce(
+        console.log(locationData.weatherElement);
+        const weatherElements = locationData.weatherElement.reduce(
           (neededElements, item) => {
             if (['WDSD', 'TEMP', 'HUMD'].includes(item.elementName)) {
               neededElements[item.elementName] = item.elementValue;
@@ -161,7 +151,9 @@ export default function Weather() {
           {}
         );
 
-        return elements;
+        // return weatherElements;
+        setWeatherElements(weatherElements);
+        setLoading(false);
       });
   };
 
@@ -184,9 +176,8 @@ export default function Weather() {
         <Rain>
           <RainIcon /> 48%
         </Rain>
-        <Refresh onClick={setCurrentWeather} isLoading={loading}>
-          最後觀測時間：{weatherElements.observationTime}{' '}
-          {loading ? <LoadingIcon /> : <RefreshIcon />}
+        <Refresh onClick={fetchData} isLoading={loading}>
+          最後觀測時間：上午 12:03 {loading ? <LoadingIcon /> : <RefreshIcon />}
         </Refresh>
       </WeatherCard>
       {/* </Container> */}
