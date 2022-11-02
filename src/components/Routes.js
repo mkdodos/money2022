@@ -38,10 +38,14 @@ import Mortgages from '../pages/Mortgages/Mortgages'
 import Weather from '../pages/Weather/Weather'
 import Calendar from '../pages/Calendar/Calendar'
 
+
+import Query from '../pages/Dashboard/Query'
+
 export default function Routes() {
   const {currentUser} = useAuth()
   return (
     <Switch>
+      <Route path="/dashboard/query" exact component={Query} />
       <Route path="/calendar" exact component={Calendar} />
       <Route path="/weather" exact component={Weather} />
       <Route path="/mortgages" exact component={Mortgages} />

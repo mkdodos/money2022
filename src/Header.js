@@ -59,10 +59,11 @@ export default function Header() {
           
 
 
-          {/* <Dropdown.Item>Edit Permissions</Dropdown.Item>
-          <Dropdown.Divider />
-          <Dropdown.Header>Export</Dropdown.Header>
-          <Dropdown.Item>Share</Dropdown.Item> */}
+          <Dropdown.Item as={Link} to="/dashboard/query">查詢</Dropdown.Item>
+         
+         {/* <Dropdown.Divider /> */}
+          {/* <Dropdown.Header>Export</Dropdown.Header> */}
+          {/* <Dropdown.Item>Share</Dropdown.Item> */} 
         </Dropdown.Menu>
       </Dropdown>
 

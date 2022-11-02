@@ -1,6 +1,7 @@
 import ItemList from './components/ItemList';
 import EditForm from './components/EditForm';
 import Accounts from './components/Accounts';
+import Query from './components/Query';
 import { useState, useEffect } from 'react';
 import { db, auth } from '../../utils/firebase';
 import { Button, Grid, Header, Statistic, Dropdown } from 'semantic-ui-react';
@@ -139,6 +140,7 @@ const Balances = () => {
 
       {/* {JSON.stringify(activeAccount?.balance)} */}
 
+<Query/>
       <Grid>
         <Grid.Row>
           <Grid.Column>
