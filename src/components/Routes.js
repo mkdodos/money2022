@@ -41,10 +41,13 @@ import Calendar from '../pages/Calendar/Calendar'
 
 import Query from '../pages/Dashboard/Query'
 
+// import Dashboard from './Dashboard'
+
 export default function Routes() {
   const {currentUser} = useAuth()
   return (
     <Switch>
+      <Route path="/dashboard" exact component={Dashboard} />
       <Route path="/dashboard/query" exact component={Query} />
       <Route path="/calendar" exact component={Calendar} />
       <Route path="/weather" exact component={Weather} />

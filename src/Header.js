@@ -59,6 +59,7 @@ export default function Header() {
           
 
 
+          <Dropdown.Item as={Link} to="/dashboard">Dashboard</Dropdown.Item>
           <Dropdown.Item as={Link} to="/dashboard/query">查詢</Dropdown.Item>
          
          {/* <Dropdown.Divider /> */}
