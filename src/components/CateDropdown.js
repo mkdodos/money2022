@@ -1,11 +1,9 @@
-import {useState,useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import { db } from '../utils/firebase';
-import { Dropdown,Form } from 'semantic-ui-react';
+import { Dropdown, Form } from 'semantic-ui-react';
 import { useAuth } from '../contexts/AuthContext';
 
-
-
-export default function CateDropdown({cate,setCate,onChange}) {
+export default function CateDropdown({ cate, setCate, onChange }) {
   const { currentUser } = useAuth();
   const [rows, setRows] = useState([]);
   const [rowsCopy, setRowsCopy] = useState([]);
@@ -25,17 +23,15 @@ export default function CateDropdown({cate,setCate,onChange}) {
       });
   }, []);
   return (
-    
-      <Form.Select
-     
-        placeholder="Select Cate"
-        // fluid
-        fluid
-        width={8}
-        // selection
-        options={rows}
-       onChange={onChange}
-      />
-   
+    <Form.Select
+      value={cate}
+      placeholder="Select Cate"
+      // fluid
+      fluid
+      width={8}
+      // selection
+      options={rows}
+      onChange={onChange}
+    />
   );
 }

@@ -16,9 +16,11 @@ export default function Query() {
   const [searchText, setSearchText] = useState('');
   useEffect(() => {
     db.collection('balances')
-      .limit(10)
+      
       .orderBy('date', 'desc')
       .where('user', '==', currentUser.email)
+      .where('date', '>=', `2012-01-01`)
+      .where('date', '<=', `2022-12-31`)
       .get()
       .then((snapshot) => {
         const data = snapshot.docs.map((doc) => {
@@ -31,24 +33,31 @@ export default function Query() {
   }, []);
 
   const cateQuery = (e, obj) => {
-    db.collection('balances')
-      .orderBy('date', 'desc')
-      .where('cate', '==', obj.value)
-      .get()
-      .then((snapshot) => {
-        const data = snapshot.docs.map((doc) => {
-          return { ...doc.data(), id: doc.id };
-        });
 
-        setRows(data);
-        setRowsCopy(data);
-      });
 
-    console.log(obj.value);
+    setRows(
+      rowsCopy.filter((row) => row.cate?.includes(obj.value))
+    );
+
+    setCate(obj.value)
+    // db.collection('balances')
+    //   .orderBy('date', 'desc')
+    //   .where('cate', '==', obj.value)
+    //   .get()
+    //   .then((snapshot) => {
+    //     const data = snapshot.docs.map((doc) => {
+    //       return { ...doc.data(), id: doc.id };
+    //     });
+
+    //     setRows(data);
+    //     setRowsCopy(data);
+    //   });
+
+    // console.log(obj.value);
   };
   return (
     <div>
-      {cate}
+      
       <SearchBar
         cateQuery={cateQuery}
         cate={cate}

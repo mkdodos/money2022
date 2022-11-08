@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Form, Input, Button, Grid, Dropdown } from 'semantic-ui-react';
+import { Form, Input, Button, Grid, Dropdown, Icon } from 'semantic-ui-react';
 
 import CateDropdown from '../../../components/CateDropdown';
 
@@ -15,68 +15,41 @@ export default function SearchBar({
 }) {
   return (
     <div>
-      {/* <Grid>
-        <Grid.Row columns={2}>
-          <Grid.Column>
-            <CateDropdown onChange={cateQuery} cate={cate} setCate={setCate} />
-          </Grid.Column>
-          <Grid.Column>
-            <Input
-              fluid
-              value={searchText}
-              onChange={(e) => {
-                setSearchText(e.target.value);
-              }}
-            />
-          </Grid.Column>
-        </Grid.Row>
-        <Grid.Row columns={2}>
-          <Grid.Column>
-            <Button
-              onClick={() => {
-                setRows(rowsCopy);
-              }}
-            >
-              Clear
-            </Button>
-          </Grid.Column>
-          <Grid.Column>
-            <Button
-              color="olive"
-              onClick={() => {
-                setRows(
-                  rowsCopy.filter((row) => row.title.includes(searchText))
-                );
-              }}
-            >
-              Query
-            </Button>
-          </Grid.Column>
-        </Grid.Row>
-      </Grid> */}
-{/* <CateDropdown/> */}
+     
+  
       <Form unstackable>
-
-
-      <Form.Group >
+        <Form.Group>
           <Form.Input
-          width={8}
-          fluid
-            // control={Input}
-            // label='First name'
-            placeholder='First name'
+            width={8}
+            fluid
+            value={searchText}
+            placeholder="Search..."
+            onChange={(e) => {
+              setSearchText(e.target.value);
+              setRows(
+                rowsCopy.filter((row) => row.title.includes(e.target.value))
+              );
+            }}
           />
-        
-          <CateDropdown onChange={cateQuery}/>
+
+          <CateDropdown onChange={cateQuery} cate={cate} />
         </Form.Group>
 
-
-
-      
-        {/* <Form.Checkbox label="I agree to the Terms and Conditions" /> */}
-        {/* <Button  type="submit">Submit</Button> */}
-        <Button  type="submit" style={{marginTop:'5px'}}>Submit</Button>
-        <Button floated='right' style={{marginTop:'5px'}} type="submit">Submit</Button>
+        <Button
+         basic
+         color='teal'
+          onClick={() => {
+            setSearchText('')
+            setCate('');
+            setRows(rowsCopy)
+          }}
+          style={{ marginTop: '5px',backgroundColor:'#f4bfdb',color:'#b27092' }}
+        >
+          <Icon name='redo' /> 重設
+        </Button>
+        <Button floated="right" style={{ marginTop: '5px' }} type="submit">
+          備用
+        </Button>
       </Form>
 
       {/* <Form>
