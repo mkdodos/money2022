@@ -1,9 +1,10 @@
 import React from 'react';
 import { Table, Header, Label } from 'semantic-ui-react';
 
-export default function TableRow({ row }) {
+export default function TableRow({ row,onClick }) {
   return (
-    <Table.Row>
+    // 點選時跳編輯視窗,將列的值傳過去
+    <Table.Row onClick={onClick}>
       <Table.Cell>
         <Header as="h4">{row.title}</Header>
         <span>{row.date} </span>

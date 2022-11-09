@@ -140,7 +140,7 @@ const Balances = () => {
 
       {/* {JSON.stringify(activeAccount?.balance)} */}
 
-<Query/>
+
       <Grid>
         <Grid.Row>
           <Grid.Column>
