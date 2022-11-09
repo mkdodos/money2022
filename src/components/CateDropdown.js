@@ -29,7 +29,7 @@ export default function CateDropdown({ cate, setCate, onChange,label }) {
       label={label}
       // fluid
       fluid
-      width={8}
+      
       // selection
       options={rows}
       onChange={onChange}
