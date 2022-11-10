@@ -14,6 +14,8 @@ export default function Query() {
   const [defaultItem, SetDefaultItem] = useState({
     cate: '',
     title: '',
+    income:'',
+    expense:''
   });
   const [editedRow, setEditedRow] = useState(defaultItem);
 
@@ -32,8 +34,8 @@ export default function Query() {
 
       .orderBy('date', 'desc')
       .where('user', '==', currentUser.email)
-      .where('date', '>=', `2019-01-01`)
-      .where('date', '<=', `2022-03-31`)
+      // .where('date', '>=', `2019-01-01`)
+      // .where('date', '<=', `2022-03-31`)
       .get()
       .then((snapshot) => {
         const data = snapshot.docs.map((doc) => {
@@ -49,6 +51,8 @@ export default function Query() {
     setRows(rowsCopy.filter((row) => row.cate?.includes(obj.value)));
 
     setCate(obj.value);
+
+
     // db.collection('balances')
     //   .orderBy('date', 'desc')
     //   .where('cate', '==', obj.value)
@@ -77,6 +81,19 @@ export default function Query() {
       });
     //  const index = rows.indexOf(editedRow);
   };
+
+
+  const handleRowClick = (row) => {
+    // console.log(row);
+    // 原始資料可能只有支出或收入,在欄位 onChange 時,會出現錯誤,在 defaultItem 有包含全部預設值
+    // 一併設定給 editedRow , 即可解決
+    setEditedRow({...defaultItem,...row});
+    const index = rows.indexOf(row);
+    setEditedIndex(index);
+    setOpen(true);
+  };
+
+
   return (
     <div>
       <Modal
@@ -114,13 +131,7 @@ export default function Query() {
               <TableRow
                 row={row}
                 key={row.id}
-                onClick={() => {
-                  console.log('edit');
-                  setEditedRow(row);
-                  const index = rows.indexOf(row);
-                  setEditedIndex(index);
-                  setOpen(true);
-                }}
+                onClick={()=>handleRowClick(row)}
               />
             );
           })}
