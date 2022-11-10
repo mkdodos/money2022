@@ -32,7 +32,7 @@ export default function SearchBar({
             }}
           />
 
-          <CateDropdown onChange={cateQuery} cate={cate} />
+          <CateDropdown onChange={cateQuery} cate={cate} width={8} />
         </Form.Group>
 
         <Button

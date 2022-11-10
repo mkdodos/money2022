@@ -17,7 +17,12 @@ export default function Query() {
   });
   const [editedRow, setEditedRow] = useState(defaultItem);
 
-  const [open,setOpen]=useState(false);
+  // 點選列時,記錄該列的索引,在儲存時將資料更新至該列
+  const [editedIndex, setEditedIndex] = useState(-1);
+
+  const [open, setOpen] = useState(false);
+  // 資料更新時,做為按鈕顯示載入中的依據
+  const [loading, setLoading] = useState(false);
 
   const [cate, setCate] = useState('');
   const [rowsCopy, setRowsCopy] = useState([]);
@@ -59,15 +64,37 @@ export default function Query() {
 
     // console.log(obj.value);
   };
+
+  const saveRow = () => {
+    setLoading(true)
+    db.collection('balances')
+      .doc(editedRow.id)
+      .update(editedRow)
+      .then(() => {
+        Object.assign(rows[editedIndex], editedRow);
+        setLoading(false)
+        setOpen(false);
+      });
+    //  const index = rows.indexOf(editedRow);
+  };
   return (
     <div>
-      <Modal open={open} closeIcon onClose={()=>{
-        setOpen(false)
-      }}>
+      <Modal
+        open={open}
+        closeIcon
+        onClose={() => {
+          setOpen(false);
+        }}
+      >
         <Modal.Header>編輯</Modal.Header>
         <Modal.Content>
-          <EditForm editedRow={editedRow} />
+          <EditForm editedRow={editedRow} setEditedRow={setEditedRow} />
         </Modal.Content>
+        <Modal.Actions>
+          <Button color="teal" onClick={saveRow} loading={loading}>
+            儲存
+          </Button>
+        </Modal.Actions>
       </Modal>
 
       <SearchBar
@@ -90,7 +117,9 @@ export default function Query() {
                 onClick={() => {
                   console.log('edit');
                   setEditedRow(row);
-                  setOpen(true)
+                  const index = rows.indexOf(row);
+                  setEditedIndex(index);
+                  setOpen(true);
                 }}
               />
             );

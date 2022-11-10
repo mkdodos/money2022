@@ -4,11 +4,19 @@ import { Form, FormInput, Input, Label } from 'semantic-ui-react';
 
 import CateDropdown from '../../../components/CateDropdown';
 
-export default function EditForm({ editedRow }) {
+export default function EditForm({ editedRow, setEditedRow }) {
+  const handleInputChange = (e) => {
+    setEditedRow({ ...editedRow, title: e.target.value });
+    // console.log(e.target.value);
+  };
   return (
     <Form unstackable>
-      <CateDropdown label="類別" />
-      <Form.Input value={editedRow?.title} label="項目" />
+      <CateDropdown cate={editedRow.cate} label="類別" />
+      <Form.Input
+        onChange={handleInputChange}
+        value={editedRow?.title}
+        label="項目"
+      />
 
       <Form.Group>
         <Form.Input value={editedRow?.income} width={8} label="收入金額" />
