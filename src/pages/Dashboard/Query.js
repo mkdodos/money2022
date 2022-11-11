@@ -6,6 +6,7 @@ import { Table, Button, Form, Input, Search, Modal } from 'semantic-ui-react';
 import TableRow from './components/TableRow';
 import SearchBar from './components/SearchBar';
 import EditForm from './components/EditForm';
+import MyPhoto from './components/MyPhoto';
 
 export default function Query() {
   const { currentUser } = useAuth();
@@ -34,8 +35,8 @@ export default function Query() {
 
       .orderBy('date', 'desc')
       .where('user', '==', currentUser.email)
-      // .where('date', '>=', `2019-01-01`)
-      // .where('date', '<=', `2022-03-31`)
+      .where('date', '>=', `2019-01-01`)
+      .where('date', '<=', `2022-03-31`)
       .get()
       .then((snapshot) => {
         const data = snapshot.docs.map((doc) => {
@@ -49,24 +50,7 @@ export default function Query() {
 
   const cateQuery = (e, obj) => {
     setRows(rowsCopy.filter((row) => row.cate?.includes(obj.value)));
-
-    setCate(obj.value);
-
-
-    // db.collection('balances')
-    //   .orderBy('date', 'desc')
-    //   .where('cate', '==', obj.value)
-    //   .get()
-    //   .then((snapshot) => {
-    //     const data = snapshot.docs.map((doc) => {
-    //       return { ...doc.data(), id: doc.id };
-    //     });
-
-    //     setRows(data);
-    //     setRowsCopy(data);
-    //   });
-
-    // console.log(obj.value);
+    setCate(obj.value);    
   };
 
   const saveRow = () => {
@@ -105,6 +89,7 @@ export default function Query() {
       >
         <Modal.Header>編輯</Modal.Header>
         <Modal.Content>
+          <MyPhoto id={editedRow?.id}/>
           <EditForm editedRow={editedRow} setEditedRow={setEditedRow} />
         </Modal.Content>
         <Modal.Actions>

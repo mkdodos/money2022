@@ -1,6 +1,8 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
+import 'firebase/storage';
+
 const firebaseConfig = {
   apiKey: "AIzaSyDUSJ5yzHvTCCSQTuONsPtOBGodjamReHc",
   authDomain: "money2022-173b9.firebaseapp.com",
@@ -26,6 +28,9 @@ const firebaseConfig_dada = {
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+
+const storage = firebase.storage();
+
 const app_dada = firebase.initializeApp(firebaseConfig_dada,"dada");
 const db_dada = app_dada.firestore();
 
@@ -33,4 +38,4 @@ const db_dada = app_dada.firestore();
 const auth = app.auth();
 
 // export default firebase;
-export { db,db_dada, auth };
+export { db,db_dada, auth,storage };
