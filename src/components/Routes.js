@@ -64,6 +64,8 @@ export default function Routes() {
 
       <Route path={"/cates/edit/:id"} exact component={EditCate} />
 
+      <Route path={"/cates/insert"} exact component={EditCate} />
+
 
 
       <Route path="/tictactoe" component={TicTacToe}/>

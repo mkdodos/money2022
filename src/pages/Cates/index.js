@@ -1,13 +1,16 @@
-import { useAuth } from "../../contexts/AuthContext";
-import { useState, useEffect } from "react";
+import { useAuth } from '../../contexts/AuthContext';
+import { useState, useEffect } from 'react';
 
-import List from "./components/List";
+import List from './components/List';
+
+import { Button } from 'semantic-ui-react';
+
+import { Link } from 'react-router-dom';
 
 import { db } from '../../utils/firebase';
 
 export default function Cates() {
-
-  const schema = [   
+  const schema = [
     {
       name: 'name',
       text: '名稱',
@@ -20,15 +23,13 @@ export default function Cates() {
     },
   ];
 
-
-
-  const {currentUser} = useAuth()
+  const { currentUser } = useAuth();
 
   const [rows, setRows] = useState([]);
   useEffect(() => {
     db.collection('cates')
-    .where('user','==',currentUser.email)
-    .orderBy('prior')
+      .where('user', '==', currentUser.email)
+      .orderBy('prior')
       .get()
       .then((snapshot) => {
         const data = snapshot.docs.map((doc) => {
@@ -38,10 +39,16 @@ export default function Cates() {
       });
   }, []);
 
+  const handleInsert = () => {
+    console.log('insert');
+  };
 
   return (
     <>
-    <List rows={rows} schema={schema}></List>
+      <Link to={`/cates/insert`}>新增</Link>
+
+      {/* <Button onClick={handleInsert}>新增</Button> */}
+      <List rows={rows} schema={schema}></List>
     </>
-  )
+  );
 }

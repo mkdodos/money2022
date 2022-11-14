@@ -1,5 +1,5 @@
 import { useHistory, useParams } from 'react-router-dom';
-
+import { useAuth } from '../../../contexts/AuthContext';
 import { useEffect, useState } from 'react';
 
 import { db } from '../../../utils/firebase';
@@ -7,9 +7,10 @@ import { db } from '../../../utils/firebase';
 import { Form, Button } from 'semantic-ui-react';
 
 export default function EditCate() {
+
+  const { currentUser } = useAuth();
   const history = useHistory();
   const { id } = useParams();
-
 
   const defalutItem = {
     name: '',
@@ -19,6 +20,10 @@ export default function EditCate() {
   const [item, setItem] = useState(defalutItem);
 
   useEffect(() => {
+    // if(!id){
+    //   console.log('abc');
+    //   return;
+    // }
     var docRef = db.collection('cates').doc(id);
 
     docRef
@@ -35,39 +40,34 @@ export default function EditCate() {
       .catch((error) => {
         console.log('Error getting document:', error);
       });
-
-   
   }, []);
 
+  // 表單輸入時,設定 item 的值
+  const handleChange = (e) => {
+    setItem({ ...item, [e.target.name]: e.target.value });
+  };
 
-// 表單輸入時,設定 item 的值
-const handleChange = (e) => {
-  setItem({ ...item, [e.target.name]: e.target.value });
-};
+  const handleSave = () => {
+    if (id) {
+      // 將順序從文字轉成數字,排序看起來才會正常
+      var docRef = db.collection('cates').doc(id);
+      docRef.update({ ...item, prior: Number(item.prior) }).then(() => {
+        history.push('/cates');
+      });
+    } else {
+      db.collection('cates')
+        .add({ ...item, prior: Number(item.prior),user:currentUser.email })
+        .then(() => {
+          history.push('/cates');
+        });
+    }
+  };
 
-const handleSave =  () => {
-
-  var docRef = db.collection('cates').doc(id);
-
-  // 將順序從文字轉成數字,排序看起來才會正常
-  
-  docRef.update({...item, prior:Number(item.prior)}).then(()=>{
-    history.push('/cates')
-  })
- 
-  
-  
- 
-};
-
-const handleDelete = async () => {
-  // if(contactId)
-  // await ContactService.DeleteContact(item.id)      
-  // history.push('/contacts')
- 
-};
-
-
+  const handleDelete = async () => {
+    // if(contactId)
+    // await ContactService.DeleteContact(item.id)
+    // history.push('/contacts')
+  };
 
   return (
     <>
@@ -84,7 +84,7 @@ const handleDelete = async () => {
         <Form.Field>
           <label>順序</label>
           <input
-          type="number"
+            type="number"
             name="prior"
             placeholder=""
             value={item.prior}
@@ -98,8 +98,6 @@ const handleDelete = async () => {
       </Form>
       {/* <div>{JSON.stringify(item)}</div> */}
     </>
-
-   
 
     // <div>{id}</div>
   );
