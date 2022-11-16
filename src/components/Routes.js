@@ -33,6 +33,8 @@ import Balances2 from '../pages/Balances2/Balances2'
 import EmpBasic from './EmpBasic'
 
 import Scores from '../pages/Scores/Scores'
+import School from '../pages/School'; 
+
 import Mortgages from '../pages/Mortgages/Mortgages'
 
 import Weather from '../pages/Weather/Weather'
@@ -53,6 +55,7 @@ export default function Routes() {
       <Route path="/weather" exact component={Weather} />
       <Route path="/mortgages" exact component={Mortgages} />
       <Route path="/scores" exact component={Scores} />
+      <Route path="/school" exact component={School} />
       <Route path="/balances2" exact component={Balances2} />
       <Route path="/accounts">
         <Accounts />

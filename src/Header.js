@@ -105,6 +105,16 @@ export default function Header() {
 
       <Menu.Item
         as={Link}
+        to="/school"
+        name="school"
+        onClick={handleClick}
+        active={activeItem === 'school'}
+      >
+        學校
+      </Menu.Item>
+
+      <Menu.Item
+        as={Link}
         to="/balances"
         name="balances"
         onClick={handleClick}
