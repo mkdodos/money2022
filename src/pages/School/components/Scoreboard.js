@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
-import { Table, Icon, Form, Button } from 'semantic-ui-react';
+import {
+  Table,
+  Icon,
+  Form,
+  Button,
+  Modal,
+  Input,
+  Message,
+  Header,
+  Segment,
+  Divider,
+} from 'semantic-ui-react';
 export default function Scoreboard() {
   let data = [
     {
@@ -38,17 +49,31 @@ export default function Scoreboard() {
     // return a.society<b.society;
   });
   const [rows, setRows] = useState(data);
-  const [editedRow, setEditedRow] = useState({
+  const defaultItem = {
+    year: '',
+    section: '',
     ch: '',
     en: '',
     math: '',
     nature: '',
     society: '',
-  });
+  };
+  const [editedRow, setEditedRow] = useState(defaultItem);
   const [editedIndex, setEditedIndex] = useState(-1);
+  const [open, setOpen] = useState(false);
   // console.log(data);
   return (
     <div>
+      <Button
+        color="teal"
+        onClick={() => {
+          setEditedIndex(-1);
+          setOpen(true);
+          setEditedRow(defaultItem);
+        }}
+      >
+        新增
+      </Button>
       <Table striped unstackable>
         <Table.Header>
           <Table.Row>
@@ -90,6 +115,7 @@ export default function Scoreboard() {
                   onClick={() => {
                     setEditedRow(row);
                     setEditedIndex(index);
+                    setOpen(true);
                   }}
                 >
                   <Icon name="edit" />
@@ -99,78 +125,135 @@ export default function Scoreboard() {
           })}
         </Table.Body>
       </Table>
-      <Form>
-        <Form.Field inline>
-          <label>國語</label>
-          <input
-            value={editedRow.ch}
-            onChange={(e) => {
-              setEditedRow({ ...editedRow, ch: e.target.value });
-            }}
-          />
-        </Form.Field>
-        <Form.Field inline>
-          <label>英文</label>
-          <input
-            value={editedRow.en}
-            onChange={(e) => {
-              setEditedRow({ ...editedRow, en: e.target.value });
-            }}
-          />
-        </Form.Field>
-        <Form.Field inline>
-          <label>數學</label>
-          <input
-            value={editedRow.math}
-            onChange={(e) => {
-              setEditedRow({ ...editedRow, math: e.target.value });
-            }}
-          />
-        </Form.Field>
-        <Form.Field inline>
-          <label>自然</label>
-          <input
-            value={editedRow.nature}
-            onChange={(e) => {
-              setEditedRow({ ...editedRow, nature: e.target.value });
-            }}
-          />
-        </Form.Field>
-        <Form.Field inline>
-          <label>社會</label>
-          <input
-            value={editedRow.society}
-            onChange={(e) => {
-              setEditedRow({ ...editedRow, society: e.target.value });
-            }}
-          />
-        </Form.Field>
-        <Button
-          onClick={() => {
-            const newRows = rows.slice();
-            // const newRow = {
-            //   ...row,
-            //   en: 258,
-            //   total:
-            //     row.ch + 258 + row.math + row.nature + row.society,
-            // };
-            // newRow.total =
-            // row.ch + 258 + row.math + row.nature + row.society,
+      <Modal closeIcon open={open} onClose={() => setOpen(false)}>
+        <Modal.Header>
+          編輯{editedRow.year}-{editedRow.section}
+        </Modal.Header>
+        <Modal.Content>
+          <Form>
+            <Form.Field inline>
+              <label>年度</label>
+              <input
+                type="number"
+                value={editedRow.year}
+                onChange={(e) => {
+                  setEditedRow({ ...editedRow, year: e.target.value });
+                }}
+              />
+            </Form.Field>
+            <Form.Field inline>
+              <label>期數</label>
+              <input
+                value={editedRow.section}
+                onChange={(e) => {
+                  setEditedRow({ ...editedRow, section: e.target.value });
+                }}
+              />
+            </Form.Field>
 
-            editedRow.total =
-              Number(editedRow.ch) +
-              Number(editedRow.en) +
-              Number(editedRow.math) +
-              Number(editedRow.nature) +
-              Number(editedRow.society);
-            Object.assign(newRows[editedIndex], editedRow);
-            setRows(newRows);
-            console.log(editedRow);
-          }}
-        >
-          儲存
-        </Button>
-      </Form>
+            {/* <Message header="分數" content="" /> */}
+            <Divider horizontal>
+              <Header as="h4">
+                <Icon name="signal" />
+                
+              </Header>
+            </Divider>
+            {/* <Header>分數</Header> */}
+            <Form.Field inline>
+              <label>國語</label>
+              <input
+                type="number"
+                value={editedRow.ch}
+                onChange={(e) => {
+                  setEditedRow({ ...editedRow, ch: e.target.value });
+                }}
+              />
+            </Form.Field>
+
+            <Form.Field inline>
+              <label>英文</label>
+              <input
+                type="number"
+                value={editedRow.en}
+                onChange={(e) => {
+                  setEditedRow({ ...editedRow, en: e.target.value });
+                }}
+              />
+            </Form.Field>
+
+            <Form.Field inline>
+              <label>數學</label>
+              <input
+                type="number"
+                value={editedRow.math}
+                onChange={(e) => {
+                  setEditedRow({ ...editedRow, math: e.target.value });
+                }}
+              />
+            </Form.Field>
+            <Form.Field inline>
+              <label>自然</label>
+              <input
+                type="number"
+                value={editedRow.nature}
+                onChange={(e) => {
+                  setEditedRow({ ...editedRow, nature: e.target.value });
+                }}
+              />
+            </Form.Field>
+            <Form.Field inline>
+              <label>社會</label>
+              {/* <Label>a</Label> */}
+              <Input
+                type="number"
+                value={editedRow.society}
+                onChange={(e) => {
+                  setEditedRow({ ...editedRow, society: e.target.value });
+                }}
+              />
+            </Form.Field>
+          </Form>
+        </Modal.Content>
+        <Modal.Actions>
+          <Button
+            primary
+            onClick={() => {
+              const newRows = rows.slice();
+
+              editedRow.total =
+                Number(editedRow.ch) +
+                Number(editedRow.en) +
+                Number(editedRow.math) +
+                Number(editedRow.nature) +
+                Number(editedRow.society);
+              if (editedIndex > -1) {
+                Object.assign(newRows[editedIndex], editedRow);
+                setRows(newRows);
+                setOpen(false);
+              } else {
+                setRows([...rows, { ...editedRow, id: Date.now() }]);
+                setOpen(false);
+              }
+
+              // console.log(editedRow);
+            }}
+          >
+            儲存
+          </Button>
+          <Button
+            color="red"
+            floated="left"
+            onClick={() => {
+              const newRows = rows.slice();
+              newRows.splice(editedIndex, 1);
+              setRows(newRows);
+              setOpen(false);
+            }}
+          >
+            刪除
+          </Button>
+        </Modal.Actions>
+      </Modal>
     </div>
   );
 }
