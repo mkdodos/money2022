@@ -14,6 +14,10 @@ import {
 
 import { db } from '../../../utils/firebase';
 
+import YearSelector from './YearSelector';
+
+import SectionSelector from './SectionSelector';
+
 export default function Scoreboard() {
   const dbCol = db.collection('schoolExams');
   // let data = [
@@ -59,6 +63,9 @@ export default function Scoreboard() {
   const [editedRow, setEditedRow] = useState(defaultItem);
   const [editedIndex, setEditedIndex] = useState(-1);
   const [open, setOpen] = useState(false);
+  const [yearOpen, setYearOpen] = useState(false);
+  const [sectionOpen, setSectionOpen] = useState(false);
+
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -103,7 +110,7 @@ export default function Scoreboard() {
 
   // 刪除
   const deleteRow = () => {
-    setLoading(true)
+    setLoading(true);
     dbCol
       .doc(editedRow.id)
       .delete()
@@ -112,12 +119,25 @@ export default function Scoreboard() {
         newRows.splice(editedIndex, 1);
         setRows(newRows);
         setOpen(false);
-        setLoading(false)
+        setLoading(false);
       });
   };
 
+  const setYear = (y) => {
+    setEditedRow({ ...editedRow, year: y });
+  };
+
+  const setSection = (section) => {
+    setEditedRow({ ...editedRow, section });
+  };
   return (
     <div>
+      <YearSelector open={yearOpen} setOpen={setYearOpen} setYear={setYear} />
+      <SectionSelector
+        open={sectionOpen}
+        setOpen={setSectionOpen}
+        setSection={setSection}
+      />
       <Button
         color="teal"
         onClick={() => {
@@ -183,6 +203,16 @@ export default function Scoreboard() {
         <Modal.Header>編輯</Modal.Header>
         <Modal.Content>
           <Form>
+            {/* <Form.Field inline>
+              <label
+                onClick={() => {
+                  setYearOpen(true);
+                }}
+              >
+                選擇年度
+              </label>
+            </Form.Field> */}
+
             <Form.Field inline>
               <label>年度</label>
               <input
@@ -190,6 +220,9 @@ export default function Scoreboard() {
                 value={editedRow.year}
                 onChange={(e) => {
                   setEditedRow({ ...editedRow, year: e.target.value });
+                }}
+                onClick={() => {
+                  setYearOpen(true);
                 }}
               />
             </Form.Field>
@@ -199,6 +232,10 @@ export default function Scoreboard() {
                 value={editedRow.section}
                 onChange={(e) => {
                   setEditedRow({ ...editedRow, section: e.target.value });
+                }}
+
+                onClick={() => {
+                  setSectionOpen(true);
                 }}
               />
             </Form.Field>
@@ -269,7 +306,12 @@ export default function Scoreboard() {
           <Button loading={loading} primary onClick={saveRow}>
             儲存
           </Button>
-          <Button loading={loading} color="red" floated="left" onClick={deleteRow}>
+          <Button
+            loading={loading}
+            color="red"
+            floated="left"
+            onClick={deleteRow}
+          >
             刪除
           </Button>
         </Modal.Actions>

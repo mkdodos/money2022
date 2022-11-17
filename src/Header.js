@@ -93,7 +93,7 @@ export default function Header() {
         統計
       </Menu.Item>
 
-      <Menu.Item
+      {/* <Menu.Item
         as={Link}
         to="/scores"
         name="scores"
@@ -101,7 +101,7 @@ export default function Header() {
         active={activeItem === 'scores'}
       >
         分數
-      </Menu.Item>
+      </Menu.Item> */}
 
       <Menu.Item
         as={Link}
