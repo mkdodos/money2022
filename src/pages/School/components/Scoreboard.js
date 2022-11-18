@@ -132,7 +132,6 @@ export default function Scoreboard() {
   };
   return (
     <div>
-      <YearSelector open={yearOpen} setOpen={setYearOpen} setYear={setYear} />
       <SectionSelector
         open={sectionOpen}
         setOpen={setSectionOpen}
@@ -200,20 +199,48 @@ export default function Scoreboard() {
         </Table.Body>
       </Table>
       <Modal closeIcon open={open} onClose={() => setOpen(false)}>
+        <YearSelector open={yearOpen} setOpen={setYearOpen} setYear={setYear} year={editedRow.year} />
+
         <Modal.Header>編輯</Modal.Header>
         <Modal.Content>
-          <Form>
-            {/* <Form.Field inline>
-              <label
+          <Form unstackable>
+            <Form.Group widths={2}>
+              <Form.Input
+                placeholder="年度"
+                type="number"
+                value={editedRow.year}
+                onChange={(e) => {
+                  setEditedRow({ ...editedRow, year: e.target.value });
+                }}
+              />
+              <Form.Button
                 onClick={() => {
                   setYearOpen(true);
                 }}
               >
                 選擇年度
-              </label>
-            </Form.Field> */}
+              </Form.Button>
+            </Form.Group>
 
-            <Form.Field inline>
+            <Form.Group widths={2}>
+              <Form.Input placeholder="期數"
+              
+              value={editedRow.section}
+              onChange={(e) => {
+                setEditedRow({ ...editedRow, section: e.target.value });
+              }}
+              
+              />
+              <Form.Button
+                onClick={() => {
+                  setSectionOpen(true);
+                }}
+              >
+                選擇期數
+              </Form.Button>
+            </Form.Group>
+
+            {/* <Form.Field inline>
               <label>年度</label>
               <input
                 type="number"
@@ -221,24 +248,27 @@ export default function Scoreboard() {
                 onChange={(e) => {
                   setEditedRow({ ...editedRow, year: e.target.value });
                 }}
+              />
+              <Form.Button
                 onClick={() => {
                   setYearOpen(true);
                 }}
-              />
-            </Form.Field>
-            <Form.Field inline>
+              >
+                選擇年度
+              </Form.Button>
+            </Form.Field> */}
+            {/* <Form.Field inline>
               <label>期數</label>
               <input
                 value={editedRow.section}
                 onChange={(e) => {
                   setEditedRow({ ...editedRow, section: e.target.value });
                 }}
-
                 onClick={() => {
                   setSectionOpen(true);
                 }}
               />
-            </Form.Field>
+            </Form.Field> */}
 
             {/* <Message header="分數" content="" /> */}
             <Divider horizontal>

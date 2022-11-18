@@ -1,25 +1,36 @@
-import React from 'react';
-import { List, Modal } from 'semantic-ui-react';
-export default function YearSelector({open,setOpen,setYear}) {
+import React, { useState } from 'react';
+import { List, Modal, Label, Button } from 'semantic-ui-react';
+export default function YearSelector({ open, setOpen, setYear,year }) {
   const years = [101, 102, 103];
+  const [thisY, setThisY] = useState('');
   return (
     <div>
-      <Modal open={open}>
+      <Modal open={open} onClose={() => setOpen(false)} closeIcon>
+        <Modal.Header>年度</Modal.Header>
         <Modal.Content>
-          <List horizontal>
+          <List horizontal celled>
             {years.map((y) => {
               return (
                 <List.Item
                   key={y}
                   onClick={() => {
                     console.log(y);
-                    setOpen(false)
-                    setYear(y)
+                    setOpen(false);
+                    setYear(y);
+                    // setThisY(y);
                   }}
                 >
-                  <List.Content>
+                  {/* <Label  horizontal>{y}</Label> */}
+
+                  {y == year ? (
+                    <Button color="teal">{y}</Button>
+                  ) : (
+                    <Button>{y}</Button>
+                  )}
+
+                  {/* <List.Content>
                     <List.Header>{y}</List.Header>
-                  </List.Content>
+                  </List.Content> */}
                 </List.Item>
               );
             })}

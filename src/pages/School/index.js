@@ -4,7 +4,7 @@ import YearSelector from './components/YearSelector'
 export default function index() {
   return (
     <div>
-      <YearSelector/>
+      {/* <YearSelector/> */}
       <Scoreboard/>
       </div>
   )

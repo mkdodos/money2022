@@ -4,7 +4,8 @@ export default function SectionSelector({open,setOpen,setSection}) {
   const sections = ['01', '02'];
   return (
     <div>
-      <Modal open={open}>
+      <Modal open={open} onClose={()=>setOpen(false)}>
+        <Modal.Header>期數</Modal.Header>
         <Modal.Content>
           <List horizontal>
             {sections.map((section) => {
