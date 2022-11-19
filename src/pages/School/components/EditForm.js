@@ -2,6 +2,8 @@ import { useState } from 'react';
 
 import { Modal, Form, Divider, Header, Icon, Button } from 'semantic-ui-react';
 import YearSelector from './YearSelector';
+import SectionSelector from './SectionSelector';
+import TypeSelector from './TypeSelector';
 export default function EditForm({
   open,
   setOpen,
@@ -26,7 +28,7 @@ export default function EditForm({
   return (
     <div>
       <Button
-        color="teal"
+        primary
         onClick={() => {
           setEditedIndex(-1);
           setOpen(true);
@@ -66,21 +68,13 @@ export default function EditForm({
             </Form.Group>
 
             <Form.Group widths={2}>
-              <Form.Input
-                placeholder="期數"
-                value={editedRow.section}
-                onChange={(e) => {
-                  setEditedRow({ ...editedRow, section: e.target.value });
-                }}
-              />
-              <Form.Button
-                onClick={() => {
-                  setSectionOpen(true);
-                }}
-              >
-                選擇期數
-              </Form.Button>
+             
+           
             </Form.Group>
+
+
+            <SectionSelector editedRow={editedRow} setEditedRow={setEditedRow}/>
+            <TypeSelector editedRow={editedRow} setEditedRow={setEditedRow}/>
 
             <Divider horizontal>
               <Header as="h4">

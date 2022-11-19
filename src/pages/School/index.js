@@ -4,6 +4,7 @@ import Scoreboard from './components/Scoreboard';
 import EditForm from './components/EditForm';
 
 import { db } from '../../utils/firebase';
+import { Divider } from 'semantic-ui-react';
 
 export default function index() {
   const defaultItem = {
@@ -101,6 +102,7 @@ export default function index() {
         yearOpen={yearOpen}
         setYearOpen={setYearOpen}
       />
+      <Divider horizontal>考試成績</Divider>
       {/* 資料表格 */}
       <Scoreboard
         rows={rows}
