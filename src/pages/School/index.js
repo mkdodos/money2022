@@ -33,6 +33,13 @@ export default function index() {
       const data = snapshot.docs.map((doc) => {
         return { ...doc.data(), id: doc.id };
       });
+
+      // 資料排序(年度,學期)
+      // data.sort((a, b) => a.year - b.year || a.type - b.type);
+      // data.sort((a, b) => a.year - b.year || a.section - b.section);
+      data.sort(
+        (a, b) => a.year - b.year || a.section - b.section || a.type - b.type
+      );
       setRows(data);
     });
   }, []);

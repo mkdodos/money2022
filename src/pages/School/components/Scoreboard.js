@@ -13,11 +13,8 @@ import {
   Label,
 } from 'semantic-ui-react';
 
-// import { db } from '../../utils/firebase';
 
-// import YearSelector from './YearSelector';
 
-import SectionSelector from './SectionSelector';
 
 export default function Scoreboard({
   rows,
@@ -27,13 +24,7 @@ export default function Scoreboard({
   setEditedRow,
   editedRow,
 }) {
-  // const dbCol = db.collection('schoolExams');
-
-  // data.map((row, i) => {
-  //   data[i].total = row.ch + row.en + row.math + row.nature + row.society;
-  // });
-
-  // const [rows, setRows] = useState([]);
+  
   const defaultItem = {
     year: '',
     section: '',
@@ -43,11 +34,7 @@ export default function Scoreboard({
     nature: '',
     society: '',
   };
-  // const [editedRow, setEditedRow] = useState(defaultItem);
-  // const [editedIndex, setEditedIndex] = useState(-1);
-  // const [open, setOpen] = useState(false);
-  // const [yearOpen, setYearOpen] = useState(false);
-  // const [sectionOpen, setSectionOpen] = useState(false);
+ 
 
   const types = ['期中', '期末'];
 
@@ -106,21 +93,13 @@ export default function Scoreboard({
   };
   return (
     <div>
-      {/* <Button
-        color="teal"
-        onClick={() => {
-          setEditedIndex(-1);
-          setOpen(true);
-          setEditedRow(defaultItem);
-        }}
-      >
-        新增
-      </Button> */}
-      <Table striped unstackable>
+      {/* 在用到 rowSpan 格線要正常,需使用 celled structured */}
+      {/* <Table striped unstackable celled structured selectable> */}
+      <Table  unstackable celled structured selectable>
         <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>學期</Table.HeaderCell>
-            <Table.HeaderCell>
+          <Table.Row textAlign="right">
+            <Table.HeaderCell textAlign="center">學期</Table.HeaderCell>
+            <Table.HeaderCell textAlign="center">
               {' '}
               <Icon name="tree" />
             </Table.HeaderCell>
@@ -143,11 +122,15 @@ export default function Scoreboard({
         <Table.Body>
           {rows.map((row, index) => {
             return (
-              <Table.Row key={row.id}>
-                <Table.Cell>
-                  {row.year}-{row.section}
-                </Table.Cell>
-                <Table.Cell>
+              <Table.Row key={row.id} textAlign="right">
+                {index % 2 == 0 && (
+                  <Table.Cell rowSpan="2" textAlign="center">
+                    {row.year}-{row.section}
+                  </Table.Cell>
+                )}
+
+                <Table.Cell textAlign="center">
+                 
                   <Label color={row.type == 1 ? 'olive' : 'green'}>
                     {types[row.type - 1]}
                   </Label>
@@ -157,8 +140,8 @@ export default function Scoreboard({
                 <Table.Cell>{row.math}</Table.Cell>
                 <Table.Cell>{row.nature}</Table.Cell>
                 <Table.Cell>{row.society}</Table.Cell>
-                <Table.Cell>
-                  <Header as='h4'>{row.total}</Header>
+                <Table.Cell textAlign="right">
+                  <Header as="h4">{row.total}</Header>
                 </Table.Cell>
                 <Table.Cell
                   onClick={() => {
@@ -167,7 +150,8 @@ export default function Scoreboard({
                     setOpen(true);
                   }}
                 >
-                  <Icon name="edit" />
+                  <a href='#'> <Icon name="edit" /></a>
+                 
                 </Table.Cell>
               </Table.Row>
             );
