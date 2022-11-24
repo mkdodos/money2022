@@ -13,7 +13,7 @@ export default function Scores() {
     gridTemplateRows: 'repeat(4, 50px)',
     gap: '5px',
     justifyContent: 'center',
-    marginBottom: '20px',
+    marginBottom: '20px'
   };
 
   const active = {
@@ -66,29 +66,16 @@ export default function Scores() {
       //   dbColScoreDetails.add({ ...schemaScoreDetails, sn: i, year: y,type:'advance' });
       // }
     }
-    // const y = 2022;
-    // dbColScores.add({ ...schemaScores, year: y });
-    // for (let i = 1; i < 25; i++) {
-    //   dbColScoreDetails.add({ ...schemaScoreDetails, sn: i, year: y });
-    // }
-    // for (let i = 1; i < 11; i++) {
-    //   dbColScoreDetails.add({
-    //     ...schemaScoreDetails,
-    //     sn: i,
-    //     year: y,
-    //     type: 'advance',
-    //   });
-    // }
 
     // setLoading(true);
 
-    // dbColScores.where('year','==',2022).get().then((snapshot) => {
+    // dbColScores.get().then((snapshot) => {
     //   snapshot.docs.map((doc) => {
     //     dbColScores.doc(doc.id).delete();
     //   });
     // });
 
-    // dbColScoreDetails.where('year','==',2022).get().then((snapshot) => {
+    // dbColScoreDetails.get().then((snapshot) => {
     //   snapshot.docs.map((doc) => {
     //     dbColScoreDetails.doc(doc.id).delete();
     //   });
@@ -97,7 +84,6 @@ export default function Scores() {
     // 設定分數資料
     dbColScores
       .orderBy('year')
-      // .where('year','==',2022)
       .get()
       .then((snapshot) => {
         const data = snapshot.docs.map((doc, index) => {
@@ -105,6 +91,7 @@ export default function Scores() {
         });
 
         setRows(data);
+        
       });
   }, []);
 
@@ -121,14 +108,15 @@ export default function Scores() {
         });
 
         // 計算分數
-        const basic = data.filter((row) => row.type === 'basic');
-        setRowDetailsBasic(basic);
+        const basic = data.filter(row=>row.type==='basic')
+        setRowDetailsBasic(basic)
         calTotal(basic);
 
-        const advance = data.filter((row) => row.type === 'advance');
-        setRowDetailsAdvance(advance);
+        const advance = data.filter(row=>row.type==='advance')
+        setRowDetailsAdvance(advance)
         calScoreAdvance(advance);
         // setRowDetails(data);
+        
       });
   }, [year]);
 
@@ -147,6 +135,7 @@ export default function Scores() {
     }
   }, [score]);
 
+
   useEffect(() => {
     const index = rows.indexOf(seletedRow);
     if (index !== -1) {
@@ -155,10 +144,7 @@ export default function Scores() {
         .update({ advance: scoreAdvance })
         .then(() => {
           let newScores = rows.slice();
-          Object.assign(newScores[index], {
-            ...seletedRow,
-            advance: scoreAdvance,
-          });
+          Object.assign(newScores[index], { ...seletedRow, advance: scoreAdvance });
           setRows(newScores);
         });
     }
@@ -190,7 +176,7 @@ export default function Scores() {
       .doc(item.id)
       .update({ correct: !item.correct })
       .then(() => {
-        if (item.type === 'basic') {
+        if(item.type==='basic'){
           let newRows = rowDetailsBasic.slice();
           let row = item;
           Object.assign(row, { ...row, correct: !row.correct });
@@ -198,13 +184,14 @@ export default function Scores() {
           calTotal(newRows);
         }
 
-        if (item.type === 'advance') {
+        if(item.type==='advance'){
           let newRows = rowDetailsAdvance.slice();
           let row = item;
           Object.assign(row, { ...row, correct: !row.correct });
           setRowDetailsAdvance(newRows);
           calScoreAdvance(newRows);
         }
+        
       });
   };
 
@@ -213,10 +200,10 @@ export default function Scores() {
     setYear(row.year);
     setSelectedRow(row);
   };
-  /*************************************************/
+/*************************************************/
   return (
     <>
-      <Clock />
+    <Clock/>
 
       {/* {typeof year} */}
       <List

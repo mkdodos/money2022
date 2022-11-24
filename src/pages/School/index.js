@@ -6,6 +6,8 @@ import EditForm from './components/EditForm';
 import { db } from '../../utils/firebase';
 import { Divider } from 'semantic-ui-react';
 
+import Answer from './components/Answer';
+
 export default function index() {
   const defaultItem = {
     year: '',
@@ -92,6 +94,7 @@ export default function index() {
 
   return (
     <div>
+      <Answer/>
       {/* 編輯表單 */}
       <EditForm
         open={open}

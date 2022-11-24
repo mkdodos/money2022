@@ -28,13 +28,14 @@ export default function EditForm({
   return (
     <div>
       <Button
-        primary
+      basic
+        color='teal'
         onClick={() => {
           setEditedIndex(-1);
           setOpen(true);
           setEditedRow(defaultItem);
         }}
-      >
+      ><Icon name='plus'/>
         新增
       </Button>
 

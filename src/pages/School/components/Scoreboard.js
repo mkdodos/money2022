@@ -93,9 +93,10 @@ export default function Scoreboard({
   };
   return (
     <div>
-      {/* 在用到 rowSpan 格線要正常,需使用 celled structured */}
-      {/* <Table striped unstackable celled structured selectable> */}
-      <Table  unstackable celled structured selectable>
+      {/* 表格使用 celled , 用到 rowSpan 的欄位,有的列會沒有出現格線,需加上 structured */}
+      {/* <Table striped unstackable celled structured  > */}
+      {/* <Table  unstackable celled structured selectable> */}
+      <Table  unstackable  >
         <Table.Header>
           <Table.Row textAlign="right">
             <Table.HeaderCell textAlign="center">學期</Table.HeaderCell>
@@ -124,7 +125,7 @@ export default function Scoreboard({
             return (
               <Table.Row key={row.id} textAlign="right">
                 {index % 2 == 0 && (
-                  <Table.Cell rowSpan="2" textAlign="center">
+                  <Table.Cell  rowSpan="2" textAlign="center">
                     {row.year}-{row.section}
                   </Table.Cell>
                 )}
