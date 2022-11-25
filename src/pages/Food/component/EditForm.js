@@ -67,73 +67,9 @@ export default function EditForm() {
         </Segment> */}
       </Segment.Group>
 
-      <Segment.Group horizontal>
-        <Segment>
-          <Image rounded src={image} size="small" color="pink" />
-          <Header as="h4"> 法式鮮蔬湯品 </Header>
-          <Header as="h4"> $40</Header>
-          {/* <Divider /> */}
-          {/* <Button circular icon="minus" />
-          <Button basic>0</Button>
-          <Button circular icon="plus" color="pink" /> */}
-        </Segment>
-
-        <Segment>
-          <Image rounded src={image} size="small" color="pink" />
-          <Header as="h4"> 鮮蝦輕沙拉 </Header>
-          <Header as="h4"> $140</Header>
-          {/* <Divider /> */}
-          {/* <Button circular icon="minus" />
-          <Button basic>0</Button>
-          <Button circular icon="plus" color="pink" /> */}
-        </Segment>
-      </Segment.Group>
-
-      {/* <Segment>
-        {' '}
-        <Image src={image} size="small" color="pink" />
-        <Header> 美式牛肉堡 $140</Header>
-        <Divider />
-        <Button circular icon="minus" />
-        <Button basic>0</Button>
-        <Button circular icon="plus" color="pink" />
-      </Segment>
-      <Segment> </Segment> */}
-
-      {/* <Image src={image} size="small" color="pink" />
-      <Header> 美式牛肉堡 $140</Header>
-      <Divider /> */}
-
-      {/* <Label circular size="large">
-        -
-      </Label>
       
-      <Label circular size="large" color="pink">
-        <Icon name="plus" />
-      </Label> */}
-
-      {/* <Button color="pink" circular>+</Button> */}
-      {/* <Grid>
-        <Grid.Row columns={3}>
-          <Grid.Column>           
-            <Button>+</Button>
-          </Grid.Column>
-          <Grid.Column>
-            <Input fluid />
-          </Grid.Column>
-          <Grid.Column>            
-            <Button>+</Button>
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
-      <Form>
-        <Form.Field inline>
-          <Button>+</Button>
-          <Input />
-
-          <Button>-</Button>
-        </Form.Field>
-      </Form> */}
+    
+     
     </div>
   );
 }
