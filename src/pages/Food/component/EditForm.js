@@ -87,13 +87,20 @@ export default function EditForm() {
     //   prodId:'2',
     //   qty:100
     // }]
+   
+    // 取出
+    let cartData = localStorage.getItem('cart'); 
+    cartData = JSON.parse(cartData);
     
-    const item = {prodId:id,qty}
-    
-    const cartStr = JSON.stringify(item)
+    // 加入
+    const item = {prodId:id,qty}    
+    cartData.push(item);
+
+    // 存入
+    const cartStr = JSON.stringify(cartData)
     localStorage.setItem('cart',cartStr);
 
-    let cartData = localStorage.getItem('cart'); 
+    cartData = localStorage.getItem('cart'); 
     cartData = JSON.parse(cartData);
     console.log(cartData)
   }
