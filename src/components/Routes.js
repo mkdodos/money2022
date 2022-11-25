@@ -42,12 +42,15 @@ import Calendar from '../pages/Calendar/Calendar';
 
 import Query from '../pages/Dashboard/Query';
 
+import EditForm from '../pages/Food/component/EditForm';
+
 // import Dashboard from './Dashboard'
 
 export default function Routes() {
   const { currentUser } = useAuth();
   return (
     <Switch>
+      <Route path="/prod/:id" exact component={EditForm} />
       <Route path="/food" exact component={Food} />
       <Route path="/dashboard" exact component={Dashboard} />
       <Route path="/dashboard/query" exact component={Query} />
