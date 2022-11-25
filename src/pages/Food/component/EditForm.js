@@ -59,10 +59,13 @@ export default function EditForm() {
   const { id } = useParams();
   const row = rows.filter((row) => row.id == id)[0];
 
-  console.log(row);
+  // console.log(row);
 
   const [price, setPrice] = useState(140);
   const [qty, setQty] = useState(0);
+
+  const [cart, setCart] = useState([]);
+
   const add = () => {
     setQty((prev) => {
       return prev + 1;
@@ -74,6 +77,26 @@ export default function EditForm() {
       return prev - 1;
     });
   };
+
+  const CartAdd = ()=>{
+    // const cart = [{
+    //   prodId:'1',
+    //   qty:10
+    // },
+    // {
+    //   prodId:'2',
+    //   qty:100
+    // }]
+    
+    const item = {prodId:id,qty}
+    
+    const cartStr = JSON.stringify(item)
+    localStorage.setItem('cart',cartStr);
+
+    let cartData = localStorage.getItem('cart'); 
+    cartData = JSON.parse(cartData);
+    console.log(cartData)
+  }
   return (
     <div>
       {/* {id} */}
@@ -94,7 +117,7 @@ export default function EditForm() {
             color="pink"
             onClick={add}
           />
-          <Button color="pink" floated="right">
+          <Button color="pink" floated="right" onClick={CartAdd}>
             加入購物車
           </Button>
         </Segment>
