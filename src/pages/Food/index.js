@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import EditForm from './component/EditForm';
-import Cart from './component/Cart';
+// import Cart from './component/Cart';
 import ProdList from './component/ProdList';
 import { db } from '../../utils/firebase';
+import Cart from './component/Cart';
+
 export default function index() {
   
 
@@ -22,9 +24,10 @@ export default function index() {
 
   return (
     <div>
+      
       <ProdList rows={rows} />
-      {/* <EditForm/>
-      <Cart/> */}
+      {/* <EditForm/> */}
+      {/* <Cart/> */}
     </div>
   );
 }

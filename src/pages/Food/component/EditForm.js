@@ -1,4 +1,5 @@
-import  { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   Button,
   Input,
@@ -19,55 +20,18 @@ import { db } from '../../../utils/firebase';
 import { useParams } from 'react-router-dom';
 
 export default function EditForm() {
-  // const rows = [
-  //   {
-  //     id: '1',
-  //     name: '法式鮮蔬湯品',
-  //     price: 40,
-  //     image:
-  //       'https://s7d1.scene7.com/is/image/mcdonalds/caesar-salad-with-spicy-fried-chicken-filet_832x822:product-header-desktop?wid=829&hei=455&dpr=off',
-  //   },
-  //   {
-  //     id: '2',
-  //     name: '鮮蝦輕沙拉',
-  //     price: 140,
-  //     image:
-  //       'https://s7d1.scene7.com/is/image/mcdonalds/mushroom-angus-beef-burger_832x822:product-header-desktop?wid=829&hei=455&dpr=off',
-  //   },
-  //   {
-  //     id: '3',
-  //     name: '牛肉堡',
-  //     price: 130,
-  //     image:
-  //       'https://s7d1.scene7.com/is/image/mcdonalds/hamburger_832x822:product-header-desktop?wid=829&hei=455&dpr=off',
-  //   },
-  //   {
-  //     id: '4',
-  //     name: '牛肉堡4',
-  //     price: 30,
-  //     image:
-  //       'https://s7d1.scene7.com/is/image/mcdonalds/big-mac_832x822_2:product-header-desktop?wid=829&hei=455&dpr=off',
-  //   },
-  //   {
-  //     id: '5',
-  //     name: '豬肉堡',
-  //     price: 10,
-  //     image:
-  //       'https://s7d1.scene7.com/is/image/mcdonalds/egg-burger-with-sausage_832x822:product-header-desktop?wid=829&hei=455&dpr=off',
-  //   },
-  // ];
-
   const { id } = useParams();
   // const row = rows.filter((row) => row.id == id)[0];
 
-
   const [row, setRow] = useState({});
   useEffect(() => {
-    
-    db.collection('food').doc(id).get().then(doc=>{
-      setRow(doc.data());
-      // console.log(doc.data());
-    })
+    db.collection('food')
+      .doc(id)
+      .get()
+      .then((doc) => {
+        setRow({ ...doc.data(), id });
+        // console.log(doc.data());
+      });
 
     // db.collection('food')
     // .where('id','==',id)
@@ -81,13 +45,14 @@ export default function EditForm() {
     //   });
   }, []);
 
-
   // console.log(row);
 
   const [price, setPrice] = useState(140);
   const [qty, setQty] = useState(0);
 
   const [cart, setCart] = useState([]);
+
+  const history = useHistory();
 
   const add = () => {
     setQty((prev) => {
@@ -101,7 +66,7 @@ export default function EditForm() {
     });
   };
 
-  const CartAdd = ()=>{
+  const CartAdd = () => {
     // const cart = [{
     //   prodId:'1',
     //   qty:10
@@ -110,23 +75,23 @@ export default function EditForm() {
     //   prodId:'2',
     //   qty:100
     // }]
-   
+
     // 取出
-    let cartData = localStorage.getItem('cart'); 
-    cartData = JSON.parse(cartData);
-    
+    let cartData = localStorage.getItem('cart');
+    if (cartData) cartData = JSON.parse(cartData);
+    else cartData = [];
+
     // 加入
-    const item = {prodId:id,qty}    
+    // const item = {prodId:id,qty}
+    const item = { ...row, qty };
     cartData.push(item);
 
     // 存入
-    const cartStr = JSON.stringify(cartData)
-    localStorage.setItem('cart',cartStr);
+    const cartStr = JSON.stringify(cartData);
+    localStorage.setItem('cart', cartStr);
 
-    cartData = localStorage.getItem('cart'); 
-    cartData = JSON.parse(cartData);
-    console.log(cartData)
-  }
+    history.push('/cart');
+  };
   return (
     <div>
       {/* {id} */}

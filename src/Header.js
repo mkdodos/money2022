@@ -103,7 +103,7 @@ export default function Header() {
         分數
       </Menu.Item> */}
 
-      <Menu.Item
+      {/* <Menu.Item
         as={Link}
         to="/school"
         name="school"
@@ -111,6 +111,17 @@ export default function Header() {
         active={activeItem === 'school'}
       >
         學校
+      </Menu.Item> */}
+
+
+      <Menu.Item
+        as={Link}
+        to="/food"
+        name="food"
+        onClick={handleClick}
+        active={activeItem === 'food'}
+      >
+        點餐
       </Menu.Item>
 
       <Menu.Item
