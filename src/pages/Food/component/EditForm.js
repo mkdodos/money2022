@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState,useEffect } from 'react';
 import {
   Button,
   Input,
@@ -13,51 +13,74 @@ import {
   Divider,
 } from 'semantic-ui-react';
 
-import image from '../../../img/image.png';
+import { db } from '../../../utils/firebase';
+// import image from '../../../img/image.png';
 
 import { useParams } from 'react-router-dom';
 
 export default function EditForm() {
-  const rows = [
-    {
-      id: '1',
-      name: '法式鮮蔬湯品',
-      price: 40,
-      image:
-        'https://s7d1.scene7.com/is/image/mcdonalds/caesar-salad-with-spicy-fried-chicken-filet_832x822:product-header-desktop?wid=829&hei=455&dpr=off',
-    },
-    {
-      id: '2',
-      name: '鮮蝦輕沙拉',
-      price: 140,
-      image:
-        'https://s7d1.scene7.com/is/image/mcdonalds/mushroom-angus-beef-burger_832x822:product-header-desktop?wid=829&hei=455&dpr=off',
-    },
-    {
-      id: '3',
-      name: '牛肉堡',
-      price: 130,
-      image:
-        'https://s7d1.scene7.com/is/image/mcdonalds/hamburger_832x822:product-header-desktop?wid=829&hei=455&dpr=off',
-    },
-    {
-      id: '4',
-      name: '牛肉堡4',
-      price: 30,
-      image:
-        'https://s7d1.scene7.com/is/image/mcdonalds/big-mac_832x822_2:product-header-desktop?wid=829&hei=455&dpr=off',
-    },
-    {
-      id: '5',
-      name: '豬肉堡',
-      price: 10,
-      image:
-        'https://s7d1.scene7.com/is/image/mcdonalds/egg-burger-with-sausage_832x822:product-header-desktop?wid=829&hei=455&dpr=off',
-    },
-  ];
+  // const rows = [
+  //   {
+  //     id: '1',
+  //     name: '法式鮮蔬湯品',
+  //     price: 40,
+  //     image:
+  //       'https://s7d1.scene7.com/is/image/mcdonalds/caesar-salad-with-spicy-fried-chicken-filet_832x822:product-header-desktop?wid=829&hei=455&dpr=off',
+  //   },
+  //   {
+  //     id: '2',
+  //     name: '鮮蝦輕沙拉',
+  //     price: 140,
+  //     image:
+  //       'https://s7d1.scene7.com/is/image/mcdonalds/mushroom-angus-beef-burger_832x822:product-header-desktop?wid=829&hei=455&dpr=off',
+  //   },
+  //   {
+  //     id: '3',
+  //     name: '牛肉堡',
+  //     price: 130,
+  //     image:
+  //       'https://s7d1.scene7.com/is/image/mcdonalds/hamburger_832x822:product-header-desktop?wid=829&hei=455&dpr=off',
+  //   },
+  //   {
+  //     id: '4',
+  //     name: '牛肉堡4',
+  //     price: 30,
+  //     image:
+  //       'https://s7d1.scene7.com/is/image/mcdonalds/big-mac_832x822_2:product-header-desktop?wid=829&hei=455&dpr=off',
+  //   },
+  //   {
+  //     id: '5',
+  //     name: '豬肉堡',
+  //     price: 10,
+  //     image:
+  //       'https://s7d1.scene7.com/is/image/mcdonalds/egg-burger-with-sausage_832x822:product-header-desktop?wid=829&hei=455&dpr=off',
+  //   },
+  // ];
 
   const { id } = useParams();
-  const row = rows.filter((row) => row.id == id)[0];
+  // const row = rows.filter((row) => row.id == id)[0];
+
+
+  const [row, setRow] = useState({});
+  useEffect(() => {
+    
+    db.collection('food').doc(id).get().then(doc=>{
+      setRow(doc.data());
+      // console.log(doc.data());
+    })
+
+    // db.collection('food')
+    // .where('id','==',id)
+    //   .get()
+    //   .then((snapshot) => {
+    //     const data = snapshot.docs.map((doc) => {
+    //       return { ...doc.data(), id: doc.id };
+    //     });
+    //     console.log(data);
+    //     setRow(data[0]);
+    //   });
+  }, []);
+
 
   // console.log(row);
 
@@ -109,7 +132,7 @@ export default function EditForm() {
       {/* {id} */}
       <Segment.Group horizontal>
         <Segment>
-          <Image src={row.image} size="small" color="pink" />
+          <Image src={row.imageUrl} size="small" color="pink" />
           <Header as="h3"> {row.name} </Header>
           <Header as="h4"> ${row.price}</Header>
           <Divider />

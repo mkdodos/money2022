@@ -26,7 +26,7 @@ const history = useHistory();
             {index % 2 == 0 && (
               <Card.Group itemsPerRow={2}>
                 <Card onClick={()=>toCart(row.id)}>
-                  <Image src={row.image} style={{margin:'10px'}}  />
+                  <Image src={row.imageUrl} style={{margin:'10px'}}  />
                   <Card.Content>
                     <Card.Header>{row.name}</Card.Header>
                     <Card.Description>${row.price}</Card.Description>
@@ -36,7 +36,7 @@ const history = useHistory();
                 {/* 判斷索引未達最大值才顯示 */}
                 {index < rows.length - 1 && (
                   <Card onClick={()=>toCart(rows[index+1].id)}>
-                    <Image src={rows[index+1].image}  style={{margin:'10px'}} />
+                    <Image src={rows[index+1].imageUrl}  style={{margin:'10px'}} />
                     <Card.Content>
                       <Card.Header>{rows[index+1].name}</Card.Header>
                       <Card.Description>${rows[index+1].price}</Card.Description>
