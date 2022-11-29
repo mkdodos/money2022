@@ -64,6 +64,8 @@ export default function EditForm() {
     setQty((prev) => {
       return prev - 1;
     });
+
+   
   };
 
   const CartAdd = () => {

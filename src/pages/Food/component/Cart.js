@@ -16,6 +16,7 @@ export default function Cart() {
   const [rows, setRows] = useState([]);
   useEffect(() => {
     let cartData = localStorage.getItem('cart');
+    if (!cartData) return;
     cartData = JSON.parse(cartData);
     setRows(cartData);
     console.log(cartData);
@@ -26,6 +27,32 @@ export default function Cart() {
     // console.log('order')
   };
 
+  // 調整數量 + -
+  const add = (row) => {
+    // 取得該列索引
+    let i = rows.indexOf(row);
+
+    // 將該列數量更新
+    row.qty = row.qty + 1;
+    let newRows = rows.slice();
+    Object.assign(newRows[i], row);
+    setRows(newRows);
+  };
+
+  const minus = (row) => {
+    let i = rows.indexOf(row);
+    // console.log(i)
+
+    let newRows = rows.slice();
+    row.qty = row.qty - 1;
+    Object.assign(newRows[i], row);
+    setRows(newRows);
+
+    // setQty((prev) => {
+    //   return prev - 1;
+    // });
+  };
+
   return (
     <div>
       <Item.Group divided unstackable>
@@ -34,11 +61,32 @@ export default function Cart() {
             <Item key={row.id}>
               <Item.Image size="mini" src={row.imageUrl} />
               <Item.Content verticalAlign="middle">
-                <Item.Header as="a">{row.name} ${row.price}</Item.Header>
+                <Item.Header as="a">
+                  {row.name} ${row.price}
+                </Item.Header>
                 <Item.Description>
-                  <Button icon="minus" circular />
+                  <Button
+                    circular
+                    icon="minus"
+                    size="small"
+                    onClick={() => {
+                      minus(row);
+                    }}
+                  />
                   <Button basic>{row.qty}</Button>
-                  <Button icon="plus" color="pink" circular />
+                  <Button
+                    circular
+                    icon="plus"
+                    size="small"
+                    color="pink"
+                    onClick={() => {
+                      add(row);
+                    }}
+                  />
+
+                  {/* <Button icon="minus" circular />
+                  <Button basic>{row.qty}</Button>
+                  <Button icon="plus" color="pink" circular /> */}
                 </Item.Description>
               </Item.Content>
             </Item>
