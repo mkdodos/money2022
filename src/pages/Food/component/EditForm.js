@@ -24,6 +24,14 @@ export default function EditForm() {
   // const row = rows.filter((row) => row.id == id)[0];
 
   const [row, setRow] = useState({});
+
+  const [price, setPrice] = useState(140);
+  const [qty, setQty] = useState(0);
+
+  const [cart, setCart] = useState([]);
+
+  const history = useHistory();
+
   useEffect(() => {
     db.collection('food')
       .doc(id)
@@ -33,26 +41,17 @@ export default function EditForm() {
         // console.log(doc.data());
       });
 
-    // db.collection('food')
-    // .where('id','==',id)
-    //   .get()
-    //   .then((snapshot) => {
-    //     const data = snapshot.docs.map((doc) => {
-    //       return { ...doc.data(), id: doc.id };
-    //     });
-    //     console.log(data);
-    //     setRow(data[0]);
-    //   });
+    // 購物車
+    let cart = localStorage.getItem('cart');
+    if (!cart) return;
+
+    cart = JSON.parse(cart);
+    const item = cart.find((item) => item.id == id);
+    if (item) setQty(item.qty);
+    // console.log(item);
   }, []);
 
   // console.log(row);
-
-  const [price, setPrice] = useState(140);
-  const [qty, setQty] = useState(0);
-
-  const [cart, setCart] = useState([]);
-
-  const history = useHistory();
 
   const add = () => {
     setQty((prev) => {
@@ -64,29 +63,30 @@ export default function EditForm() {
     setQty((prev) => {
       return prev - 1;
     });
-
-   
   };
 
   const CartAdd = () => {
-    // const cart = [{
-    //   prodId:'1',
-    //   qty:10
-    // },
-    // {
-    //   prodId:'2',
-    //   qty:100
-    // }]
-
     // 取出
     let cartData = localStorage.getItem('cart');
     if (cartData) cartData = JSON.parse(cartData);
     else cartData = [];
 
+    // 判斷購物車中是否已有該品項
+    const index = cartData.findIndex((obj) => obj.id == id);
+    const item = { ...row, qty };
+
+    if (index > -1) {
+      // 有
+      Object.assign(cartData[index], item);
+      console.log('yes');
+    } else {
+      // 無
+      cartData.push(item);
+      console.log('no');
+    }
+
     // 加入
     // const item = {prodId:id,qty}
-    const item = { ...row, qty };
-    cartData.push(item);
 
     // 存入
     const cartStr = JSON.stringify(cartData);
@@ -94,6 +94,11 @@ export default function EditForm() {
 
     history.push('/cart');
   };
+
+  const viewCart = () => {
+    history.push('/cart');
+  };
+
   return (
     <div>
       {/* {id} */}
@@ -118,28 +123,11 @@ export default function EditForm() {
             加入購物車
           </Button>
         </Segment>
-
-        {/* <Segment>
-          <Image src={image} size="small" color="pink" />
-          <Header as="h3"> 美式單層牛肉堡 </Header>
-          <Header as="h4"> ${price}</Header>
-          <Header as="h4"> 小計 ${price*qty}</Header>
-          <Divider />
-          <Button circular icon="minus" size='small' onClick={minus} />
-          <Button basic>{qty}</Button>
-          <Button circular icon="plus" size='small' color="pink" onClick={add} />
-        </Segment> */}
-
-        {/* <Segment>
-          <Image src={image} size="small" color="pink" />
-          <Header as="h4"> 起司牛肉堡 </Header>
-          <Header as="h4"> $160</Header>
-          <Divider />
-          <Button circular icon="minus" />
-          <Button basic>0</Button>
-          <Button circular icon="plus" color="pink" />
-        </Segment> */}
       </Segment.Group>
+
+      <Button color="pink" fluid onClick={viewCart}>
+        查看購物車
+      </Button>
     </div>
   );
 }
