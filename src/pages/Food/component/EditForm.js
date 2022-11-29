@@ -92,6 +92,7 @@ export default function EditForm() {
     const cartStr = JSON.stringify(cartData);
     localStorage.setItem('cart', cartStr);
 
+    console.log(cartStr);
     history.push('/cart');
   };
 

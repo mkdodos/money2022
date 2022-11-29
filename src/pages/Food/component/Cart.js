@@ -13,18 +13,26 @@ import image from '../../../img/image.png';
 
 import { useHistory } from 'react-router-dom';
 
-
-
 export default function Cart() {
   const history = useHistory();
   // 將 localStorage 的資料存在 state
   const [rows, setRows] = useState([]);
+  const [total, setTotal] = useState(0);
   useEffect(() => {
+    // localStorage.removeItem('cart');
     let cartData = localStorage.getItem('cart');
     if (!cartData) return;
     cartData = JSON.parse(cartData);
     setRows(cartData);
-    console.log(cartData);
+    const sum = cartData.reduce((a, b) => {
+      // return  b.price * b.qty;
+      // return a.price * a.qty + b.price * b.qty;
+      return a + b.price * b.qty;
+      // return a.price * a.qty ;
+    },0);
+    // console.log(sum)
+    setTotal(sum);
+    // console.log(cartData);
   }, []);
 
   const placeOrder = () => {
@@ -43,7 +51,12 @@ export default function Cart() {
     let newRows = rows.slice();
     Object.assign(newRows[i], row);
     setRows(newRows);
-    localStorage.setItem('cart',JSON.stringify(newRows))
+    localStorage.setItem('cart', JSON.stringify(newRows));
+
+    const sum = newRows.reduce((a, b) => {
+      return a + b.price * b.qty;
+    },0);
+    setTotal(sum);
   };
 
   const minus = (row) => {
@@ -54,7 +67,12 @@ export default function Cart() {
     row.qty = row.qty - 1;
     Object.assign(newRows[i], row);
     setRows(newRows);
-    localStorage.setItem('cart',JSON.stringify(newRows))
+    localStorage.setItem('cart', JSON.stringify(newRows));
+
+    const sum = newRows.reduce((a, b) => {
+      return a + b.price * b.qty;
+    },0);
+    setTotal(sum);
     // setQty((prev) => {
     //   return prev - 1;
     // });
@@ -69,7 +87,7 @@ export default function Cart() {
               <Item.Image size="mini" src={row.imageUrl} />
               <Item.Content verticalAlign="middle">
                 <Item.Header as="a">
-                  {row.name} ${row.price}
+                  {row.name} ${row.price * row.qty}
                 </Item.Header>
                 <Item.Description>
                   <Button
@@ -99,26 +117,20 @@ export default function Cart() {
             </Item>
           );
         })}
-
-       
       </Item.Group>
 
-      <Button fluid color="pink" onClick={placeOrder}>
-        結帳
+      <Button
+        fluid
+       
+        as="div"
+        labelPosition="left"
+        onClick={placeOrder}
+      >
+        <Label as="a" color='pink' basic>
+          ${total}
+        </Label>
+        <Button fluid  color="pink">結帳</Button>
       </Button>
-
-      {/* <List  divided>
-        
-        <List.Item>
-          <Image src={image} size="tiny" color="pink" />
-          <List.Content verticalAlign="middle">Middle</List.Content>
-        </List.Item>
-        <List.Item>
-          <Image src={image} size="tiny" color="pink" />
-          <List.Content verticalAlign="middle">Middle</List.Content>
-        </List.Item>
-      
-      </List> */}
     </div>
   );
 }
