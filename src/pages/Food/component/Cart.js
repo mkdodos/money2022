@@ -87,7 +87,7 @@ export default function Cart() {
               <Item.Image size="mini" src={row.imageUrl} />
               <Item.Content verticalAlign="middle">
                 <Item.Header as="a">
-                  {row.name} ${row.price * row.qty}
+                  {row.name} ${row.price}
                 </Item.Header>
                 <Item.Description>
                   <Button
