@@ -47,10 +47,13 @@ import EditForm from '../pages/Food/component/EditForm';
 import Cart from '../pages/Food/component/Cart';
 // import Dashboard from './Dashboard'
 
+
+import Demo from './Demo';
 export default function Routes() {
   const { currentUser } = useAuth();
   return (
     <Switch>
+      <Route path="/demo" exact component={Demo} />
       <Route path="/prod/:id" exact component={EditForm} />
       <Route path="/cart" exact component={Cart} />
       <Route path="/food" exact component={Food} />

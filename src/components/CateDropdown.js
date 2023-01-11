@@ -10,8 +10,9 @@ export default function CateDropdown({ cate, setCate, onChange,label,width, name
   const [searchText, setSearchText] = useState('');
   useEffect(() => {
     db.collection('cates')
-      .limit(10)
+      // .limit(10)
       .where('user', '==', currentUser.email)
+      .orderBy('prior')
       .get()
       .then((snapshot) => {
         const data = snapshot.docs.map((doc) => {
