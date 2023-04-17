@@ -1,12 +1,29 @@
-import React from 'react';
+import {useState,useEffect} from 'react';
 
 import { Divider, Label, Segment } from 'semantic-ui-react';
+import { db } from '../utils/firebase';
 
 export default function Demo() {
+
+  const [rows, setRows] = useState([]);
+  useEffect(() => {
+    db.collection('accounts')
+      .get()
+      .then((snapshot) => {
+        const data = snapshot.docs.map((doc) => {
+          return doc.data();
+        });
+        console.log(data)
+        setRows(data);
+      });
+  }, []);
+
+
   const numbers = [0, 0, 0, 0, 0, 0, 1, 1, 1, 1];
   // const numbers2 = [0, 0, 0, 0, 'B', 0, 1, 1, 1, 1];
   return (
     <div>
+      {rows[0].balance}
       <Segment>
         有二個富翁,想比較誰的財富多,又不想讓對方知道自己的真實財產數字
       </Segment>

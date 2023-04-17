@@ -39,11 +39,9 @@ export default function Header() {
     // Menu secondary Dropdown simple
     // 會產生 gap 變成 Dropdown 內的 item 不好點
     <Menu pointing secondary>
-       {/* <Menu secondary pointing  attached='top'> */}
+      {/* <Menu secondary pointing  attached='top'> */}
       <Dropdown item icon="setting">
         <Dropdown.Menu>
-         
-
           <Dropdown.Item as={Link} to="/accounts" name="accounts">
             帳戶
           </Dropdown.Item>
@@ -56,20 +54,15 @@ export default function Header() {
             股票
           </Dropdown.Item>
 
-          
+          <Dropdown.Item as={Link} to="/dashboard/query">
+            查詢
+          </Dropdown.Item>
 
-
-          
-          <Dropdown.Item as={Link} to="/dashboard/query">查詢</Dropdown.Item>
-         
-         {/* <Dropdown.Divider /> */}
+          {/* <Dropdown.Divider /> */}
           {/* <Dropdown.Header>Export</Dropdown.Header> */}
-          {/* <Dropdown.Item>Share</Dropdown.Item> */} 
+          {/* <Dropdown.Item>Share</Dropdown.Item> */}
         </Dropdown.Menu>
       </Dropdown>
-
-     
-     
 
       {currentUser?.email == 'mkdodos@gmail.com' && (
         <Menu.Item
@@ -113,8 +106,7 @@ export default function Header() {
         學校
       </Menu.Item> */}
 
-
-      <Menu.Item
+      {/* <Menu.Item
         as={Link}
         to="/food"
         name="food"
@@ -122,6 +114,16 @@ export default function Header() {
         active={activeItem === 'food'}
       >
         點餐
+      </Menu.Item> */}
+
+      <Menu.Item
+        as={Link}
+        to="/trans"
+        name="trans"
+        onClick={handleClick}
+        active={activeItem === 'trans'}
+      >
+        轉帳
       </Menu.Item>
 
       <Menu.Item

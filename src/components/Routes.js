@@ -7,6 +7,8 @@ import EditCate from '../pages/Cates/components/EditCate';
 // import Balances from './Balances';
 
 import Stocks from '../pages/Stocks';
+import Trans from '../pages/Trans';
+
 import Books from './Books';
 
 import ContactList from '../demo/contacts/ContactList';
@@ -47,12 +49,12 @@ import EditForm from '../pages/Food/component/EditForm';
 import Cart from '../pages/Food/component/Cart';
 // import Dashboard from './Dashboard'
 
-
 import Demo from './Demo';
 export default function Routes() {
   const { currentUser } = useAuth();
   return (
     <Switch>
+      <Route path="/trans" exact component={Trans} />
       <Route path="/demo" exact component={Demo} />
       <Route path="/prod/:id" exact component={EditForm} />
       <Route path="/cart" exact component={Cart} />
