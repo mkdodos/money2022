@@ -12,7 +12,7 @@ import Trans from './Trans';
 import './index.css';
 import { db } from '../../utils/firebase';
 
-export default function TransList({ rows, options }) {
+export default function TransList({ rows, options, user }) {
   // 帳戶 id
   const [from, setFrom] = useState();
   // 帳戶名稱
@@ -23,24 +23,26 @@ export default function TransList({ rows, options }) {
   const [open, setOpen] = useState(false);
 
   function handleClick() {
-    // const id = fromAcc.id;
-    // const amt = fromAcc.balance
-    // db.collection('accounts')
-    //   .doc(id)
-    //   .update({ balance: Number(fromAcc.balance) - amount });
-    // setOpen(true);
-    // 更新帳戶餘額
-
     // 取得帳戶餘額
     db.collection('accounts')
       .doc(from)
       .get()
       .then((doc) => {
         // 更新帳戶餘額
-
         db.collection('accounts')
           .doc(from)
           .update({ balance: Number(doc.data().balance) - amount });
+
+        // console.log(new Date().toISOString().slice(0, 10));
+        // 新增收支
+        db.collection('balances').add({
+          account: doc.data(),
+          cate: '',
+          date: new Date().toISOString().slice(0, 10),
+          expense: amount,
+          title: '轉帳',
+          user: user,
+        });
       });
 
     // 取得帳戶餘額
@@ -49,13 +51,22 @@ export default function TransList({ rows, options }) {
       .get()
       .then((doc) => {
         // 更新帳戶餘額
-
         db.collection('accounts')
           .doc(to)
           .update({ balance: Number(doc.data().balance) + Number(amount) })
           .then(() => {
-            console.log(amount);
+            // console.log(amount);
           });
+
+        // 新增收支
+        db.collection('balances').add({
+          account: doc.data(),
+          cate: '',
+          date: new Date().toISOString().slice(0, 10),
+          income: amount,
+          title: '轉帳',
+          user: user,
+        });
       });
 
     setOpen(true);

@@ -55,8 +55,7 @@ export default function Index() {
   }, []);
   return (
     <div>
-      <TransList rows={rows} options={options} />
-      {/* <AccList rows={rows} /> */}
+      <TransList rows={rows} options={options} user={currentUser?.email} />
     </div>
   );
 }
