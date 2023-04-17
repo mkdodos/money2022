@@ -183,6 +183,7 @@ const EditForm = ({
     setRowsAccount(newRows);
   }
   const handleDelete = () => {
+    if (!confirm('確定刪除嗎?')) return;
     setLoading(true);
     dbCol
       .doc(item.id)

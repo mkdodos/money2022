@@ -65,7 +65,7 @@ export default function TransList({ rows, options, user }) {
           cate: '',
           date: new Date().toISOString().slice(0, 10),
           income: amount,
-          title: '從' + toAcc + '轉入',
+          title: '從' + fromAcc + '轉入',
           user: user,
           type: '轉帳',
         });
