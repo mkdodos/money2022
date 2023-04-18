@@ -79,11 +79,11 @@ const Balances = () => {
     db.collection('accounts')
       .where('user', '==', currentUser.email)
       .orderBy('prior')
-      .limit(4)
+      // .limit(4)
       .get()
       .then((snapshot) => {
         const data = snapshot.docs.map((doc) => {
-          console.log(doc.data().name);
+          // console.log(doc.data().name);
           return { ...doc.data(), id: doc.id };
         });
 
