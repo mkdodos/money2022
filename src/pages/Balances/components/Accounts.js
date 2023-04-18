@@ -1,4 +1,4 @@
-import { Grid, Segment } from 'semantic-ui-react';
+import { Grid, Segment, Icon } from 'semantic-ui-react';
 import { useState, useEffect } from 'react';
 import { db } from '../../../utils/firebase';
 
@@ -39,6 +39,9 @@ const Accounts = ({ rows, accountClick, activeAccount }) => {
             {row.name}
           </Segment>
         ))}
+        <Segment textAlign="center" basic color="olive">
+          <Icon name="arrow right" />
+        </Segment>
       </Segment.Group>
     </>
 

@@ -79,7 +79,7 @@ const Balances = () => {
     db.collection('accounts')
       .where('user', '==', currentUser.email)
       .orderBy('prior')
-      .limit(5)
+      .limit(4)
       .get()
       .then((snapshot) => {
         const data = snapshot.docs.map((doc) => {
@@ -139,7 +139,6 @@ const Balances = () => {
       {/* <pre>{JSON.stringify(itemCopy)}</pre> */}
 
       {/* {JSON.stringify(activeAccount?.balance)} */}
-
 
       <Grid>
         <Grid.Row>
