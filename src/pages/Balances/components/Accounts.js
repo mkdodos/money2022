@@ -50,7 +50,7 @@ const Accounts = ({ rows, activeAccount, accountClick }) => {
           color="olive"
           onClick={handleSetRange}
         >
-          <Icon name="arrow right" />
+          <Icon size="large" name="arrow alternate circle right outline" />
         </Segment>
       </Segment.Group>
     </>

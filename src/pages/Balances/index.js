@@ -2,9 +2,10 @@ import ItemList from './components/ItemList';
 import EditForm from './components/EditForm';
 import Accounts from './components/Accounts';
 import Query from './components/Query';
+import DateFilter from './components/DateFilter';
 import { useState, useEffect } from 'react';
 import { db, auth } from '../../utils/firebase';
-import { Button, Grid, Header, Statistic, Dropdown } from 'semantic-ui-react';
+import { Button, Grid, Header, Statistic, Input } from 'semantic-ui-react';
 
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -91,10 +92,16 @@ const Balances = () => {
         // 帳戶預設值
         setActiveAccount(data[0]);
         setRowsAccount(data);
+
+        fetchBalancesData(data[0]);
       });
   }, []);
 
   useEffect(() => {
+    fetchBalancesData(activeAccount);
+  }, [filterDate]);
+
+  const fetchBalancesData = (account) => {
     let dbCol = db.collection('balances');
     if (currentUser) dbCol = dbCol.where('user', '==', currentUser?.email);
     // 收支資料(一次顯示一天資料)
@@ -106,13 +113,14 @@ const Balances = () => {
           return { ...doc.data(), id: doc.id };
         });
 
-        console.log(filterDate);
         setRowsCopy(data2);
         setRows(
-          data2.filter((row) => row.account && row.account.name == '現金')
+          data2.filter(
+            (row) => row.account && row.account.name == account?.name
+          )
         );
       });
-  }, [filterDate]);
+  };
 
   const handleOpen = () => {
     setOpen(true);
@@ -133,17 +141,17 @@ const Balances = () => {
     return result;
   }
 
-  const handleFilterDatePlus = () => {
-    const newDate = addDays(filterDate, 1).toISOString().slice(0, 10);
+  const handleFilterDate = (days) => {
+    const newDate = addDays(filterDate, days).toISOString().slice(0, 10);
     setFilterDate(newDate);
-    console.log(newDate);
+    // console.log(newDate);
   };
 
-  const handleFilterDateMinus = () => {
-    const newDate = addDays(filterDate, -1).toISOString().slice(0, 10);
-    setFilterDate(newDate);
-    console.log(newDate);
-  };
+  // const handleFilterDateMinus = () => {
+  //   const newDate = addDays(filterDate, -1).toISOString().slice(0, 10);
+  //   setFilterDate(newDate);
+  //   console.log(newDate);
+  // };
 
   return (
     <>
@@ -151,8 +159,6 @@ const Balances = () => {
 
       {/* {JSON.stringify(activeAccount?.balance)} */}
 
-      <Button onClick={handleFilterDatePlus}>日期篩選+</Button>
-      <Button onClick={handleFilterDateMinus}>日期篩選-</Button>
       <Grid>
         <Grid.Row>
           <Grid.Column>
@@ -183,6 +189,13 @@ const Balances = () => {
           </Grid.Row>
         </Grid>
       )}
+
+      <br></br>
+      <DateFilter
+        filterDate={filterDate}
+        setFilterDate={setFilterDate}
+        handleFilterDate={handleFilterDate}
+      />
 
       <Grid>
         <Grid.Row>

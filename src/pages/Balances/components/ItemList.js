@@ -26,7 +26,7 @@ export default function ItemList({
   isIncome,
   setIsIncomeOrigin,
   setCate,
-  setType
+  setType,
 }) {
   const [search, setSearch] = useState('');
   // const [rows, setRows] = React.useState([]);
@@ -90,14 +90,14 @@ export default function ItemList({
     // setSearch(e.target.value);
 
     // 要 toLowerCase 才能正確查詢
-    setRows(rowsCopy.filter((row) => (row.cate === obj.value)));
+    setRows(rowsCopy.filter((row) => row.cate === obj.value));
   }
 
   return (
     <>
       {/* {search} */}
       {/* {JSON.stringify(rows)} */}
-      <Grid>
+      {/* <Grid>
         <Grid.Row columns={2}>
           <Grid.Column>
             <Input
@@ -120,7 +120,7 @@ export default function ItemList({
             />
           </Grid.Column>
         </Grid.Row>
-      </Grid>
+      </Grid> */}
 
       <Table unstackable>
         {/* <Table.Header>
