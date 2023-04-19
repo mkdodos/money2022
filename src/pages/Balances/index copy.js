@@ -53,11 +53,6 @@ const Balances = () => {
 
   const [type, setType] = useState();
 
-  // 日期篩選條件值
-  const [filterDate, setFilterDate] = useState(
-    new Date().toISOString().slice(0, 10)
-  );
-
   useEffect(() => {
     // axios.get('http://192.168.0.12:9000/balances').then(res=>{
     //   setRows(res.data)
@@ -76,6 +71,10 @@ const Balances = () => {
       setCates(rows);
     });
 
+    // console.log(currentUser?.uid)
+    let dbCol = db.collection('balances').orderBy('date', 'desc').limit(300);
+    if (currentUser) dbCol = dbCol.where('user', '==', currentUser?.email);
+
     // 帳戶資料
     db.collection('accounts')
       .where('user', '==', currentUser.email)
@@ -90,29 +89,37 @@ const Balances = () => {
 
         // 帳戶預設值
         setActiveAccount(data[0]);
+
         setRowsAccount(data);
+
+        // 收支資料(只顯示近三個月)
+        let yyyy = new Date().getFullYear();
+        let mm = new Date().getMonth() - 1;
+
+        if (mm < 10) mm = '0' + mm;
+        // console.log(mm);
+        dbCol
+          .where('date', '>', `${yyyy}-${mm}`)
+          // .where('date', '<', `${yyyy}-${mm}`)
+          // .where('account','==',activeAccount)
+          .get()
+          .then((snapshot) => {
+            // console.log(snapshot.size);
+            const data2 = snapshot.docs.map((doc) => {
+              return { ...doc.data(), id: doc.id };
+            });
+            // setRows(data);
+
+            setRowsCopy(data2);
+            setRows(
+              data2.filter(
+                (row) => row.account && row.account.name == data[0].name
+                // (row) => row.account && row.account.name == '現金'
+              )
+            );
+          });
       });
   }, []);
-
-  useEffect(() => {
-    let dbCol = db.collection('balances');
-    if (currentUser) dbCol = dbCol.where('user', '==', currentUser?.email);
-    // 收支資料(一次顯示一天資料)
-    dbCol
-      .where('date', '==', filterDate)
-      .get()
-      .then((snapshot) => {
-        const data2 = snapshot.docs.map((doc) => {
-          return { ...doc.data(), id: doc.id };
-        });
-
-        console.log(filterDate);
-        setRowsCopy(data2);
-        setRows(
-          data2.filter((row) => row.account && row.account.name == '現金')
-        );
-      });
-  }, [filterDate]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -127,32 +134,12 @@ const Balances = () => {
     );
   };
 
-  function addDays(date, days) {
-    var result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
-  }
-
-  const handleFilterDatePlus = () => {
-    const newDate = addDays(filterDate, 1).toISOString().slice(0, 10);
-    setFilterDate(newDate);
-    console.log(newDate);
-  };
-
-  const handleFilterDateMinus = () => {
-    const newDate = addDays(filterDate, -1).toISOString().slice(0, 10);
-    setFilterDate(newDate);
-    console.log(newDate);
-  };
-
   return (
     <>
       {/* <pre>{JSON.stringify(itemCopy)}</pre> */}
 
       {/* {JSON.stringify(activeAccount?.balance)} */}
 
-      <Button onClick={handleFilterDatePlus}>日期篩選+</Button>
-      <Button onClick={handleFilterDateMinus}>日期篩選-</Button>
       <Grid>
         <Grid.Row>
           <Grid.Column>
