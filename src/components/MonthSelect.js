@@ -32,9 +32,21 @@ function MonthSelect(props) {
   );
 }
 
+const yearOptions = [
+  { text: 2023, value: 2023, key: 2023 },
+  { text: 2022, value: 2022, key: 2022 },
+];
+
 function MonthButton(props) {
   return (
-    <Menu widths={3}>
+    <Menu widths={4}>
+      <Menu.Item>
+        <Dropdown
+          options={yearOptions}
+          value={props.year}
+          onChange={props.onYearChange}
+        />
+      </Menu.Item>
       <Menu.Item>
         <Button onClick={props.onMinusClick}>-</Button>
       </Menu.Item>

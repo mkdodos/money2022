@@ -5,7 +5,14 @@ import Query from './components/Query';
 import DateFilter from './components/DateFilter';
 import { useState, useEffect } from 'react';
 import { db, auth } from '../../utils/firebase';
-import { Button, Grid, Header, Statistic, Input } from 'semantic-ui-react';
+import {
+  Button,
+  Grid,
+  Header,
+  Statistic,
+  Input,
+  Divider,
+} from 'semantic-ui-react';
 
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -189,8 +196,8 @@ const Balances = () => {
           </Grid.Row>
         </Grid>
       )}
-
-      <br></br>
+      <Divider />
+      {/* <br></br> */}
       <DateFilter
         filterDate={filterDate}
         setFilterDate={setFilterDate}

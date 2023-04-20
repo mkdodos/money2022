@@ -53,14 +53,17 @@ export default function Dashboard() {
   });
 
   const [month, setMonth] = useState(new Date().getMonth() + 1);
+  const [year, setYear] = useState(new Date().getFullYear());
 
   const { column, data, direction, dataCopy } = state;
   useEffect(() => {
     let mm = '';
     month >= 10 ? (mm = month) : (mm = '0' + month);
     db.collection('balances')
-      .where('date', '>=', `2022-${mm}-01`)
-      .where('date', '<=', `2022-${mm}-31`)
+      .where('date', '>=', `${year}-${mm}-01`)
+      .where('date', '<=', `${year}-${mm}-31`)
+      // .where('date', '>=', `2022-${mm}-01`)
+      // .where('date', '<=', `2022-${mm}-31`)
       // .where('date', 'startAt', '2022-07')
       .where('user', '==', currentUser.email)
       .get()
@@ -87,7 +90,7 @@ export default function Dashboard() {
 
         dispatch({ type: 'setData', data: filterdData, dataCopy: filterdData });
       });
-  }, [month]);
+  }, [month, year]);
 
   function calTotal(arr) {
     let total = 0;
@@ -98,10 +101,37 @@ export default function Dashboard() {
     return total;
   }
 
+  const handleYearClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    switch (e.detail) {
+      case 1:
+        console.log(' click');
+        // setYear((prev) => {
+        //   return prev - 1;
+        // });
+        break;
+      case 2:
+        console.log('double click');
+        break;
+      case 3:
+        console.log('triple click');
+        break;
+    }
+  };
+
+  function handleYearChange(e, { value }) {
+    setYear(value);
+    console.log(value);
+  }
+
   return (
     <>
       <MonthButton
         text={`${month} 月`}
+        year={year}
+        onYearChange={handleYearChange}
+        // setYear={setYear}
+        onYearClick={handleYearClick}
+        // onYearDoubleClick={() => setYear(new Date().getFullYear())}
         onPlusClick={() => {
           if (month == 12) setMonth(1);
           else setMonth(month + 1);
@@ -110,9 +140,7 @@ export default function Dashboard() {
         onClick={() => {
           setMonth(new Date().getMonth() + 1);
         }}
-      
         onMinusClick={() => {
-          
           if (month == 1) setMonth(12);
           else setMonth(month - 1);
         }}

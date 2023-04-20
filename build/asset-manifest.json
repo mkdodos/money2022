@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/money2022/build/static/css/main.e5f310fe.chunk.css",
-    "main.js": "/money2022/build/static/js/main.1595511a.chunk.js",
-    "main.js.map": "/money2022/build/static/js/main.1595511a.chunk.js.map",
+    "main.js": "/money2022/build/static/js/main.35ba5df0.chunk.js",
+    "main.js.map": "/money2022/build/static/js/main.35ba5df0.chunk.js.map",
     "runtime-main.js": "/money2022/build/static/js/runtime-main.58d772e0.js",
     "runtime-main.js.map": "/money2022/build/static/js/runtime-main.58d772e0.js.map",
     "static/css/2.1a31a6c5.chunk.css": "/money2022/build/static/css/2.1a31a6c5.chunk.css",
@@ -26,6 +26,6 @@
     "static/css/2.1a31a6c5.chunk.css",
     "static/js/2.bbf26998.chunk.js",
     "static/css/main.e5f310fe.chunk.css",
-    "static/js/main.1595511a.chunk.js"
+    "static/js/main.35ba5df0.chunk.js"
   ]
 }

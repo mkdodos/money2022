@@ -19,7 +19,7 @@ export default function DateFilter({
       <Grid>
         <Grid.Row>
           <Grid.Column width={4}>
-            <Button onClick={() => handleFilterDate(-1)}>
+            <Button size="small" onClick={() => handleFilterDate(-1)}>
               <Icon name="arrow left" />
             </Button>
           </Grid.Column>
@@ -32,7 +32,7 @@ export default function DateFilter({
             />
           </Grid.Column>
           <Grid.Column width={4}>
-            <Button onClick={() => handleFilterDate(1)}>
+            <Button size="small" onClick={() => handleFilterDate(1)}>
               <Icon name="arrow right" />
             </Button>
           </Grid.Column>
