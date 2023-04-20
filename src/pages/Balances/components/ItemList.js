@@ -142,7 +142,7 @@ export default function ItemList({
               >
                 <Table.Cell>
                   <Header as="h4">{row.title}</Header>
-                  <span>{row.date} </span>
+                  {/* <span>{row.date} </span> */}
 
                   {!activeAccount && (
                     <Label color="teal">{row.account?.name}</Label>
