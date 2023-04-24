@@ -12,7 +12,7 @@ import Trans from './Trans';
 import './index.css';
 import { db } from '../../utils/firebase';
 
-export default function TransList({ rows, options, user }) {
+export default function TransList({ options, user }) {
   // 帳戶 id
   const [from, setFrom] = useState();
   // 帳戶名稱
@@ -21,6 +21,8 @@ export default function TransList({ rows, options, user }) {
   const [to, setTo] = useState();
   const [toAcc, setToAcc] = useState();
   const [open, setOpen] = useState(false);
+  // 備註
+  const [note, setNote] = useState('');
 
   function handleClick() {
     // 取得帳戶餘額
@@ -40,7 +42,7 @@ export default function TransList({ rows, options, user }) {
           cate: '',
           date: new Date().toISOString().slice(0, 10),
           expense: amount,
-          title: '轉出至' + toAcc,
+          title: `[${toAcc}] ${note}`,
           user: user,
           type: '轉帳',
         });
@@ -65,17 +67,13 @@ export default function TransList({ rows, options, user }) {
           cate: '',
           date: new Date().toISOString().slice(0, 10),
           income: amount,
-          title: '從' + fromAcc + '轉入',
+          title: `[${fromAcc}] ${note}`,
           user: user,
           type: '轉帳',
         });
       });
 
     setOpen(true);
-
-    // console.log(from);
-
-    // console.log(toAcc);
   }
 
   function onFromChange(e, obj) {
@@ -98,9 +96,6 @@ export default function TransList({ rows, options, user }) {
     const accName = obj.options.filter((option) => option.key == obj.value)[0]
       .text;
     setToAcc(accName);
-
-    // const acc = rows.filter((row) => row.name == obj.value);
-    // setToAcc(acc[0]);
   }
 
   function handleModalClose() {
@@ -145,7 +140,12 @@ export default function TransList({ rows, options, user }) {
         <div className="trans-card">
           <div className="header">轉帳作業</div>
           <div className="acc">
-            <Trans rows={options} onChange={onFromChange} value={from} />
+            <Trans
+              text="轉出帳戶"
+              rows={options}
+              onChange={onFromChange}
+              value={from}
+            />
           </div>
           <div className="acc">
             <Input
@@ -158,7 +158,21 @@ export default function TransList({ rows, options, user }) {
             />
           </div>
           <div className="acc">
-            <Trans rows={options} onChange={onToChange} value={to} />
+            <Trans
+              text="轉入帳戶"
+              rows={options}
+              onChange={onToChange}
+              value={to}
+            />
+          </div>
+          <div className="acc">
+            <Input
+              value={note}
+              type="text"
+              onChange={(e) => setNote(e.target.value)}
+              fluid
+              placeholder="備註"
+            />
           </div>
           <div className="acc footer">
             <Button fluid color="teal" onClick={handleClick}>

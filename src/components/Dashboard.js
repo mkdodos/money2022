@@ -101,13 +101,13 @@ export default function Dashboard() {
     return total;
   }
 
-  const handleYearClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleYearClick = (e) => {
     switch (e.detail) {
       case 1:
         console.log(' click');
-        // setYear((prev) => {
-        //   return prev - 1;
-        // });
+        setYear((prev) => {
+          return prev - 1;
+        });
         break;
       case 2:
         console.log('double click');
