@@ -49,6 +49,10 @@ export default function Header() {
             類別
           </Dropdown.Item>
 
+          <Dropdown.Item as={Link} to="/cates-note">
+            記事類別
+          </Dropdown.Item>
+
           <Dropdown.Divider />
           <Dropdown.Item as={Link} to="/stocks">
             股票

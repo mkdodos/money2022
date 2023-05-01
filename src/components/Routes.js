@@ -47,6 +47,9 @@ import Query from '../pages/Dashboard/Query';
 import EditForm from '../pages/Food/component/EditForm';
 
 import Cart from '../pages/Food/component/Cart';
+// 記事類別
+import CatesNote from '../pages/CatesNote';
+import EditCatesNote from '../pages/CatesNote/components/EditCate';
 // import Dashboard from './Dashboard'
 
 import Demo from './Demo';
@@ -70,12 +73,17 @@ export default function Routes() {
       <Route path="/accounts">
         <Accounts />
       </Route>
-      <Route path="/cates" exact component={Cates} />
+
+      {/* 記事類別 */}
+      <Route path="/cates-note" exact component={CatesNote} />
+      <Route path={'/cates-note/insert'} exact component={EditCatesNote} />
+      <Route path={'/cates-note/edit/:id'} exact component={EditCatesNote} />
 
       <Route path="/emp-basic" exact component={EmpBasic} />
 
+      {/* 類別 */}
+      <Route path="/cates" exact component={Cates} />
       <Route path={'/cates/edit/:id'} exact component={EditCate} />
-
       <Route path={'/cates/insert'} exact component={EditCate} />
 
       <Route path="/tictactoe" component={TicTacToe} />
