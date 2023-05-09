@@ -36,17 +36,7 @@ pages/Balances/index.js
         <Table.Cell>Cell</Table.Cell>
         <Table.Cell>Cell</Table.Cell>
         <Table.Cell>Cell</Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>Cell</Table.Cell>
-        <Table.Cell>Cell</Table.Cell>
-        <Table.Cell>Cell</Table.Cell>
-      </Table.Row>
-      <Table.Row>
-        <Table.Cell>Cell</Table.Cell>
-        <Table.Cell>Cell</Table.Cell>
-        <Table.Cell>Cell</Table.Cell>
-      </Table.Row>
+      </Table.Row>      
     </Table.Body>
 
     <Table.Footer></Table.Footer>
