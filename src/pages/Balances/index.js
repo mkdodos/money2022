@@ -59,6 +59,10 @@ const Balances = () => {
   const [cate, setCate] = useState();
   const [cates, setCates] = useState([]);
 
+  // 帳戶下拉
+  const [account, setAccount] = useState();
+  const [accounts, setAccounts] = useState([]);
+
   const [type, setType] = useState();
 
   // 日期篩選條件值
@@ -95,6 +99,13 @@ const Balances = () => {
           // console.log(doc.data().name);
           return { ...doc.data(), id: doc.id };
         });
+
+        const options = snapshot.docs.map((doc) => {
+          const d = doc.data();
+          return { text: d.name, value: d.name, key: doc.id };
+        });
+
+        setAccounts(options)
 
         // 帳戶預設值
         setActiveAccount(data[0]);
@@ -209,6 +220,7 @@ const Balances = () => {
           <Grid.Column>
             <ItemList
               setType={setType}
+              setAccount={setAccount}
               setCate={setCate}
               cates={cates}
               setOpen={setOpen}
@@ -236,6 +248,11 @@ const Balances = () => {
         cates={cates}
         cate={cate}
         setCate={setCate}
+
+        account={account}
+        accounts={accounts}
+        setAccount={setAccount}
+
         isIncomeOrigin={isIncomeOrigin}
         setIsIncome={setIsIncome}
         isIncome={isIncome}

@@ -25,8 +25,12 @@ const EditForm = ({
   isIncomeOrigin,
   cates,
   cate,
-  type,
   setCate,
+  account,
+  accounts,
+  setAccount,
+  type,
+  
   setType,
 }) => {
   const { currentUser } = useAuth();
@@ -278,6 +282,21 @@ const EditForm = ({
                 onChange={handleChange}
               />
             </Form.Field>
+
+
+
+
+            {/* <Form.Select
+              selection
+              fluid
+              label="帳戶"             
+              value={account}
+              options={accounts}
+              onChange={(e, obj) => {
+                setAccount(obj.value);
+              }}
+            /> */}
+
 
             <Form.Select
               selection

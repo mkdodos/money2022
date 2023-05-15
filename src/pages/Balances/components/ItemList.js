@@ -26,6 +26,7 @@ export default function ItemList({
   isIncome,
   setIsIncomeOrigin,
   setCate,
+  setAccount,
   setType,
 }) {
   const [search, setSearch] = useState('');
@@ -48,6 +49,7 @@ export default function ItemList({
     // setIsIncome(row.income?true:false)
 
     setCate(row.cate);
+    // setAccount(row.account);
 
     setType(row.type);
 

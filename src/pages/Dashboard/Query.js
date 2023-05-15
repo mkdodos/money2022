@@ -1,15 +1,25 @@
-import { useAuth } from '../../contexts/AuthContext';
 import { useState, useEffect } from 'react';
-import { db } from '../../utils/firebase';
-import { Table, Button, Form, Input, Header, Modal } from 'semantic-ui-react';
 
-import TableRow from './components/TableRow';
+// 查詢列
 import SearchBar from './components/SearchBar';
+
+// firebase
+import { db } from '../../utils/firebase';
+
+// 使用者登入相關
+import { useAuth } from '../../contexts/AuthContext';
+// 資料顯示
+import DataList from './components/DataList';
+
+// UI
+import { Modal, Button } from 'semantic-ui-react';
+
 import EditForm from './components/EditForm';
-import MyPhoto from './components/MyPhoto';
 
 export default function Query() {
+  // 目前登入使用者
   const { currentUser } = useAuth();
+  // 資料列
   const [rows, setRows] = useState([]);
 
   const [defaultItem, SetDefaultItem] = useState({
@@ -20,46 +30,28 @@ export default function Query() {
   });
   const [editedRow, setEditedRow] = useState(defaultItem);
 
-  // 點選列時,記錄該列的索引,在儲存時將資料更新至該列
-  const [editedIndex, setEditedIndex] = useState(-1);
+  // 編輯視窗開關
 
   const [open, setOpen] = useState(false);
-  // 資料更新時,做為按鈕顯示載入中的依據
-  const [loading, setLoading] = useState(false);
 
-  const [cate, setCate] = useState('');
-  const [rowsCopy, setRowsCopy] = useState([]);
-  const [searchText, setSearchText] = useState('');
   useEffect(() => {
-    // db.collection('balances')
-    //   .orderBy('date', 'desc')
-    //   .where('user', '==', currentUser.email)
-    //   .where('date', '>=', `2019-01-01`)
-    //   .where('date', '<=', `2022-12-31`)
-    //   .get()
-    //   .then((snapshot) => {
-    //     const data = snapshot.docs.map((doc) => {
-    //       return { ...doc.data(), id: doc.id };
-    //     });
-    //     // console.log(data);
-    //     setRows(data);
-    //     setRowsCopy(data);
-    //   });
+    cateQuery();
   }, []);
-
   const cateQuery = (e, obj) => {
     db.collection('balances')
       .orderBy('date', 'desc')
       .where('user', '==', currentUser.email)
-      .where('cate', '==', obj.value)
+      .where('cate', '==', '洗牙')
+      // .where('cate', '==', obj.value)
       .get()
       .then((snapshot) => {
         const data = snapshot.docs.map((doc) => {
           return { ...doc.data(), id: doc.id };
         });
-        // setRows(data);
-        setRowsCopy(data);
-
+        // setRows(data)
+        // console.log(data);
+        // 處理日期,取得日期的年月比對,不同的話設定 flag 為 true
+        // 在顯示資料時, flag 為 true 才將年月顯示在標題列
         const newRows = data.slice();
         newRows.map((row, index) => {
           let s1 = newRows[index].date.substring(0, 7);
@@ -78,39 +70,39 @@ export default function Query() {
         });
 
         setRows(newRows);
-
-        console.log(newRows);
+        // console.log(newRows);
       });
-
-    // setRows(rowsCopy.filter((row) => row.cate?.includes(obj.value)));
-    setCate(obj.value);
   };
 
-  const saveRow = () => {
-    setLoading(true);
-    db.collection('balances')
-      .doc(editedRow.id)
-      .update(editedRow)
-      .then(() => {
-        Object.assign(rows[editedIndex], editedRow);
-        setLoading(false);
-        setOpen(false);
-      });
-    //  const index = rows.indexOf(editedRow);
-  };
+  const handleDataListRowClick = (row) => {
+    setOpen(true);
+    console.log(row);
 
-  const handleRowClick = (row) => {
-    // console.log(row);
     // 原始資料可能只有支出或收入,在欄位 onChange 時,會出現錯誤,在 defaultItem 有包含全部預設值
     // 一併設定給 editedRow , 即可解決
     setEditedRow({ ...defaultItem, ...row });
-    const index = rows.indexOf(row);
-    setEditedIndex(index);
-    setOpen(true);
+  };
+
+  const saveRow = () => {
+    console.log(editedRow);
+    // setLoading(true);
+    db.collection('balances')
+      .doc(editedRow.id)
+      // 帳戶欄位是以物件型態儲存,更新寫法和一般欄位有所差異
+      .update({...editedRow,account:{...editedRow.account,name:'信用卡'}})
+      // .update(editedRow)
+      .then(() => {
+        // Object.assign(rows[editedIndex], editedRow);
+        // setLoading(false);
+        setOpen(false);
+      });
   };
 
   return (
     <div>
+      <SearchBar cateQuery={cateQuery} />
+      <DataList rows={rows} onDataListRowClick={handleDataListRowClick} />
+
       <Modal
         open={open}
         closeIcon
@@ -120,50 +112,16 @@ export default function Query() {
       >
         <Modal.Header>編輯</Modal.Header>
         <Modal.Content>
-          <MyPhoto id={editedRow?.id} />
-          <EditForm editedRow={editedRow} setEditedRow={setEditedRow} />
+          <EditForm editedRow={editedRow} />
         </Modal.Content>
         <Modal.Actions>
-          <Button color="teal" onClick={saveRow} loading={loading}>
+          <Button color="teal" onClick={saveRow}>
             儲存
           </Button>
         </Modal.Actions>
       </Modal>
 
-      <SearchBar
-        cateQuery={cateQuery}
-        cate={cate}
-        setCate={setCate}
-        searchText={searchText}
-        setSearchText={setSearchText}
-        setRows={setRows}
-        rowsCopy={rowsCopy}
-      />
-
-      <Table unstackable>
-        <Table.Body>
-          {rows.map((row, index) => {
-            return (
-              <>
-                {row.flag && (
-                  <Table.Row positive>
-                    <Table.Cell colSpan="2" textAlign="center">
-                      <Header as="h4">{row.s1}</Header>
-                    </Table.Cell>
-                  </Table.Row>
-                )}
-                <TableRow
-                  index={index}
-                  rows={rows}
-                  row={row}
-                  key={row.id}
-                  onClick={() => handleRowClick(row)}
-                />
-              </>
-            );
-          })}
-        </Table.Body>
-      </Table>
+      {/* <TableRow rows={rows}/> */}
     </div>
   );
 }

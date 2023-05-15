@@ -1,16 +1,48 @@
-import DefaultRoutes from './routes/index';
+import React from 'react';
 import Header from './Header';
-import { BrowserRouter } from 'react-router-dom';
+import Routes from './components/Routes';
+import { Container } from 'semantic-ui-react';
+import {
+  BrowserRouter,
+  Route,
+  Link,
+  Switch,
+  useHistory,
+  Redirect,
+} from 'react-router-dom';
 
-function App() {
+import { AuthProvider } from './contexts/AuthContext';
+
+// import { AuthProvider } from '../contexts/AuthContext';
+
+import ContactList from './demo/contacts/ContactList';
+import CrudForm from './components/template/CrudForm';
+
+import Spinner from './components/Spinner';
+
+import Login from './pages/Login';
+
+export default function App() {
+  // React.useEffect(()=>{
+  //   db.collection('accounts').add({name:'abc'})
+  // },[])
   return (
     <>
-      <BrowserRouter>
-        <Header />
-        <DefaultRoutes />
-      </BrowserRouter>
+      {/* <Login/> */}
+      {/* <Spinner/> */}
+      {/* <CrudForm/> */}
+
+      <AuthProvider>
+        <BrowserRouter>
+          <Header></Header>
+
+          {/* 路由 */}
+          <Container>          
+
+            <Routes />
+          </Container>
+        </BrowserRouter>
+      </AuthProvider>
     </>
   );
 }
-
-export default App;
