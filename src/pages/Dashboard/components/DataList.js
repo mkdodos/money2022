@@ -25,7 +25,8 @@ export default function DataList({ rows,onDataListRowClick }) {
                     <Header as="h4">{row.title}</Header>
                     <span>{row.date}</span>
 
-                    {row.cate && <Label>{row.cate}</Label>}
+                    {row.account && <Label>{row.account.name}</Label>}
+                    {/* {row.cate && <Label>{row.cate}</Label>} */}
                   </Table.Cell>
                   <Table.Cell textAlign="right">
                     {row.income ? (

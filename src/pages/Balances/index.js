@@ -147,6 +147,7 @@ const Balances = () => {
   };
 
   const handleAccountClick = (account) => {
+    // 設定作用中帳戶
     setActiveAccount(account);
     setRows(
       rowsCopy.filter((row) => row.account && row.account.name == account.name)

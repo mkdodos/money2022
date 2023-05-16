@@ -28,6 +28,8 @@ export default function Query() {
     income: '',
     expense: '',
   });
+
+  // 編輯列資料
   const [editedRow, setEditedRow] = useState(defaultItem);
 
   // 編輯視窗開關
@@ -35,14 +37,14 @@ export default function Query() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    cateQuery();
+    // cateQuery();
   }, []);
   const cateQuery = (e, obj) => {
     db.collection('balances')
       .orderBy('date', 'desc')
       .where('user', '==', currentUser.email)
-      .where('cate', '==', '洗牙')
-      // .where('cate', '==', obj.value)
+      // .where('cate', '==', '洗牙')
+      .where('cate', '==', obj.value)
       .get()
       .then((snapshot) => {
         const data = snapshot.docs.map((doc) => {
@@ -83,13 +85,17 @@ export default function Query() {
     setEditedRow({ ...defaultItem, ...row });
   };
 
+  // 儲存
   const saveRow = () => {
     console.log(editedRow);
     // setLoading(true);
+    const accountName= editedRow.account.name
+    // return;
     db.collection('balances')
       .doc(editedRow.id)
       // 帳戶欄位是以物件型態儲存,更新寫法和一般欄位有所差異
-      .update({...editedRow,account:{...editedRow.account,name:'信用卡'}})
+      // 更新 account 物件的  name 屬性
+      .update({...editedRow,account:{...editedRow.account,name:accountName}})
       // .update(editedRow)
       .then(() => {
         // Object.assign(rows[editedIndex], editedRow);
@@ -112,7 +118,7 @@ export default function Query() {
       >
         <Modal.Header>編輯</Modal.Header>
         <Modal.Content>
-          <EditForm editedRow={editedRow} />
+          <EditForm editedRow={editedRow} setEditedRow={setEditedRow} />
         </Modal.Content>
         <Modal.Actions>
           <Button color="teal" onClick={saveRow}>
