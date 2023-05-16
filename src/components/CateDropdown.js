@@ -3,7 +3,7 @@ import { db } from '../utils/firebase';
 import { Dropdown, Form } from 'semantic-ui-react';
 import { useAuth } from '../contexts/AuthContext';
 
-export default function CateDropdown({ cate, setCate, onChange,label,width, name }) {
+export default function CateDropdown({ cate, setCate,placeholder, onChange,label,width, name }) {
   const { currentUser } = useAuth();
   const [rows, setRows] = useState([]);
   const [rowsCopy, setRowsCopy] = useState([]);
@@ -28,6 +28,7 @@ export default function CateDropdown({ cate, setCate, onChange,label,width, name
       value={cate}
       name={name}
       label={label}
+      placeholder={placeholder}
       // fluid
       fluid
       width={width}

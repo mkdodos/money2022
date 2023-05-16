@@ -36,6 +36,12 @@ export default function Query() {
 
   const [open, setOpen] = useState(false);
 
+
+  // 關鍵字搜尋(目前還沒研究如何直接從 firebase 做關鍵字搜尋,
+  // 所以先用類別從遠端載入資料,複製一份在本端做為搜尋用)
+  const [rowsCopy, setRowsCopy] = useState([]);
+  const [searchText, setSearchText] = useState('');
+
   useEffect(() => {
     // cateQuery();
   }, []);
@@ -50,8 +56,11 @@ export default function Query() {
         const data = snapshot.docs.map((doc) => {
           return { ...doc.data(), id: doc.id };
         });
-        // setRows(data)
-        // console.log(data);
+       
+
+     
+
+
         // 處理日期,取得日期的年月比對,不同的話設定 flag 為 true
         // 在顯示資料時, flag 為 true 才將年月顯示在標題列
         const newRows = data.slice();
@@ -72,6 +81,7 @@ export default function Query() {
         });
 
         setRows(newRows);
+        setRowsCopy(newRows);
         // console.log(newRows);
       });
   };
@@ -106,7 +116,10 @@ export default function Query() {
 
   return (
     <div>
-      <SearchBar cateQuery={cateQuery} />
+      <SearchBar cateQuery={cateQuery} searchText={searchText} 
+      setSearchText={setSearchText} setRows={setRows} rowsCopy={rowsCopy}
+      />
+      <br/>
       <DataList rows={rows} onDataListRowClick={handleDataListRowClick} />
 
       <Modal
