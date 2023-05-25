@@ -47,16 +47,26 @@ import Query from '../pages/Dashboard/Query';
 import EditForm from '../pages/Food/component/EditForm';
 
 import Cart from '../pages/Food/component/Cart';
+
+
+import Credits from '../pages/Credits';
+
+
 // 記事類別
 import CatesNote from '../pages/CatesNote';
 import EditCatesNote from '../pages/CatesNote/components/EditCate';
 // import Dashboard from './Dashboard'
+
+
+import Minisoft from '../pages/Minisoft'
 
 import Demo from './Demo';
 export default function Routes() {
   const { currentUser } = useAuth();
   return (
     <Switch>
+      <Route path="/minisoft" exact component={Minisoft} />
+      <Route path="/credits" exact component={Credits} />
       <Route path="/trans" exact component={Trans} />
       <Route path="/demo" exact component={Demo} />
       <Route path="/prod/:id" exact component={EditForm} />

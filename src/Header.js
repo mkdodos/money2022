@@ -39,7 +39,7 @@ export default function Header() {
     // Menu secondary Dropdown simple
     // 會產生 gap 變成 Dropdown 內的 item 不好點
     <Menu pointing secondary>
-      {/* <Menu secondary pointing  attached='top'> */}
+      {/* 下拉選單 */}
       <Dropdown item icon="setting">
         <Dropdown.Menu>
           <Dropdown.Item as={Link} to="/accounts" name="accounts">
@@ -68,6 +68,7 @@ export default function Header() {
         </Dropdown.Menu>
       </Dropdown>
 
+      {/* 特定使用者選單 */}
       {currentUser?.email == 'mkdodos@gmail.com' && (
         <Menu.Item
           as={Link}
@@ -79,6 +80,17 @@ export default function Header() {
           房貸
         </Menu.Item>
       )}
+      {/* 一般使用者選單 */}
+
+      <Menu.Item
+        as={Link}
+        to="/credits"
+        name="credits"
+        onClick={handleClick}
+        active={activeItem === 'credits'}
+      >
+        信用卡
+      </Menu.Item>
 
       <Menu.Item
         as={Link}
