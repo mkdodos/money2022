@@ -1,76 +1,96 @@
-import React, { useEffect, useState } from 'react';
-// import { Card, Button, Alert } from "react-bootstrap"
-import { useAuth } from '../contexts/AuthContext';
-import { Link, useHistory } from 'react-router-dom';
-import { Button, Statistic, Card, Grid, List, Table } from 'semantic-ui-react';
+import { useEffect, useReducer, useState } from 'react';
+import { Table, Segment, Statistic, Label } from 'semantic-ui-react';
 import { db } from '../utils/firebase';
-
+import { useAuth } from '../contexts/AuthContext';
 import numberFormat from '../utils/numberFormat';
+import _ from 'lodash';
+import { MonthButton } from './MonthSelect';
 
 export default function Dashboard() {
-  const [error, setError] = useState('');
-  const { currentUser, logout } = useAuth();
-  const history = useHistory();
-  const [bonus, setBonus] = useState(0);
   const [total, setTotal] = useState(0);
-  const [totalData, setTotalData] = useState([]);
-  const [totalDataCopy, setTotalDataCopy] = useState([]);
+  const { currentUser } = useAuth();
 
+  function reducer(state, action) {
+    switch (action.type) {
+      case 'sort':
+        // 第二次按下同欄位
+        if (state.column === action.column) {
+          return {
+            ...state,
+            data: state.data.slice().reverse(),
+            direction:
+              state.direction === 'ascending' ? 'descending' : 'ascending',
+          };
+        }
+        // 第一次按下某欄位
+        return {
+          ...state,
+          column: action.column,
+          data: _.sortBy(state.data, [action.column]),
+          // dataCopy: state.data ,
+          direction: 'ascending',
+        };
+      // 初始化資料,並留一份做為篩選用
+      case 'setData':
+        return { data: action.data, dataCopy: action.data };
+      // 點選日期篩選資料
+      case 'filterData':
+        return { ...state, data: action.data };
+      // 點選合計將資料回復原來
+      case 'copyData':
+        return { ...state, data: state.dataCopy };
+
+      default:
+        throw new Error();
+    }
+  }
+
+  const [state, dispatch] = useReducer(reducer, {
+    column: null,
+    data: [],
+    dataCopy: [],
+    direction: null,
+  });
+
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
+  const [year, setYear] = useState(new Date().getFullYear());
+
+  const { column, data, direction, dataCopy } = state;
   useEffect(() => {
-    // db.collection('balances')
-    //   .where('cate', '==', '股息')
-    //   .get()
-    //   .then((snapshot) => {
-    //     let total = 0;
-    //     snapshot.docs.map((doc) => {
-    //       total += doc.data().income * 1;
-    //     });
-    //     setBonus(total);
-    //   });
-
+    let mm = '';
+    month >= 10 ? (mm = month) : (mm = '0' + month);
     db.collection('balances')
-      .where('date', '>=', '2022-09')
+      .where('date', '>=', `${year}-${mm}-01`)
+      .where('date', '<=', `${year}-${mm}-31`)
+      // .where('date', '>=', `2022-${mm}-01`)
+      // .where('date', '<=', `2022-${mm}-31`)
+      // .where('date', 'startAt', '2022-07')
       .where('user', '==', currentUser.email)
       .get()
       .then((snapshot) => {
-        
-        const data = snapshot.docs.map((doc) => {          
+        const rows = snapshot.docs.map((doc) => {
           return {
             id: doc.id,
             ...doc.data(),
             // 將金額字串轉為數字才能正確做排序
             expense: parseInt(doc.data().expense),
-          };         
+          };
         });
 
-        let filterdData = data.filter((row) => row.expense > 0);
-        // 金額排序
-        filterdData.sort((a, b) => {
-          return b.expense - a.expense;
-        });
-
-        setTotalData(filterdData);
-        setTotalDataCopy(filterdData);
+        // 篩選資料
+        let filterdData = rows.filter(
+          (row) => row.expense > 0 && row.type !== '轉帳'
+        );
         // 合計
-        let total = 0;
+        let temp = 0;
         filterdData.map((row) => {
-          total += row.expense * 1;
+          temp += row.expense * 1;
         });
-        setTotal(total);
+        setTotal(temp);
+
+        dispatch({ type: 'setData', data: filterdData, dataCopy: filterdData });
       });
-  }, []);
-
-  // console.log(currentUser);
-  async function handleLogout() {
-    setError('');
-
-    try {
-      await logout();
-      history.push('/login');
-    } catch {
-      setError('Failed to log out');
-    }
-  }
+  }, [month, year]);
 
   function calTotal(arr) {
     let total = 0;
@@ -81,93 +101,123 @@ export default function Dashboard() {
     return total;
   }
 
+  const handleYearClick = (e) => {
+    switch (e.detail) {
+      case 1:
+        console.log(' click');
+        setYear((prev) => {
+          return prev - 1;
+        });
+        break;
+      case 2:
+        console.log('double click');
+        break;
+      case 3:
+        console.log('triple click');
+        break;
+    }
+  };
+
+  function handleYearChange(e, { value }) {
+    setYear(value);
+    console.log(value);
+  }
+
   return (
     <>
-      {/* <pre>{JSON.stringify(currentUser)}</pre> */}
-      {/* <div>Dashboard</div> */}
+      <MonthButton
+        text={`${month} 月`}
+        year={year}
+        onYearChange={handleYearChange}
+        // setYear={setYear}
+        onYearClick={handleYearClick}
+        // onYearDoubleClick={() => setYear(new Date().getFullYear())}
+        onPlusClick={() => {
+          if (month == 12) setMonth(1);
+          else setMonth(month + 1);
+        }}
+        // 中間按鈕按下切換回當月
+        onClick={() => {
+          setMonth(new Date().getMonth() + 1);
+        }}
+        onMinusClick={() => {
+          if (month == 1) setMonth(12);
+          else setMonth(month - 1);
+        }}
+      ></MonthButton>
 
-      {/* <Statistic color="green">
-        <Statistic.Value>{numberFormat(bonus)}</Statistic.Value>
-        <Statistic.Label>股息</Statistic.Label>
-      </Statistic> */}
+      <Segment textAlign="center">
+        <Statistic
+          color="blue"
+          onClick={() => {
+            // console.log(data)
+            console.log(dataCopy);
+            dispatch({ type: 'copyData' });
+            setTotal(calTotal(dataCopy));
+          }}
+        >
+          <Statistic.Value>{numberFormat(total)}</Statistic.Value>
+          {/* <Statistic.Label>blue</Statistic.Label> */}
+        </Statistic>
+      </Segment>
 
-      <Grid columns={1}>
-        <Grid.Row>
-          {/* <Grid.Column>
-            <Card>
-              <Card.Content>
-                <Card.Header textAlign="center">月支出</Card.Header>
-              </Card.Content>
-              <Card.Content>{total}</Card.Content>
-            </Card>
-          </Grid.Column> */}
-          <Grid.Column>
-            <Card fluid>
-              <Card.Content>
-                <Card.Header
-                  textAlign="center"
+      <Table celled unstackable sortable>
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell
+              width={3}
+              // 顯示向上向下箭頭(sorted='ascending' || 'descending')
+              sorted={state.column === 'date' ? direction : null}
+              onClick={() => {
+                dispatch({ type: 'sort', column: 'date' });
+              }}
+            >
+              日期
+            </Table.HeaderCell>
+            <Table.HeaderCell
+              sorted={state.column === 'title' ? direction : null}
+              onClick={() => {
+                dispatch({ type: 'sort', column: 'title' });
+              }}
+            >
+              項目
+            </Table.HeaderCell>
+            <Table.HeaderCell
+              sorted={state.column === 'expense' ? direction : null}
+              onClick={() => {
+                dispatch({ type: 'sort', column: 'expense' });
+                console.log('d');
+              }}
+            >
+              支出
+            </Table.HeaderCell>
+            <Table.HeaderCell>帳戶</Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+
+        <Table.Body>
+          {data.map((row) => {
+            return (
+              <Table.Row key={row.id}>
+                <Table.Cell
                   onClick={() => {
-                    setTotalData(totalDataCopy);
-                    setTotal(calTotal(totalDataCopy));
+                    let temp = data.filter((obj) => obj.date == row.date);
+                    dispatch({ type: 'filterData', data: temp });
+                    setTotal(calTotal(temp));
                   }}
                 >
-                  月支出
-                </Card.Header>
-              </Card.Content>
-              {/* <Card.Content>{total}</Card.Content> */}
-            </Card>
-            <Table celled unstackable sortable>
-              <Table.Header>
-                <Table.Row>
-                  <Table.HeaderCell>Date</Table.HeaderCell>
-                  <Table.HeaderCell>Header</Table.HeaderCell>
-                  <Table.HeaderCell>{total}</Table.HeaderCell>
-                </Table.Row>
-              </Table.Header>
-
-              <Table.Body>
-                {totalData.map((row) => {
-                  return (
-                    <Table.Row key={row.id}>
-                      <Table.Cell
-                        onClick={() => {
-                          let temp = totalData.filter(
-                            (obj) => obj.date == row.date
-                          );
-                          //  console.log(temp)
-
-                          setTotalData(temp);
-
-                          let total = 0;
-                          temp.map((row) => {
-                            total += row.expense * 1;
-                          });
-                          setTotal(total);
-                        }}
-                      >
-                        {row.date}
-                      </Table.Cell>
-                      <Table.Cell>{row.title}</Table.Cell>
-                      <Table.Cell>{row.expense}</Table.Cell>
-                    </Table.Row>
-                  );
-                })}
-              </Table.Body>
-            </Table>
-
-            {/* <List divided verticalAlign="middle">
-              {totalData.map((row) => {
-                return (
-                  <List.Item key={row.id}>
-                    <List.Content floated="right">{row.expense}</List.Content>
-                    <List.Content>{row.title}</List.Content>
-                  </List.Item>
-                );
-              })}
-            </List> */}
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
+                  {row.date.slice(5, 10)}
+                </Table.Cell>
+                <Table.Cell>
+                  {row.title ? row.title : <Label>{row.cate}</Label>}
+                </Table.Cell>
+                <Table.Cell>{row.expense}</Table.Cell>
+                <Table.Cell>{row.account.name}</Table.Cell>
+              </Table.Row>
+            );
+          })}
+        </Table.Body>
+      </Table>
     </>
   );
 }

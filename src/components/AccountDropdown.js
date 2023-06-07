@@ -3,7 +3,7 @@ import { db } from '../utils/firebase';
 import { Dropdown, Form } from 'semantic-ui-react';
 import { useAuth } from '../contexts/AuthContext';
 
-export default function AccountDropdown({ account, name, onChange,label }) {
+export default function AccountDropdown({ account, name, onChange, label }) {
   const { currentUser } = useAuth();
   const [rows, setRows] = useState([]);
 
@@ -24,10 +24,11 @@ export default function AccountDropdown({ account, name, onChange,label }) {
   }, []);
   return (
     <Form.Select
-    label={label}
+      placeholder="帳戶"
+      label={label}
       value={account}
       name={name}
-      fluid      
+      fluid
       options={rows}
       onChange={onChange}
     />
