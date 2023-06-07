@@ -70,27 +70,28 @@ export default function Header() {
 
       {/* 特定使用者選單 */}
       {currentUser?.email == 'mkdodos@gmail.com' && (
-        <Menu.Item
-          as={Link}
-          to="/mortgages"
-          name="mortgages"
-          onClick={handleClick}
-          active={activeItem === 'mortgages'}
-        >
-          房貸
-        </Menu.Item>
+        <>
+          <Menu.Item
+            as={Link}
+            to="/mortgages"
+            name="mortgages"
+            onClick={handleClick}
+            active={activeItem === 'mortgages'}
+          >
+            房貸
+          </Menu.Item>
+          <Menu.Item
+            as={Link}
+            to="/credits"
+            name="credits"
+            onClick={handleClick}
+            active={activeItem === 'credits'}
+          >
+            信用卡
+          </Menu.Item>
+        </>
       )}
       {/* 一般使用者選單 */}
-
-      <Menu.Item
-        as={Link}
-        to="/credits"
-        name="credits"
-        onClick={handleClick}
-        active={activeItem === 'credits'}
-      >
-        信用卡
-      </Menu.Item>
 
       <Menu.Item
         as={Link}
