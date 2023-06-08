@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import numberFormat from '../utils/numberFormat';
 import _ from 'lodash';
 import { MonthButton } from './MonthSelect';
+import AccountDropdown from './AccountDropdown';
 
 export default function Dashboard() {
   const [total, setTotal] = useState(0);
@@ -54,6 +55,7 @@ export default function Dashboard() {
 
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
+  const [account, setAccount] = useState('');
 
   const { column, data, direction, dataCopy } = state;
   useEffect(() => {
@@ -81,6 +83,13 @@ export default function Dashboard() {
         let filterdData = rows.filter(
           (row) => row.expense > 0 && row.type !== '轉帳'
         );
+
+        if (account) {
+          filterdData = filterdData.filter(
+            (row) => row.account.name == account
+          );
+        }
+
         // 合計
         let temp = 0;
         filterdData.map((row) => {
@@ -90,7 +99,7 @@ export default function Dashboard() {
 
         dispatch({ type: 'setData', data: filterdData, dataCopy: filterdData });
       });
-  }, [month, year]);
+  }, [month, year, account]);
 
   function calTotal(arr) {
     let total = 0;
@@ -161,6 +170,8 @@ export default function Dashboard() {
         </Statistic>
       </Segment>
 
+      <AccountDropdown onChange={(e, obj) => setAccount(obj.value)} />
+
       <Table celled unstackable sortable>
         <Table.Header>
           <Table.Row>
@@ -185,13 +196,12 @@ export default function Dashboard() {
             <Table.HeaderCell
               sorted={state.column === 'expense' ? direction : null}
               onClick={() => {
-                dispatch({ type: 'sort', column: 'expense' });
-                console.log('d');
+                dispatch({ type: 'sort', column: 'expense' });                
               }}
             >
               支出
             </Table.HeaderCell>
-            <Table.HeaderCell>帳戶</Table.HeaderCell>
+            {/* <Table.HeaderCell>帳戶</Table.HeaderCell> */}
           </Table.Row>
         </Table.Header>
 
@@ -212,7 +222,7 @@ export default function Dashboard() {
                   {row.title ? row.title : <Label>{row.cate}</Label>}
                 </Table.Cell>
                 <Table.Cell>{row.expense}</Table.Cell>
-                <Table.Cell>{row.account.name}</Table.Cell>
+                {/* <Table.Cell>{row.account.name}</Table.Cell> */}
               </Table.Row>
             );
           })}

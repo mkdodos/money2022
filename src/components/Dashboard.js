@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useState } from 'react';
-import { Table, Segment, Statistic, Label } from 'semantic-ui-react';
+import { Table, Segment, Statistic, Label, Menu } from 'semantic-ui-react';
 import { db } from '../utils/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import numberFormat from '../utils/numberFormat';
@@ -8,7 +8,10 @@ import { MonthButton } from './MonthSelect';
 import AccountDropdown from './AccountDropdown';
 
 export default function Dashboard() {
+  const [isIncome, setIsIncome] = useState(false);
+  const [columnText, setColumnText] = useState('expense');
   const [total, setTotal] = useState(0);
+  const [totalIncome, setTotalIncome] = useState(0);
   const { currentUser } = useAuth();
 
   function reducer(state, action) {
@@ -75,15 +78,24 @@ export default function Dashboard() {
             id: doc.id,
             ...doc.data(),
             // 將金額字串轉為數字才能正確做排序
-            expense: parseInt(doc.data().expense),
+            // expense: parseInt(doc.data().expense),
           };
         });
 
         // 篩選資料
         let filterdData = rows.filter(
-          (row) => row.expense > 0 && row.type !== '轉帳'
+          // (row) => row.expense > 0 && row.type !== '轉帳'
+          (row) => row.type !== '轉帳'          
         );
 
+        if(isIncome){
+
+          filterdData = filterdData.filter(row=>row.income>0)
+
+        }else{
+          filterdData = filterdData.filter(row=>row.expense>0)
+        }
+       
         if (account) {
           filterdData = filterdData.filter(
             (row) => row.account.name == account
@@ -92,14 +104,22 @@ export default function Dashboard() {
 
         // 合計
         let temp = 0;
+        let tempIncome = 0;
         filterdData.map((row) => {
-          temp += row.expense * 1;
+          if (row.expense) {
+            temp += row.expense * 1;
+          }
+
+          if (row.income) {
+            tempIncome += row.income * 1;
+          }
         });
         setTotal(temp);
+        setTotalIncome(tempIncome);
 
         dispatch({ type: 'setData', data: filterdData, dataCopy: filterdData });
       });
-  }, [month, year, account]);
+  }, [month, year, account,isIncome]);
 
   function calTotal(arr) {
     let total = 0;
@@ -130,6 +150,17 @@ export default function Dashboard() {
   function handleYearChange(e, { value }) {
     setYear(value);
     console.log(value);
+  }
+
+  // 設定作用中項目樣式
+  function handleItemClick(e, { name }) {
+    if (name === 'income') {
+      setIsIncome(true);
+      setColumnText('income')
+    } else {
+      setIsIncome(false);
+      setColumnText('expense')
+    }
   }
 
   return (
@@ -165,10 +196,32 @@ export default function Dashboard() {
             setTotal(calTotal(dataCopy));
           }}
         >
-          <Statistic.Value>{numberFormat(total)}</Statistic.Value>
+          <Statistic.Value>
+            {isIncome ? numberFormat(totalIncome) : numberFormat(total)}
+          </Statistic.Value>
+          {/* <Statistic.Value></Statistic.Value> */}
           {/* <Statistic.Label>blue</Statistic.Label> */}
         </Statistic>
       </Segment>
+
+      <Menu fluid widths={2} pointing secondary>
+        <Menu.Item
+          color="teal"
+          name="income"
+          active={isIncome}
+          onClick={handleItemClick}
+        >
+          收入
+        </Menu.Item>
+        <Menu.Item
+          color="orange"
+          name="expense"
+          active={!isIncome}
+          onClick={handleItemClick}
+        >
+          支出
+        </Menu.Item>
+      </Menu>
 
       <AccountDropdown onChange={(e, obj) => setAccount(obj.value)} />
 
@@ -193,13 +246,24 @@ export default function Dashboard() {
             >
               項目
             </Table.HeaderCell>
+
+            {/* <Table.HeaderCell
+              sorted={state.column ==={columnText}  ? direction : null}
+              onClick={() => {
+                dispatch({ type: 'sort', column: {columnText} });
+              }}
+            >
+              
+             {isIncome ? '收入' : '支出'} 
+            </Table.HeaderCell> */}
+
             <Table.HeaderCell
               sorted={state.column === 'expense' ? direction : null}
               onClick={() => {
-                dispatch({ type: 'sort', column: 'expense' });                
+                dispatch({ type: 'sort', column: 'expense' });
               }}
             >
-              支出
+              金額
             </Table.HeaderCell>
             {/* <Table.HeaderCell>帳戶</Table.HeaderCell> */}
           </Table.Row>
@@ -221,7 +285,8 @@ export default function Dashboard() {
                 <Table.Cell>
                   {row.title ? row.title : <Label>{row.cate}</Label>}
                 </Table.Cell>
-                <Table.Cell>{row.expense}</Table.Cell>
+                <Table.Cell>{ isIncome ? row.income :row.expense}</Table.Cell>
+                {/* <Table.Cell>{row.expense}</Table.Cell> */}
                 {/* <Table.Cell>{row.account.name}</Table.Cell> */}
               </Table.Row>
             );
